@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Solvent AI - Financial Dashboard</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "tertiary-container": "#007d55",
+                      "outline": "#747688",
+                      "on-tertiary-fixed-variant": "#005236",
+                      "on-primary": "#ffffff",
+                      "surface-dim": "#d8dadc",
+                      "surface-tint": "#124af0",
+                      "on-secondary": "#ffffff",
+                      "secondary-fixed": "#d5e3fc",
+                      "on-secondary-container": "#57657a",
+                      "on-error": "#ffffff",
+                      "surface-bright": "#f7f9fb",
+                      "on-secondary-fixed-variant": "#3a485b",
+                      "on-primary-fixed-variant": "#0035be",
+                      "on-surface-variant": "#434656",
+                      "on-error-container": "#93000a",
+                      "inverse-on-surface": "#eff1f3",
+                      "tertiary-fixed-dim": "#4edea3",
+                      "primary": "#0040e0",
+                      "tertiary": "#006242",
+                      "surface-variant": "#e0e3e5",
+                      "on-secondary-fixed": "#0d1c2e",
+                      "on-tertiary": "#ffffff",
+                      "primary-container": "#2e5bff",
+                      "surface-container-high": "#e6e8ea",
+                      "secondary-fixed-dim": "#b9c7df",
+                      "on-surface": "#191c1e",
+                      "background": "#f7f9fb",
+                      "on-primary-fixed": "#001356",
+                      "error": "#ba1a1a",
+                      "outline-variant": "#c4c5d9",
+                      "surface-container-lowest": "#ffffff",
+                      "tertiary-fixed": "#6ffbbe",
+                      "primary-fixed": "#dde1ff",
+                      "secondary": "#515f74",
+                      "on-background": "#191c1e",
+                      "on-primary-container": "#efefff",
+                      "inverse-primary": "#b8c3ff",
+                      "secondary-container": "#d5e3fc",
+                      "inverse-surface": "#2d3133",
+                      "error-container": "#ffdad6",
+                      "primary-fixed-dim": "#b8c3ff",
+                      "surface-container-low": "#f2f4f6",
+                      "surface": "#f7f9fb",
+                      "surface-container-highest": "#e0e3e5",
+                      "surface-container": "#eceef0",
+                      "on-tertiary-container": "#bdffdb",
+                      "on-tertiary-fixed": "#002113"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "container-padding-mobile": "16px",
+                      "gutter": "24px",
+                      "stack-md": "12px",
+                      "container-padding-desktop": "40px",
+                      "stack-sm": "4px",
+                      "stack-lg": "24px",
+                      "base": "8px"
+              },
+              "fontFamily": {
+                      "body-md": [
+                              "Inter"
+                      ],
+                      "headline-sm": [
+                              "Inter"
+                      ],
+                      "display-lg-mobile": [
+                              "Inter"
+                      ],
+                      "label-md": [
+                              "Inter"
+                      ],
+                      "body-lg": [
+                              "Inter"
+                      ],
+                      "headline-md": [
+                              "Inter"
+                      ],
+                      "display-lg": [
+                              "Inter"
+                      ],
+                      "label-sm": [
+                              "Inter"
+                      ]
+              },
+              "fontSize": {
+                      "body-md": [
+                              "16px",
+                              {
+                                      "lineHeight": "24px",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "headline-sm": [
+                              "20px",
+                              {
+                                      "lineHeight": "28px",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "display-lg-mobile": [
+                              "32px",
+                              {
+                                      "lineHeight": "40px",
+                                      "letterSpacing": "-0.02em",
+                                      "fontWeight": "700"
+                              }
+                      ],
+                      "label-md": [
+                              "14px",
+                              {
+                                      "lineHeight": "20px",
+                                      "letterSpacing": "0.01em",
+                                      "fontWeight": "500"
+                              }
+                      ],
+                      "body-lg": [
+                              "18px",
+                              {
+                                      "lineHeight": "28px",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "headline-md": [
+                              "24px",
+                              {
+                                      "lineHeight": "32px",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "display-lg": [
+                              "48px",
+                              {
+                                      "lineHeight": "56px",
+                                      "letterSpacing": "-0.02em",
+                                      "fontWeight": "700"
+                              }
+                      ],
+                      "label-sm": [
+                              "12px",
+                              {
+                                      "lineHeight": "16px",
+                                      "fontWeight": "600"
+                              }
+                      ]
+              }
+      },
+          },
+        }
+      </script>
+<style>
+        body {
+            background-color: theme('colors.background');
+        }
+        .data-card {
+            background-color: theme('colors.surface-container-lowest');
+            border: 1px solid theme('colors.outline-variant');
+            border-radius: theme('borderRadius.xl');
+            padding: theme('spacing.gutter');
+        }
+        .data-card:hover {
+            box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.05);
+        }
+        .status-healthy {
+            color: #059669; /* Emerald 600 */
+            border-color: #059669;
+            background-color: rgba(5, 150, 105, 0.1);
+        }
+        .status-warning {
+            color: #d97706; /* Amber 600 */
+            border-color: #d97706;
+            background-color: rgba(217, 119, 6, 0.1);
+        }
+        .status-danger {
+            color: #dc2626; /* Red 600 */
+            border-color: #dc2626;
+            background-color: rgba(220, 38, 38, 0.1);
+        }
+    </style>
+</head>
+<body class="flex min-h-screen text-on-surface">
+<!-- SideNavBar -->
+<aside class="fixed left-0 top-0 h-full flex flex-col py-stack-lg bg-surface-container-low border-r border-outline-variant w-64 z-40 hidden md:flex">
+<div class="px-gutter mb-8">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded bg-primary flex items-center justify-center text-on-primary">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">account_balance</span>
+</div>
+<div>
+<h1 class="font-headline-sm text-headline-sm font-bold text-primary">Solvent AI</h1>
+<p class="font-label-sm text-label-sm text-on-surface-variant">Enterprise Finance</p>
+</div>
+</div>
+</div>
+<div class="px-gutter mb-6">
+<button class="w-full bg-primary text-on-primary font-label-md text-label-md py-2 rounded-lg hover:opacity-90 transition-opacity">
+                New Analysis
+            </button>
+</div>
+<nav class="flex-1 flex flex-col gap-2 px-3">
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-primary font-bold border-r-4 border-primary bg-surface-container-high transition-all" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-label-md text-label-md">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-on-surface-variant hover:bg-surface-container-high transition-all" href="#">
+<span class="material-symbols-outlined">account_balance_wallet</span>
+<span class="font-label-md text-label-md">Portfolio</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-on-surface-variant hover:bg-surface-container-high transition-all" href="#">
+<span class="material-symbols-outlined">query_stats</span>
+<span class="font-label-md text-label-md">Scenario</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-on-surface-variant hover:bg-surface-container-high transition-all" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-label-md text-label-md">Settings</span>
+</a>
+</nav>
+<div class="px-3 mt-auto flex flex-col gap-2 border-t border-outline-variant pt-4 mx-3">
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-on-surface-variant hover:bg-surface-container-high transition-all" href="#">
+<span class="material-symbols-outlined">person</span>
+<span class="font-label-md text-label-md">Account</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-on-surface-variant hover:bg-surface-container-high transition-all" href="#">
+<span class="material-symbols-outlined">logout</span>
+<span class="font-label-md text-label-md">Logout</span>
+</a>
+</div>
+</aside>
+<!-- Main Content Wrapper -->
+<div class="flex-1 flex flex-col md:ml-64 w-full max-w-[1280px] mx-auto">
+<!-- TopNavBar -->
+<header class="w-full h-16 bg-surface-container-lowest border-b border-outline-variant flex justify-between items-center px-container-desktop sticky top-0 z-30">
+<div class="flex items-center bg-surface-container-low rounded-full px-4 py-2 border border-outline-variant focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/20 transition-all w-64">
+<span class="material-symbols-outlined text-on-surface-variant mr-2">search</span>
+<input class="bg-transparent border-none outline-none text-body-md font-body-md w-full placeholder:text-on-surface-variant text-on-surface" placeholder="Search..." type="text"/>
+</div>
+<div class="flex items-center gap-4">
+<button class="p-2 text-on-surface-variant hover:bg-surface-container-low rounded-full transition-colors cursor-pointer active:opacity-80">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button class="p-2 text-on-surface-variant hover:bg-surface-container-low rounded-full transition-colors cursor-pointer active:opacity-80">
+<span class="material-symbols-outlined">help</span>
+</button>
+<div class="h-6 w-px bg-outline-variant mx-2"></div>
+<button class="font-label-md text-label-md text-primary hover:bg-surface-container-low px-4 py-2 rounded-lg transition-colors">
+                    Support
+                </button>
+<button class="font-label-md text-label-md bg-primary text-on-primary px-4 py-2 rounded-lg hover:opacity-90 transition-opacity shadow-sm">
+                    Upgrade
+                </button>
+<div class="w-8 h-8 rounded-full bg-secondary-container flex items-center justify-center border border-outline-variant overflow-hidden ml-2 cursor-pointer">
+<img alt="User profile photo" class="w-full h-full object-cover" data-alt="A professional headshot of a corporate executive in a modern office environment. High-key lighting, bright light-mode aesthetic. Sharp focus, subtle depth of field. Clean, neutral background." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDY4-r1kMiHx184GcVCX_cf7-IyMK0tKfy9CXfPjFXuBmHWV1-GJbJ-VcHvvdct9wh4O_z5RGphMjzvvMW7EFVuqlFc-YPCST6wEt2Ivg4sx4L31X4fKiHUhyMb6b9uZ982LUjYQOjUcXMRFpn77yIAzdbcpQ9ruM1a4rneStd6F3-8iFKpSJoY5zidrsahbZf9_YU2FNuVifiLV5-qVNizRdwokKwU4iFGdQ40sTQ5g5wkK_ejR2lx"/>
+</div>
+</div>
+</header>
+<!-- Dashboard Canvas -->
+<main class="flex-1 p-container-padding-mobile md:p-container-padding-desktop">
+<!-- Header Section -->
+<div class="mb-8">
+<h2 class="font-display-lg text-display-lg text-on-surface">Executive Overview</h2>
+<p class="font-body-lg text-body-lg text-on-surface-variant mt-2">Your current financial snapshot and projected liquidity.</p>
+</div>
+<!-- Bento Grid Layout -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-gutter">
+<!-- Effort Rate Gauge (Left) -->
+<div class="lg:col-span-4 data-card flex flex-col justify-between">
+<div>
+<div class="flex justify-between items-center mb-6">
+<h3 class="font-headline-sm text-headline-sm text-on-surface">Effort Rate</h3>
+<span class="material-symbols-outlined text-outline">info</span>
+</div>
+<div class="relative w-full aspect-square max-w-[240px] mx-auto">
+<!-- Placeholder for Gauge Chart -->
+<canvas id="effortGauge"></canvas>
+<div class="absolute inset-0 flex flex-col items-center justify-center mt-12">
+<span class="font-display-lg text-display-lg text-on-surface">28%</span>
+<span class="status-healthy px-2 py-1 rounded text-xs font-semibold mt-1 border">Healthy</span>
+</div>
+</div>
+</div>
+<div class="mt-6 pt-4 border-t border-outline-variant flex justify-between items-center">
+<span class="font-label-sm text-label-sm text-on-surface-variant">Target: &lt; 35%</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Trend: -2.4%</span>
+</div>
+</div>
+<!-- 6-Month Liquidity Projection (Center) -->
+<div class="lg:col-span-5 flex flex-col gap-gutter">
+<div class="data-card flex-1 flex flex-col">
+<div class="flex justify-between items-center mb-6">
+<h3 class="font-headline-sm text-headline-sm text-on-surface">6-Month Liquidity Projection</h3>
+<button class="p-1 hover:bg-surface-container-low rounded"><span class="material-symbols-outlined text-outline">more_horiz</span></button>
+</div>
+<div class="flex-1 min-h-[200px] w-full">
+<canvas id="liquidityChart"></canvas>
+</div>
+</div>
+<!-- Summary Cards Row -->
+<div class="grid grid-cols-3 gap-gutter">
+<div class="data-card p-4">
+<h4 class="font-label-sm text-label-sm text-on-surface-variant mb-1 uppercase tracking-wider">Net Monthly Income</h4>
+<p class="font-headline-md text-headline-md text-on-surface">$12,450</p>
+</div>
+<div class="data-card p-4">
+<h4 class="font-label-sm text-label-sm text-on-surface-variant mb-1 uppercase tracking-wider">Total Debt Service</h4>
+<p class="font-headline-md text-headline-md text-on-surface">$3,486</p>
+</div>
+<div class="data-card p-4">
+<h4 class="font-label-sm text-label-sm text-on-surface-variant mb-1 uppercase tracking-wider">Liquid Reserve</h4>
+<p class="font-headline-md text-headline-md text-on-surface">$45,200</p>
+</div>
+</div>
+</div>
+<!-- Action Required Sidebar (Right) -->
+<div class="lg:col-span-3 data-card bg-surface-bright border-primary/20">
+<div class="flex items-center gap-2 mb-6">
+<span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">campaign</span>
+<h3 class="font-headline-sm text-headline-sm text-on-surface">Action Required</h3>
+</div>
+<div class="flex flex-col gap-stack-md">
+<!-- Recommendation 1 -->
+<div class="p-4 bg-surface-container-lowest border border-outline-variant rounded-lg hover:border-primary transition-colors cursor-pointer group">
+<div class="flex justify-between items-start mb-2">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-secondary text-sm">home_work</span>
+<span class="font-label-md text-label-md text-on-surface font-semibold">Optimize Mortgage</span>
+</div>
+<span class="status-warning px-2 py-0.5 rounded text-[10px] font-bold border uppercase tracking-widest">High Impact</span>
+</div>
+<p class="font-body-md text-body-md text-sm text-on-surface-variant mb-3">Refinancing your primary residence could reduce monthly service by $320 based on current rates.</p>
+<button class="font-label-sm text-label-sm text-primary flex items-center group-hover:underline">
+                                Review Scenario <span class="material-symbols-outlined text-sm ml-1">arrow_forward</span>
+</button>
+</div>
+<!-- Recommendation 2 -->
+<div class="p-4 bg-surface-container-lowest border border-outline-variant rounded-lg hover:border-primary transition-colors cursor-pointer group">
+<div class="flex justify-between items-start mb-2">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-secondary text-sm">trending_up</span>
+<span class="font-label-md text-label-md text-on-surface font-semibold">High-Yield Opportunity</span>
+</div>
+<span class="status-healthy px-2 py-0.5 rounded text-[10px] font-bold border uppercase tracking-widest">Growth</span>
+</div>
+<p class="font-body-md text-body-md text-sm text-on-surface-variant mb-3">Excess liquid reserves of $15,000 can be moved to a 4.5% APY account to optimize returns.</p>
+<button class="font-label-sm text-label-sm text-primary flex items-center group-hover:underline">
+                                Execute Transfer <span class="material-symbols-outlined text-sm ml-1">arrow_forward</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+</main>
+</div>
+<!-- Chart Scripts -->
+<script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Configuration matching the design system
+            const primaryColor = '#0040e0';
+            const surfaceVariant = '#e0e3e5';
+            const emeraldColor = '#059669';
+            const fontFamily = 'Inter, sans-serif';
+
+            // Effort Rate Gauge Chart (Doughnut)
+            const gaugeCtx = document.getElementById('effortGauge').getContext('2d');
+            new Chart(gaugeCtx, {
+                type: 'doughnut',
+                data: {
+                    datasets: [{
+                        data: [28, 72],
+                        backgroundColor: [
+                            emeraldColor,
+                            surfaceVariant
+                        ],
+                        borderWidth: 0,
+                        circumference: 180,
+                        rotation: 270,
+                        cutout: '80%'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: { enabled: false }
+                    },
+                    animation: {
+                        animateRotate: true,
+                        animateScale: false
+                    }
+                }
+            });
+
+            // Liquidity Projection Area Chart
+            const liquidityCtx = document.getElementById('liquidityChart').getContext('2d');
+            
+            // Create gradient
+            let gradient = liquidityCtx.createLinearGradient(0, 0, 0, 400);
+            gradient.addColorStop(0, 'rgba(0, 64, 224, 0.2)'); // primary with opacity
+            gradient.addColorStop(1, 'rgba(0, 64, 224, 0)');
+
+            new Chart(liquidityCtx, {
+                type: 'line',
+                data: {
+                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                    datasets: [{
+                        label: 'Projected Liquidity',
+                        data: [45200, 48500, 51000, 49800, 54200, 58000],
+                        borderColor: primaryColor,
+                        backgroundColor: gradient,
+                        borderWidth: 2,
+                        pointBackgroundColor: '#ffffff',
+                        pointBorderColor: primaryColor,
+                        pointBorderWidth: 2,
+                        pointRadius: 4,
+                        pointHoverRadius: 6,
+                        fill: true,
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            backgroundColor: '#191c1e',
+                            titleFont: { family: fontFamily, size: 12 },
+                            bodyFont: { family: fontFamily, size: 14, weight: 'bold' },
+                            padding: 12,
+                            displayColors: false,
+                            callbacks: {
+                                label: function(context) {
+                                    let label = context.dataset.label || '';
+                                    if (label) {
+                                        label += ': ';
+                                    }
+                                    if (context.parsed.y !== null) {
+                                        label += new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(context.parsed.y);
+                                    }
+                                    return label;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            grid: { display: false, drawBorder: false },
+                            ticks: { font: { family: fontFamily, size: 12 }, color: '#57657a' }
+                        },
+                        y: {
+                            grid: {
+                                color: surfaceVariant,
+                                drawBorder: false,
+                                borderDash: [5, 5]
+                            },
+                            ticks: {
+                                font: { family: fontFamily, size: 12 },
+                                color: '#57657a',
+                                callback: function(value) {
+                                    return '$' + value / 1000 + 'k';
+                                }
+                            }
+                        }
+                    },
+                    interaction: {
+                        intersect: false,
+                        mode: 'index',
+                    },
+                }
+            });
+        });
+    </script>
+</body></html>

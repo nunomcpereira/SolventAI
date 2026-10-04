@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Solvent AI - AI Contract Parser</title>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<style>
+        .material-symbols-outlined {
+            font-family: 'Material Symbols Outlined';
+            font-weight: normal;
+            font-style: normal;
+            font-size: 24px;
+            line-height: 1;
+            letter-spacing: normal;
+            text-transform: none;
+            display: inline-block;
+            white-space: nowrap;
+            word-wrap: normal;
+            direction: ltr;
+            -webkit-font-feature-settings: 'liga';
+            -webkit-font-smoothing: antialiased;
+        }
+        
+        /* Custom animations for micro-interactions */
+        @keyframes pulse-border {
+            0% { border-color: rgba(0, 64, 224, 0.3); }
+            50% { border-color: rgba(0, 64, 224, 1); }
+            100% { border-color: rgba(0, 64, 224, 0.3); }
+        }
+        .anim-processing {
+            animation: pulse-border 2s infinite;
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.4s ease-in-out forwards;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+<!-- Tailwind Config -->
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "tertiary": "#006242",
+                        "error-container": "#ffdad6",
+                        "secondary": "#515f74",
+                        "tertiary-fixed-dim": "#4edea3",
+                        "surface-container-high": "#e6e8ea",
+                        "on-primary-container": "#efefff",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-dim": "#d8dadc",
+                        "surface-bright": "#f7f9fb",
+                        "on-error": "#ffffff",
+                        "tertiary-container": "#007d55",
+                        "outline-variant": "#c4c5d9",
+                        "on-surface-variant": "#434656",
+                        "on-background": "#191c1e",
+                        "on-secondary-fixed": "#0d1c2e",
+                        "primary-fixed-dim": "#b8c3ff",
+                        "surface-container-highest": "#e0e3e5",
+                        "on-secondary": "#ffffff",
+                        "surface-variant": "#e0e3e5",
+                        "on-tertiary-fixed": "#002113",
+                        "on-primary-fixed-variant": "#0035be",
+                        "surface": "#f7f9fb",
+                        "inverse-surface": "#2d3133",
+                        "primary": "#0040e0",
+                        "on-tertiary": "#ffffff",
+                        "inverse-primary": "#b8c3ff",
+                        "on-primary-fixed": "#001356",
+                        "on-secondary-fixed-variant": "#3a485b",
+                        "surface-container": "#eceef0",
+                        "secondary-fixed-dim": "#b9c7df",
+                        "on-surface": "#191c1e",
+                        "tertiary-fixed": "#6ffbbe",
+                        "on-primary": "#ffffff",
+                        "surface-container-low": "#f2f4f6",
+                        "on-tertiary-fixed-variant": "#005236",
+                        "inverse-on-surface": "#eff1f3",
+                        "secondary-container": "#d5e3fc",
+                        "outline": "#747688",
+                        "background": "#f7f9fb",
+                        "on-secondary-container": "#57657a",
+                        "on-tertiary-container": "#bdffdb",
+                        "primary-fixed": "#dde1ff",
+                        "secondary-fixed": "#d5e3fc",
+                        "surface-tint": "#124af0",
+                        "on-error-container": "#93000a",
+                        "primary-container": "#2e5bff",
+                        "error": "#ba1a1a"
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    spacing: {
+                        "stack-md": "12px",
+                        "base": "8px",
+                        "container-padding-mobile": "16px",
+                        "gutter": "24px",
+                        "stack-lg": "24px",
+                        "stack-sm": "4px",
+                        "container-padding-desktop": "40px"
+                    },
+                    fontFamily: {
+                        "body-lg": ["Inter"],
+                        "headline-md": ["Inter"],
+                        "display-lg": ["Inter"],
+                        "label-sm": ["Inter"],
+                        "headline-sm": ["Inter"],
+                        "body-md": ["Inter"],
+                        "label-md": ["Inter"],
+                        "display-lg-mobile": ["Inter"]
+                    },
+                    fontSize: {
+                        "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }],
+                        "headline-md": ["24px", { "lineHeight": "32px", "fontWeight": "600" }],
+                        "display-lg": ["48px", { "lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "label-sm": ["12px", { "lineHeight": "16px", "fontWeight": "600" }],
+                        "headline-sm": ["20px", { "lineHeight": "28px", "fontWeight": "600" }],
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "label-md": ["14px", { "lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "500" }],
+                        "display-lg-mobile": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700" }]
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-background min-h-screen flex flex-col font-body-md text-on-background antialiased selection:bg-primary-container selection:text-on-primary-container">
+<!-- TopAppBar -->
+<header class="hidden md:flex flex-col w-full z-40 bg-surface border-b border-outline-variant">
+<div class="flex justify-between items-center w-full px-container-padding-desktop py-4">
+<div class="flex items-center gap-4 text-primary">
+<span aria-hidden="true" class="material-symbols-outlined text-[28px]" data-icon="account_balance_wallet" data-weight="fill" style="font-variation-settings: 'FILL' 1;">account_balance_wallet</span>
+<h1 class="font-headline-md text-headline-md font-bold tracking-tight">Solvent AI</h1>
+</div>
+<nav class="flex items-center gap-8">
+<!-- Navigation Items -->
+<a class="flex items-center gap-2 text-on-surface-variant hover:bg-surface-container-low transition-colors px-3 py-2 rounded-lg font-label-md text-label-md" href="#">
+<span class="material-symbols-outlined text-[20px]" data-icon="dashboard">dashboard</span>
+                    Dashboard
+                </a>
+<a class="flex items-center gap-2 text-primary opacity-80 duration-150 transition-colors px-3 py-2 rounded-lg font-label-md text-label-md bg-surface-container-low" href="#">
+<span class="material-symbols-outlined text-[20px]" data-icon="account_balance" data-weight="fill" style="font-variation-settings: 'FILL' 1;">account_balance</span>
+                    Portfolio
+                </a>
+<a class="flex items-center gap-2 text-on-surface-variant hover:bg-surface-container-low transition-colors px-3 py-2 rounded-lg font-label-md text-label-md" href="#">
+<span class="material-symbols-outlined text-[20px]" data-icon="timeline">timeline</span>
+                    Scenario
+                </a>
+<a class="flex items-center gap-2 text-on-surface-variant hover:bg-surface-container-low transition-colors px-3 py-2 rounded-lg font-label-md text-label-md" href="#">
+<span class="material-symbols-outlined text-[20px]" data-icon="settings">settings</span>
+                    Settings
+                </a>
+</nav>
+<button aria-label="Notifications" class="text-primary hover:bg-surface-container-low transition-colors p-2 rounded-full">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</button>
+</div>
+</header>
+<!-- Mobile TopAppBar Shell -->
+<header class="md:hidden flex justify-between items-center w-full px-container-padding-mobile py-4 bg-surface border-b border-outline-variant z-40 fixed top-0">
+<div class="flex items-center gap-3 text-primary">
+<span class="material-symbols-outlined text-[24px]" data-icon="account_balance_wallet" data-weight="fill" style="font-variation-settings: 'FILL' 1;">account_balance_wallet</span>
+<h1 class="font-headline-sm text-headline-sm font-bold">Solvent AI</h1>
+</div>
+<button aria-label="Notifications" class="text-primary p-2 rounded-full">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</button>
+</header>
+<!-- Main Canvas -->
+<main class="flex-grow flex flex-col items-center justify-center pt-24 pb-32 md:py-16 px-container-padding-mobile md:px-container-padding-desktop w-full max-w-7xl mx-auto relative z-10">
+<!-- Focus Column Container -->
+<div class="w-full max-w-2xl relative">
+<!-- Background Decoration (Subtle Grid Pattern via CSS) -->
+<div class="absolute -inset-10 opacity-20 pointer-events-none z-[-1]" style="background-image: radial-gradient(circle at 1px 1px, var(--tw-colors-outline-variant) 1px, transparent 0); background-size: 32px 32px;"></div>
+<!-- Header -->
+<div class="text-center mb-stack-lg">
+<h2 class="font-headline-md text-headline-md text-on-background mb-stack-sm">Add New Liability</h2>
+<p class="font-body-md text-body-md text-on-surface-variant">Upload your contract securely to auto-fill details.</p>
+</div>
+<!-- Dynamic Interactive Card Container -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl shadow-sm overflow-hidden transition-all duration-300 relative" id="ai-parser-card">
+<!-- State 1: Upload Zone -->
+<div class="p-8 md:p-12 flex flex-col items-center text-center" id="state-upload">
+<div class="w-full border-2 border-dashed border-primary-fixed-dim hover:border-primary bg-surface hover:bg-secondary-container/20 rounded-xl p-12 transition-all cursor-pointer group flex flex-col items-center gap-stack-md" id="drop-zone" onclick="simulateUpload()">
+<div class="h-16 w-16 rounded-full bg-primary-container text-on-primary-container flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+<span class="material-symbols-outlined text-3xl" data-icon="upload_file">upload_file</span>
+</div>
+<div>
+<p class="font-headline-sm text-headline-sm text-on-surface mb-1 group-hover:text-primary transition-colors">Upload Loan Contract (PDF)</p>
+<p class="font-body-md text-body-md text-on-surface-variant">Drag and drop your file here, or click to browse.</p>
+</div>
+</div>
+<div class="mt-stack-md flex items-center gap-2 text-tertiary bg-tertiary-container/10 px-4 py-2 rounded-full">
+<span class="material-symbols-outlined text-[18px]" data-icon="lock" data-weight="fill" style="font-variation-settings: 'FILL' 1;">lock</span>
+<span class="font-label-sm text-label-sm">AI processing happens 100% locally on your device.</span>
+</div>
+</div>
+<!-- State 2: Processing (Hidden initially) -->
+<div class="hidden p-12 flex flex-col items-center justify-center min-h-[350px]" id="state-processing">
+<div class="relative w-24 h-24 mb-stack-lg">
+<!-- Abstract processing indicator -->
+<div class="absolute inset-0 rounded-full border-4 border-surface-container-high"></div>
+<div class="absolute inset-0 rounded-full border-4 border-primary border-t-transparent animate-spin"></div>
+<div class="absolute inset-0 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-3xl animate-pulse" data-icon="document_scanner">document_scanner</span>
+</div>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-on-background mb-2">Analyzing Document</h3>
+<p class="font-body-md text-body-md text-on-surface-variant mb-6 font-mono bg-surface-container-low px-3 py-1 rounded">Chase_Mortgage.pdf</p>
+<!-- Progress Bar -->
+<div class="w-full max-w-sm bg-surface-container-high rounded-full h-2 mb-2 overflow-hidden">
+<div class="bg-primary h-2 rounded-full w-0 transition-all duration-300 ease-out" id="progress-fill"></div>
+</div>
+<p class="font-label-sm text-label-sm text-on-surface-variant" id="processing-status">Extracting financial terms...</p>
+</div>
+<!-- State 3: Review Extracted Fields (Hidden initially) -->
+<div class="hidden flex-col h-full fade-in" id="state-review">
+<!-- Success Header -->
+<div class="bg-surface-container-low border-b border-outline-variant px-6 py-4 flex items-center gap-3">
+<div class="h-8 w-8 rounded-full bg-tertiary/10 text-tertiary flex items-center justify-center">
+<span class="material-symbols-outlined text-[18px]" data-icon="check_circle" data-weight="fill" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+</div>
+<div>
+<h3 class="font-label-md text-label-md text-on-surface font-semibold">Data Extracted Successfully</h3>
+<p class="font-label-sm text-label-sm text-on-surface-variant">Review the parsed details below.</p>
+</div>
+</div>
+<!-- Bento Grid of Fields -->
+<div class="p-6 grid grid-cols-1 md:grid-cols-2 gap-stack-md bg-surface-container-lowest">
+<!-- Field Card: Amount -->
+<div class="bg-surface border border-outline-variant rounded-lg p-4 flex flex-col justify-between hover:shadow-sm transition-shadow">
+<div class="flex justify-between items-start mb-2">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Principal Amount</span>
+<span class="material-symbols-outlined text-outline-variant text-[16px]" data-icon="payments">payments</span>
+</div>
+<div class="font-headline-md text-headline-md text-on-background">$350,000</div>
+</div>
+<!-- Field Card: Rate -->
+<div class="bg-surface border border-outline-variant rounded-lg p-4 flex flex-col justify-between hover:shadow-sm transition-shadow">
+<div class="flex justify-between items-start mb-2">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Interest Rate</span>
+<span class="material-symbols-outlined text-outline-variant text-[16px]" data-icon="percent">percent</span>
+</div>
+<div class="flex items-baseline gap-2">
+<span class="font-headline-md text-headline-md text-on-background">4.5%</span>
+<span class="font-label-sm text-label-sm text-secondary bg-secondary-container px-2 py-0.5 rounded-full">Fixed</span>
+</div>
+</div>
+<!-- Field Card: Term -->
+<div class="bg-surface border border-outline-variant rounded-lg p-4 flex flex-col justify-between hover:shadow-sm transition-shadow">
+<div class="flex justify-between items-start mb-2">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Loan Term</span>
+<span class="material-symbols-outlined text-outline-variant text-[16px]" data-icon="calendar_month">calendar_month</span>
+</div>
+<div class="font-headline-md text-headline-md text-on-background">30 Years</div>
+</div>
+<!-- Field Card: Monthly Fee -->
+<div class="bg-surface border border-outline-variant rounded-lg p-4 flex flex-col justify-between hover:shadow-sm transition-shadow">
+<div class="flex justify-between items-start mb-2">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Monthly Escrow/Fee</span>
+<span class="material-symbols-outlined text-outline-variant text-[16px]" data-icon="receipt_long">receipt_long</span>
+</div>
+<div class="font-headline-md text-headline-md text-on-background">$45</div>
+</div>
+</div>
+<!-- Actions -->
+<div class="px-6 py-5 bg-surface-container-lowest border-t border-outline-variant flex flex-col sm:flex-row-reverse justify-between gap-stack-md sm:gap-0">
+<button class="bg-primary text-on-primary hover:bg-primary/90 font-label-md text-label-md py-2.5 px-6 rounded-lg transition-colors shadow-sm flex items-center justify-center gap-2" onclick="resetFlow()">
+<span class="material-symbols-outlined text-[18px]" data-icon="add_task">add_task</span>
+                            Confirm & Add
+                        </button>
+<button class="bg-surface-container hover:bg-surface-container-highest text-on-surface font-label-md text-label-md py-2.5 px-6 rounded-lg transition-colors border border-outline-variant flex items-center justify-center gap-2" onclick="resetFlow()">
+<span class="material-symbols-outlined text-[18px]" data-icon="edit">edit</span>
+                            Edit Details
+                        </button>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- BottomNavBar (Visible but Dimmed slightly to focus on Main Canvas) -->
+<nav class="md:hidden fixed bottom-0 w-full z-30 flex justify-around items-center h-16 bg-surface border-t border-outline-variant opacity-80 backdrop-blur-sm pointer-events-auto transition-opacity hover:opacity-100">
+<a class="flex flex-col items-center justify-center text-on-surface-variant px-4 py-1 hover:text-primary transition-colors" href="#">
+<span class="material-symbols-outlined text-[24px]" data-icon="dashboard">dashboard</span>
+<span class="font-label-sm text-[10px] mt-1">Dashboard</span>
+</a>
+<a class="flex flex-col items-center justify-center bg-secondary-container text-on-secondary-container rounded-xl px-4 py-1 scale-95 transition-transform duration-200" href="#">
+<span class="material-symbols-outlined text-[24px]" data-icon="account_balance" data-weight="fill" style="font-variation-settings: 'FILL' 1;">account_balance</span>
+<span class="font-label-sm text-[10px] mt-1">Portfolio</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant px-4 py-1 hover:text-primary transition-colors" href="#">
+<span class="material-symbols-outlined text-[24px]" data-icon="timeline">timeline</span>
+<span class="font-label-sm text-[10px] mt-1">Scenario</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant px-4 py-1 hover:text-primary transition-colors" href="#">
+<span class="material-symbols-outlined text-[24px]" data-icon="settings">settings</span>
+<span class="font-label-sm text-[10px] mt-1">Settings</span>
+</a>
+</nav>
+<!-- Overlay to simulate dimming context on desktop (optional visual flair) -->
+<div class="fixed inset-0 bg-inverse-surface/5 z-0 pointer-events-none hidden md:block"></div>
+<script>
+        // Micro-interactions logic
+        function simulateUpload() {
+            const stateUpload = document.getElementById('state-upload');
+            const stateProcessing = document.getElementById('state-processing');
+            const stateReview = document.getElementById('state-review');
+            const progressFill = document.getElementById('progress-fill');
+            const statusText = document.getElementById('processing-status');
+
+            // Hide Upload, Show Processing
+            stateUpload.classList.add('hidden');
+            stateProcessing.classList.remove('hidden');
+            stateProcessing.classList.add('flex'); // Ensure flex is applied when unhidden
+
+            // Simulate Processing Steps
+            let progress = 0;
+            const steps = [
+                { p: 20, t: "Reading PDF structure..." },
+                { p: 50, t: "Locating financial clauses..." },
+                { p: 85, t: "Validating extracted numbers..." },
+                { p: 100, t: "Finalizing..." }
+            ];
+            
+            let stepIndex = 0;
+            
+            const interval = setInterval(() => {
+                if (stepIndex < steps.length) {
+                    progress = steps[stepIndex].p;
+                    progressFill.style.width = `${progress}%`;
+                    statusText.innerText = steps[stepIndex].t;
+                    stepIndex++;
+                } else {
+                    clearInterval(interval);
+                    // Transition to Review
+                    setTimeout(() => {
+                        stateProcessing.classList.add('hidden');
+                        stateProcessing.classList.remove('flex');
+                        stateReview.classList.remove('hidden');
+                        stateReview.classList.add('flex'); // Apply flex
+                    }, 400);
+                }
+            }, 800); // Wait 800ms between fake steps
+        }
+
+        function resetFlow() {
+            const stateUpload = document.getElementById('state-upload');
+            const stateProcessing = document.getElementById('state-processing');
+            const stateReview = document.getElementById('state-review');
+            const progressFill = document.getElementById('progress-fill');
+            
+            stateReview.classList.add('hidden');
+            stateReview.classList.remove('flex');
+            
+            stateUpload.classList.remove('hidden');
+            
+            // Reset processing state visually
+            progressFill.style.width = '0%';
+        }
+    </script>
+</body></html>

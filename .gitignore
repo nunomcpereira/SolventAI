@@ -1,0 +1,17 @@
+node_modules/
+dist/
+.next/
+data/
+*.db
+.DS_Store
+*.log
+coverage/
+next-env.d.ts
+tsconfig.tsbuildinfo
+playwright-report/
+test-results/
+blob-report/
+.env
+
+# Private contracts (real loan documents) — never commit
+docs/*.pdf

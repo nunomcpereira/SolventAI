@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Solvent AI - Settings</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "tertiary-container": "#007d55",
+                      "outline": "#747688",
+                      "on-tertiary-fixed-variant": "#005236",
+                      "on-primary": "#ffffff",
+                      "surface-dim": "#d8dadc",
+                      "surface-tint": "#124af0",
+                      "on-secondary": "#ffffff",
+                      "secondary-fixed": "#d5e3fc",
+                      "on-secondary-container": "#57657a",
+                      "on-error": "#ffffff",
+                      "surface-bright": "#f7f9fb",
+                      "on-secondary-fixed-variant": "#3a485b",
+                      "on-primary-fixed-variant": "#0035be",
+                      "on-surface-variant": "#434656",
+                      "on-error-container": "#93000a",
+                      "inverse-on-surface": "#eff1f3",
+                      "tertiary-fixed-dim": "#4edea3",
+                      "primary": "#0040e0",
+                      "tertiary": "#006242",
+                      "surface-variant": "#e0e3e5",
+                      "on-secondary-fixed": "#0d1c2e",
+                      "on-tertiary": "#ffffff",
+                      "primary-container": "#2e5bff",
+                      "surface-container-high": "#e6e8ea",
+                      "secondary-fixed-dim": "#b9c7df",
+                      "on-surface": "#191c1e",
+                      "background": "#f7f9fb",
+                      "on-primary-fixed": "#001356",
+                      "error": "#ba1a1a",
+                      "outline-variant": "#c4c5d9",
+                      "surface-container-lowest": "#ffffff",
+                      "tertiary-fixed": "#6ffbbe",
+                      "primary-fixed": "#dde1ff",
+                      "secondary": "#515f74",
+                      "on-background": "#191c1e",
+                      "on-primary-container": "#efefff",
+                      "inverse-primary": "#b8c3ff",
+                      "secondary-container": "#d5e3fc",
+                      "inverse-surface": "#2d3133",
+                      "error-container": "#ffdad6",
+                      "primary-fixed-dim": "#b8c3ff",
+                      "surface-container-low": "#f2f4f6",
+                      "surface": "#f7f9fb",
+                      "surface-container-highest": "#e0e3e5",
+                      "surface-container": "#eceef0",
+                      "on-tertiary-container": "#bdffdb",
+                      "on-tertiary-fixed": "#002113"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "container-padding-mobile": "16px",
+                      "gutter": "24px",
+                      "stack-md": "12px",
+                      "container-padding-desktop": "40px",
+                      "stack-sm": "4px",
+                      "stack-lg": "24px",
+                      "base": "8px"
+              },
+              "fontFamily": {
+                      "body-md": [
+                              "Inter"
+                      ],
+                      "headline-sm": [
+                              "Inter"
+                      ],
+                      "display-lg-mobile": [
+                              "Inter"
+                      ],
+                      "label-md": [
+                              "Inter"
+                      ],
+                      "body-lg": [
+                              "Inter"
+                      ],
+                      "headline-md": [
+                              "Inter"
+                      ],
+                      "display-lg": [
+                              "Inter"
+                      ],
+                      "label-sm": [
+                              "Inter"
+                      ]
+              },
+              "fontSize": {
+                      "body-md": [
+                              "16px",
+                              {
+                                      "lineHeight": "24px",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "headline-sm": [
+                              "20px",
+                              {
+                                      "lineHeight": "28px",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "display-lg-mobile": [
+                              "32px",
+                              {
+                                      "lineHeight": "40px",
+                                      "letterSpacing": "-0.02em",
+                                      "fontWeight": "700"
+                              }
+                      ],
+                      "label-md": [
+                              "14px",
+                              {
+                                      "lineHeight": "20px",
+                                      "letterSpacing": "0.01em",
+                                      "fontWeight": "500"
+                              }
+                      ],
+                      "body-lg": [
+                              "18px",
+                              {
+                                      "lineHeight": "28px",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "headline-md": [
+                              "24px",
+                              {
+                                      "lineHeight": "32px",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "display-lg": [
+                              "48px",
+                              {
+                                      "lineHeight": "56px",
+                                      "letterSpacing": "-0.02em",
+                                      "fontWeight": "700"
+                              }
+                      ],
+                      "label-sm": [
+                              "12px",
+                              {
+                                      "lineHeight": "16px",
+                                      "fontWeight": "600"
+                              }
+                      ]
+              }
+      },
+          },
+        }
+    </script>
+</head>
+<body class="bg-background text-on-background font-body-md min-h-screen flex antialiased">
+<!-- SideNavBar -->
+<nav class="hidden md:flex bg-surface-container-low dark:bg-inverse-surface h-screen w-64 flex-col border-r border-outline-variant dark:border-outline fixed left-0 top-0 py-stack-lg z-40">
+<div class="px-gutter mb-stack-lg flex items-center gap-3">
+<div class="w-10 h-10 rounded bg-primary-container flex items-center justify-center">
+<span class="material-symbols-outlined text-on-primary-container">insights</span>
+</div>
+<div>
+<h1 class="font-headline-sm text-headline-sm font-bold text-primary">Solvent AI</h1>
+<p class="font-label-sm text-label-sm text-on-surface-variant">Enterprise Finance</p>
+</div>
+</div>
+<div class="px-gutter mb-stack-lg">
+<button class="w-full bg-primary text-on-primary font-label-md text-label-md py-2 px-4 rounded-lg hover:bg-primary-container transition-colors flex items-center justify-center gap-2">
+<span class="material-symbols-outlined" style="font-size: 18px;">add</span>
+                New Analysis
+            </button>
+</div>
+<div class="flex-1 flex flex-col gap-1 px-3">
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-on-surface-variant hover:bg-surface-container-high transition-all cursor-pointer active:scale-95 duration-150 font-label-md text-label-md" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+                Dashboard
+            </a>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-on-surface-variant hover:bg-surface-container-high transition-all cursor-pointer active:scale-95 duration-150 font-label-md text-label-md" href="#">
+<span class="material-symbols-outlined">account_balance_wallet</span>
+                Portfolio
+            </a>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-on-surface-variant hover:bg-surface-container-high transition-all cursor-pointer active:scale-95 duration-150 font-label-md text-label-md" href="#">
+<span class="material-symbols-outlined">query_stats</span>
+                Scenario
+            </a>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-primary font-bold border-r-4 border-primary bg-surface-container-high cursor-pointer active:scale-95 duration-150 font-label-md text-label-md" href="#">
+<span class="material-symbols-outlined">settings</span>
+                Settings
+            </a>
+</div>
+<div class="mt-auto flex flex-col gap-1 px-3">
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-on-surface-variant hover:bg-surface-container-high transition-all cursor-pointer active:scale-95 duration-150 font-label-md text-label-md" href="#">
+<span class="material-symbols-outlined">person</span>
+                Account
+            </a>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-on-surface-variant hover:bg-surface-container-high transition-all cursor-pointer active:scale-95 duration-150 font-label-md text-label-md" href="#">
+<span class="material-symbols-outlined">logout</span>
+                Logout
+            </a>
+</div>
+</nav>
+<!-- Main Content Area -->
+<div class="flex-1 md:ml-64 flex flex-col min-h-screen">
+<!-- TopNavBar -->
+<header class="bg-surface-container-lowest flex justify-between items-center px-container-desktop w-full h-16 sticky top-0 z-30 border-b border-outline-variant">
+<div class="flex items-center gap-4">
+<div class="relative hidden md:block">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant" style="font-size: 20px;">search</span>
+<input class="pl-10 pr-4 py-2 bg-surface-container-low border-none rounded-full font-body-md text-body-md focus:ring-2 focus:ring-primary focus:outline-none w-64" placeholder="Search settings..." type="text"/>
+</div>
+<div class="md:hidden">
+<h2 class="font-headline-md text-headline-md font-bold text-primary">Solvent AI</h2>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<button class="text-on-surface-variant hover:bg-surface-container-low p-2 rounded-full transition-colors">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button class="text-on-surface-variant hover:bg-surface-container-low p-2 rounded-full transition-colors hidden sm:block">
+<span class="material-symbols-outlined">help</span>
+</button>
+<button class="text-on-surface-variant hover:bg-surface-container-low px-4 py-2 rounded-lg transition-colors font-label-md text-label-md hidden sm:block">
+                    Support
+                </button>
+<button class="bg-primary text-on-primary px-4 py-2 rounded-lg hover:bg-primary-container transition-colors font-label-md text-label-md">
+                    Upgrade
+                </button>
+<img alt="User profile photo" class="w-8 h-8 rounded-full object-cover border border-outline-variant cursor-pointer ml-2" data-alt="Professional corporate headshot of a financial analyst in a bright, modern office setting. High-key lighting, minimalist background, sharp focus, suggesting trust and competence in a financial technology context." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBioT0UJD3lXfhYXEjV_sAP62K3EXMNZktCI-6q0qBmEWOLbQK9vWDMusy-3DZqEiaP-rq92oUhlLRL7zLI4ECwA8nVsOGD0Avowi_6oblHy0Hf258pzRU_Dy7QSuTHaRt3kiI7RMZiVnx6YX58Vfho3X9Y_UcaXeWNjN686XnBcyCT2H-ayi8KduaK76El3fRhnjvDTOggpOAxzGnMA9_VdZ4MdSUkIEBGLQuWqdziU2ikRbUF5t75"/>
+</div>
+</header>
+<!-- Page Canvas -->
+<main class="flex-1 p-container-mobile md:p-container-desktop overflow-y-auto">
+<div class="max-w-5xl mx-auto">
+<div class="mb-stack-lg">
+<h2 class="font-headline-md text-headline-md text-on-background mb-2">Settings</h2>
+<p class="font-body-md text-body-md text-on-surface-variant">Manage your account preferences and global configurations.</p>
+</div>
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-gutter">
+<!-- Left Column: Navigation/Summary -->
+<div class="lg:col-span-1 space-y-stack-lg">
+<div class="bg-surface-container-lowest rounded-xl border border-outline-variant p-4">
+<ul class="space-y-1">
+<li><a class="block px-3 py-2 rounded-lg bg-surface-container-low text-primary font-label-md text-label-md" href="#profile">Profile &amp; Account</a></li>
+<li><a class="block px-3 py-2 rounded-lg text-on-surface-variant hover:bg-surface-container-low transition-colors font-label-md text-label-md" href="#financial">Financial Engine</a></li>
+<li><a class="block px-3 py-2 rounded-lg text-on-surface-variant hover:bg-surface-container-low transition-colors font-label-md text-label-md" href="#security">Security</a></li>
+<li><a class="block px-3 py-2 rounded-lg text-on-surface-variant hover:bg-surface-container-low transition-colors font-label-md text-label-md" href="#privacy">Privacy &amp; About</a></li>
+</ul>
+</div>
+</div>
+<!-- Right Column: Settings Content -->
+<div class="lg:col-span-2 space-y-stack-lg">
+<!-- Profile & Account -->
+<section class="bg-surface-container-lowest rounded-xl border border-outline-variant p-6 hover:shadow-sm transition-shadow" id="profile">
+<div class="flex items-center gap-3 mb-6">
+<span class="material-symbols-outlined text-primary">person</span>
+<h3 class="font-headline-sm text-headline-sm text-on-background">Profile &amp; Account</h3>
+</div>
+<div class="space-y-4">
+<div class="flex items-center gap-4 mb-6">
+<img class="w-16 h-16 rounded-full object-cover border border-outline-variant" data-alt="Professional corporate headshot of a financial analyst in a bright, modern office setting. High-key lighting, minimalist background, sharp focus, suggesting trust and competence in a financial technology context." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAhWeIt3I_mVYwO6F_L3Wze9lqgCJahzfsfSiWBVn2rYc1lk-amiK4RuaCoJAp9b1Rhf5kV2Q69oayedjGap68gl7R6BijJ_T2zyv3tB0BTul8AFFqQNRZK1_mzDGVFMVciwSSIhb88Xm2jV7SMwkJ1-hx6NTFQpgUvzcwVaIQD1Bsqbn8OKcBeevoR8tYK1ctMkevm8DZdYXtt0cHLLo2QoFKFxYNbAEf5Xr04QKms5zzB5MpwNxdO"/>
+<div>
+<button class="px-4 py-2 border border-outline-variant rounded-lg text-on-surface font-label-md text-label-md hover:bg-surface-container-low transition-colors">Change Avatar</button>
+</div>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+<div>
+<label class="block font-label-sm text-label-sm text-on-surface-variant mb-1">First Name</label>
+<input class="w-full px-3 py-2 border border-outline-variant rounded-lg font-body-md text-body-md focus:border-primary focus:ring-2 focus:ring-primary-fixed focus:outline-none transition-all" type="text" value="Jane"/>
+</div>
+<div>
+<label class="block font-label-sm text-label-sm text-on-surface-variant mb-1">Last Name</label>
+<input class="w-full px-3 py-2 border border-outline-variant rounded-lg font-body-md text-body-md focus:border-primary focus:ring-2 focus:ring-primary-fixed focus:outline-none transition-all" type="text" value="Doe"/>
+</div>
+</div>
+<div>
+<label class="block font-label-sm text-label-sm text-on-surface-variant mb-1">Email Address</label>
+<input class="w-full px-3 py-2 border border-outline-variant rounded-lg font-body-md text-body-md focus:border-primary focus:ring-2 focus:ring-primary-fixed focus:outline-none transition-all" type="email" value="jane.doe@solvent.ai"/>
+</div>
+</div>
+<div class="mt-6 flex justify-end">
+<button class="bg-primary text-on-primary px-4 py-2 rounded-lg font-label-md text-label-md hover:bg-primary-container transition-colors">Save Changes</button>
+</div>
+</section>
+<!-- Financial Engine -->
+<section class="bg-surface-container-lowest rounded-xl border border-outline-variant p-6 hover:shadow-sm transition-shadow" id="financial">
+<div class="flex items-center gap-3 mb-6">
+<span class="material-symbols-outlined text-primary">account_balance</span>
+<h3 class="font-headline-sm text-headline-sm text-on-background">Financial Engine</h3>
+</div>
+<div class="space-y-6">
+<div>
+<label class="block font-label-sm text-label-sm text-on-surface-variant mb-1">Base Currency</label>
+<select class="w-full px-3 py-2 border border-outline-variant rounded-lg font-body-md text-body-md focus:border-primary focus:ring-2 focus:ring-primary-fixed focus:outline-none transition-all bg-surface-container-lowest">
+<option value="USD">USD - US Dollar</option>
+<option value="EUR">EUR - Euro</option>
+<option value="GBP">GBP - British Pound</option>
+<option value="JPY">JPY - Japanese Yen</option>
+</select>
+<p class="font-label-sm text-label-sm text-on-surface-variant mt-1">This currency will be used for all aggregated portfolio metrics.</p>
+</div>
+<div>
+<label class="block font-label-sm text-label-sm text-on-surface-variant mb-1">Fiscal Year Start</label>
+<select class="w-full px-3 py-2 border border-outline-variant rounded-lg font-body-md text-body-md focus:border-primary focus:ring-2 focus:ring-primary-fixed focus:outline-none transition-all bg-surface-container-lowest">
+<option value="Jan">January</option>
+<option value="Apr">April</option>
+<option value="Jul">July</option>
+<option value="Oct">October</option>
+</select>
+</div>
+<div>
+<label class="block font-label-sm text-label-sm text-on-surface-variant mb-1">Interface Language (i18n)</label>
+<select class="w-full px-3 py-2 border border-outline-variant rounded-lg font-body-md text-body-md focus:border-primary focus:ring-2 focus:ring-primary-fixed focus:outline-none transition-all bg-surface-container-lowest">
+<option value="EN">English (EN)</option>
+<option value="ES">Español (ES)</option>
+<option value="FR">Français (FR)</option>
+<option value="DE">Deutsch (DE)</option>
+<option value="PT">Português (PT)</option>
+</select>
+</div>
+</div>
+</section>
+<!-- Security -->
+<section class="bg-surface-container-lowest rounded-xl border border-outline-variant p-6 hover:shadow-sm transition-shadow" id="security">
+<div class="flex items-center gap-3 mb-6">
+<span class="material-symbols-outlined text-primary">security</span>
+<h3 class="font-headline-sm text-headline-sm text-on-background">Security &amp; AI Engine</h3>
+</div>
+<div class="space-y-6">
+<div>
+<label class="block font-label-sm text-label-sm text-on-surface-variant mb-2">Local AI Model Selection</label>
+<div class="space-y-3">
+<label class="flex items-start gap-3 p-3 border border-outline-variant rounded-lg cursor-pointer hover:bg-surface-container-low transition-colors">
+<input checked="" class="mt-1 text-primary focus:ring-primary" name="ai_model" type="radio"/>
+<div>
+<span class="block font-label-md text-label-md text-on-background">Solvent Base-7B (Local)</span>
+<span class="block font-label-sm text-label-sm text-on-surface-variant">Fastest, operates entirely on-device for maximum privacy.</span>
+</div>
+</label>
+<label class="flex items-start gap-3 p-3 border border-outline-variant rounded-lg cursor-pointer hover:bg-surface-container-low transition-colors opacity-70">
+<input class="mt-1 text-primary focus:ring-primary" disabled="" name="ai_model" type="radio"/>
+<div>
+<span class="block font-label-md text-label-md text-on-background">Solvent Pro-14B (Local)</span>
+<span class="block font-label-sm text-label-sm text-on-surface-variant">Higher reasoning capability. Requires 16GB+ RAM. (Hardware not supported)</span>
+</div>
+</label>
+</div>
+</div>
+</div>
+</section>
+<!-- Privacy & About -->
+<section class="bg-surface-container-lowest rounded-xl border border-outline-variant p-6 hover:shadow-sm transition-shadow" id="privacy">
+<div class="flex items-center gap-3 mb-6">
+<span class="material-symbols-outlined text-tertiary-container">verified_user</span>
+<h3 class="font-headline-sm text-headline-sm text-on-background">Privacy &amp; Status</h3>
+</div>
+<div class="flex items-center justify-between p-4 bg-surface-bright rounded-lg border border-outline-variant mb-4">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-full bg-tertiary-fixed-dim flex items-center justify-center bg-opacity-20">
+<span class="material-symbols-outlined text-tertiary-container" style="font-size: 18px;">cloud_off</span>
+</div>
+<div>
+<span class="block font-label-md text-label-md text-on-background">100% Offline Mode Active</span>
+<span class="block font-label-sm text-label-sm text-on-surface-variant">No financial data is sent to external servers.</span>
+</div>
+</div>
+<span class="text-tertiary-container font-label-md text-label-md bg-tertiary-fixed-dim bg-opacity-20 px-2 py-1 rounded">Verified</span>
+</div>
+<div class="pt-4 border-t border-outline-variant flex justify-between items-center text-on-surface-variant font-label-sm text-label-sm">
+<span>Solvent AI Enterprise v2.4.1</span>
+<a class="hover:text-primary transition-colors" href="#">View Terms &amp; Policy</a>
+</div>
+</section>
+</div>
+</div>
+</div>
+</main>
+</div>
+</body></html>
