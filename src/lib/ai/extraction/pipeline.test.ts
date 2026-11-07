@@ -225,3 +225,23 @@ describe("extractContractFields — schema violations", () => {
     }
   });
 });
+
+describe("buildExtractionPrompt", () => {
+  // Reads enum options and nullable wrappers straight off the zod schema at runtime, so a
+  // zod upgrade that changes those internals would silently drop the allowed-value lists.
+  it("spells out the allowed values for enum fields, read from the schema", async () => {
+    const { buildExtractionPrompt } = await import("./pipeline.js");
+    const prompt = buildExtractionPrompt("contract text");
+    expect(prompt).toContain("rateType: MUST be exactly one of: fixed, variable, mixed");
+    expect(prompt).toContain('a fixed period followed by a variable period is "mixed"');
+    expect(prompt).toContain("loanType: MUST be exactly one of: mortgage, auto, personal, consumer, student, other");
+    expect(prompt).toMatch(/paymentFrequency: MUST be exactly one of: [a-z, ]*monthly/);
+  });
+
+  it("uses structural hints for non-enum fields", async () => {
+    const { buildExtractionPrompt } = await import("./pipeline.js");
+    const prompt = buildExtractionPrompt("contract text");
+    expect(prompt).toContain('principal: object {"minorUnits"');
+    expect(prompt).toContain("--- CONTRACT TEXT START ---\n\ncontract text");
+  });
+});

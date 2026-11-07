@@ -33,6 +33,10 @@ const extractionFieldStatusSchema = z.enum([
   "verified",
 ]);
 
+/** What the refinements below read. Spelled out because zod 4 cannot infer `value` through
+ * the generic `Value` schema (the key disappears from the inferred object type). */
+type RefinableField = { status: ExtractionFieldStatus; value?: unknown };
+
 export function extractedFieldSchema<Value extends z.ZodTypeAny>(valueSchema: Value) {
   return z
     .object({
@@ -41,11 +45,11 @@ export function extractedFieldSchema<Value extends z.ZodTypeAny>(valueSchema: Va
       confidence: z.number().min(0).max(1).optional(),
       sourceReference: z.string().optional(),
     })
-    .refine((field) => field.status === "missing" || field.value !== null, {
+    .refine((field: RefinableField) => field.status === "missing" || field.value !== null, {
       message: 'value must not be null unless status is "missing"',
       path: ["value"],
     })
-    .refine((field) => field.status !== "missing" || field.value === null, {
+    .refine((field: RefinableField) => field.status !== "missing" || field.value === null, {
       message: 'value must be null when status is "missing"',
       path: ["value"],
     });
