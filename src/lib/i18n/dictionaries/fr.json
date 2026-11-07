@@ -25,6 +25,8 @@
     "netMonthlyIncome": "Revenu Mensuel Net",
     "totalDebtService": "Service Total de la Dette",
     "liquidReserve": "Réserve Liquide",
+    "balance": "Solde",
+    "balanceHint": "Réserve liquide moins obligations totales de dette",
     "actionRequired": "Action Requise",
     "noActionItems": "Rien ne nécessite votre attention pour le moment.",
     "effortHealthy": "Vos charges de dette représentent une part saine de vos revenus.",

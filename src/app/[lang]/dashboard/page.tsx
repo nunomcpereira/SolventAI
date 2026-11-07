@@ -51,14 +51,34 @@ function StepLink({ href, disabled, label, glyph }: { href: string; disabled: bo
   );
 }
 
-function Figure({ label, value, emphasis = false }: { label: string; value: string; emphasis?: boolean }) {
+function Figure({
+  label,
+  value,
+  tone = "default",
+  hint,
+  className = "",
+}: {
+  label: string;
+  value: string;
+  tone?: "default" | "emphasis" | "positive" | "negative";
+  /** Shown as a tooltip on the label, e.g. how a derived figure is computed. */
+  hint?: string;
+  className?: string;
+}) {
+  const toneClass =
+    tone === "emphasis"
+      ? "text-primary"
+      : tone === "positive"
+        ? "text-status-healthy"
+        : tone === "negative"
+          ? "text-status-danger"
+          : "text-on-surface";
   return (
-    <div className="py-4 pr-3 even:pl-4 md:px-5 md:first:pl-0 min-w-0">
-      <h4 className="eyebrow">{label}</h4>
-      <p
-        className={`figure mt-2 text-[18px] sm:text-[22px] xl:text-[26px] leading-tight truncate ${emphasis ? "text-primary" : "text-on-surface"}`}
-        title={value}
-      >
+    <div className={`py-4 pr-3 even:pl-4 xl:px-4 xl:first:pl-0 min-w-0 ${className}`}>
+      <h4 className="eyebrow" {...(hint ? { title: hint } : {})}>
+        {label}
+      </h4>
+      <p className={`figure mt-2 text-[18px] sm:text-[22px] xl:text-[19px] min-[1400px]:text-[22px] leading-tight truncate ${toneClass}`} title={value}>
         {value}
       </p>
     </div>
@@ -155,6 +175,8 @@ export default async function DashboardPage({
     `?monthOffset=${Math.min(Math.max(offset, data.minMonthOffset), MAX_DASHBOARD_MONTH_OFFSET)}`;
   const chartRangeLabel = `${formatMonthYear(data.windowStartDate, lang)} – ${formatMonthYear(data.windowEndDate, lang)}`;
 
+  // Net position: what you hold minus what you owe. Negative means debt exceeds the liquid reserve.
+  const balance = data.totalLiquidity.sub(data.debtOutstanding);
   const atStart = effectiveMonthOffset === data.minMonthOffset;
   const atEnd = effectiveMonthOffset === MAX_DASHBOARD_MONTH_OFFSET;
 
@@ -177,11 +199,18 @@ export default async function DashboardPage({
       </header>
 
       {/* Key figures, one ruled band */}
-      <section className="grid grid-cols-2 md:grid-cols-4 border-b border-outline-variant md:divide-x divide-outline-variant -mt-4 max-md:[&>*:nth-child(odd)]:border-r max-md:[&>*:nth-child(odd)]:border-outline-variant">
+      <section className="grid grid-cols-2 xl:grid-cols-5 border-b border-outline-variant xl:divide-x divide-outline-variant -mt-4 max-xl:[&>*:nth-child(odd):not(:last-child)]:border-r max-xl:[&>*:nth-child(odd)]:border-outline-variant">
         <Figure label={dict.dashboard.netMonthlyIncome} value={formatMoney(data.netMonthlyIncome, lang)} />
         <Figure label={dict.dashboard.totalDebtService} value={formatMoney(data.monthlyDebtObligations, lang)} />
         <Figure label={dict.dashboard.debtOutstanding} value={formatMoney(data.debtOutstanding, lang)} />
-        <Figure label={dict.dashboard.liquidReserve} value={formatMoney(data.totalLiquidity, lang)} emphasis />
+        <Figure label={dict.dashboard.liquidReserve} value={formatMoney(data.totalLiquidity, lang)} tone="emphasis" />
+        <Figure
+          label={dict.dashboard.balance}
+          hint={dict.dashboard.balanceHint}
+          value={formatMoney(balance, lang)}
+          tone={balance.isNegative() ? "negative" : "positive"}
+          className="max-xl:col-span-2 max-xl:border-t max-xl:border-outline-variant max-xl:!pl-0"
+        />
       </section>
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-x-10 gap-y-10">

@@ -25,6 +25,8 @@
     "netMonthlyIncome": "Monatliches Nettoeinkommen",
     "totalDebtService": "Gesamter Schuldendienst",
     "liquidReserve": "Liquide Reserve",
+    "balance": "Saldo",
+    "balanceHint": "Liquide Reserve minus gesamte Schuldverpflichtungen",
     "actionRequired": "Handlungsbedarf",
     "noActionItems": "Im Moment ist keine Aktion erforderlich.",
     "effortHealthy": "Ihre Schuldenverpflichtungen machen einen gesunden Anteil des Einkommens aus.",

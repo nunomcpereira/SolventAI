@@ -25,6 +25,8 @@
     "netMonthlyIncome": "Net Monthly Income",
     "totalDebtService": "Total Debt Service",
     "liquidReserve": "Liquid Reserve",
+    "balance": "Balance",
+    "balanceHint": "Liquid reserve minus total debt obligations",
     "actionRequired": "Action Required",
     "noActionItems": "Nothing needs your attention right now.",
     "effortHealthy": "Your debt obligations are a healthy share of income.",

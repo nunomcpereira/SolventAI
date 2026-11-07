@@ -25,6 +25,8 @@
     "netMonthlyIncome": "Ingreso Mensual Neto",
     "totalDebtService": "Servicio Total de la Deuda",
     "liquidReserve": "Reserva Líquida",
+    "balance": "Saldo",
+    "balanceHint": "Reserva líquida menos obligaciones totales de deuda",
     "actionRequired": "Acción Requerida",
     "noActionItems": "Nada requiere tu atención en este momento.",
     "effortHealthy": "Tus obligaciones de deuda son una parte saludable de tus ingresos.",
