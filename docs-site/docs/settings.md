@@ -19,6 +19,18 @@ title: Settings
 | **Loan type labels** | Rename Mortgage, Auto, Personal, Consumer, Student, Other, and add **custom loan types** |
 | **Income types** | Add **custom income types** |
 
+## Theme
+
+Three colour themes, switchable from the bottom of the sidebar or from the **Theme** section here. The choice is remembered in this browser.
+
+| Classic (default) | Ledger | Original |
+|---|---|---|
+| ![Classic theme](/img/screenshots/theme-classic.png) | ![Ledger theme](/img/screenshots/theme-ledger.png) | ![Original theme](/img/screenshots/theme-original.png) |
+
+- **Classic:** the original blue colours with the current layout
+- **Ledger:** warm paper colours, a bottle-green accent and a dark sidebar
+- **Original:** the look before the redesign, including its sidebar, top bar and dashboard
+
 ## Security & AI engine
 
 - **Local LLM endpoint:** an OpenAI-compatible server such as Ollama or llama.cpp, for example `http://localhost:8050/v1`

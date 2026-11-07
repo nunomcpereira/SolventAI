@@ -10,7 +10,7 @@ title: Loans and expenses
 ## Portfolio summary
 
 - **Total liabilities:** outstanding principal across all loans
-- **Average interest rate:** across fixed-rate loans
+- **Average interest rate (current):** the rate each loan charges today, weighted by what is still owed. A mixed-rate loan counts at its fixed rate until the fixed period ends, then at index + spread
 - **Total monthly payment:** the sum of today's payments
 
 ## Loan cards

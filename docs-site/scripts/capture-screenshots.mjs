@@ -9,9 +9,11 @@ import { fileURLToPath } from "node:url";
 
 const BASE_URL = process.argv[2] ?? "http://localhost:5555";
 const TENANT = process.env.SOLVENT_DOCS_TENANT ?? "demo-2";
+/** Theme for every shot unless a shot sets its own (see src/lib/theme.ts). */
+const DEFAULT_THEME = "classic";
 const OUT_DIR = fileURLToPath(new URL("../static/img/screenshots/", import.meta.url));
 
-/** @type {{ name: string; path: string; mobile?: boolean; fullPage?: boolean; before?: (page: import("@playwright/test").Page) => Promise<void> }[]} */
+/** @type {{ name: string; path: string; theme?: "classic" | "ledger" | "original"; mobile?: boolean; fullPage?: boolean; before?: (page: import("@playwright/test").Page) => Promise<void> }[]} */
 const SHOTS = [
   { name: "dashboard", path: "/en/dashboard" },
   { name: "dashboard-full", path: "/en/dashboard", fullPage: true },
@@ -64,6 +66,9 @@ const SHOTS = [
   { name: "simulation-new", path: "/en/simulation?new=1" },
   { name: "settings", path: "/en/settings", fullPage: true },
   { name: "dashboard-pt", path: "/pt/dashboard" },
+  { name: "theme-classic", path: "/en/dashboard", theme: "classic" },
+  { name: "theme-ledger", path: "/en/dashboard", theme: "ledger" },
+  { name: "theme-original", path: "/en/dashboard", theme: "original" },
   { name: "mobile-dashboard", path: "/en/dashboard", mobile: true },
   { name: "mobile-simulation", path: "/en/simulation?scenarioId=scenario-unemployment", mobile: true },
 ];
@@ -78,7 +83,10 @@ for (const shot of SHOTS) {
       ? { viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true }
       : { viewport: { width: 1440, height: 900 }, deviceScaleFactor: 1 },
   );
-  await context.addCookies([{ name: "solvent_tenant", value: TENANT, domain: host, path: "/" }]);
+  await context.addCookies([
+    { name: "solvent_tenant", value: TENANT, domain: host, path: "/" },
+    { name: "solvent_theme", value: shot.theme ?? DEFAULT_THEME, domain: host, path: "/" },
+  ]);
   const page = await context.newPage();
   await page.goto(BASE_URL + shot.path, { waitUntil: "networkidle" });
   // Recharts animates lines in; let it settle before capturing.
