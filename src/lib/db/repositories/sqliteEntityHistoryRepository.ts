@@ -27,6 +27,8 @@ export interface EntityHistoryRepository {
    * inside the same transaction as the mutation it's recording. */
   record(entry: { entityType: EntityType; entityId: string; changeType: ChangeType; snapshot: unknown }): void;
   listByType(entityType: EntityType): Promise<EntityHistoryEntry[]>;
+  /** Every row, oldest first (insertion order breaks timestamp ties). Feeds the audit log. */
+  listAll(): Promise<EntityHistoryEntry[]>;
 }
 
 /**
@@ -48,6 +50,13 @@ export function createSqliteEntityHistoryRepository(db: Database): EntityHistory
       const rows = db
         .prepare("SELECT * FROM entity_history WHERE entity_type = ? ORDER BY recorded_at ASC")
         .all(entityType) as unknown as EntityHistoryRow[];
+      return rows.map(rowToEntry);
+    },
+
+    async listAll(): Promise<EntityHistoryEntry[]> {
+      const rows = db
+        .prepare("SELECT * FROM entity_history ORDER BY recorded_at ASC, rowid ASC")
+        .all() as unknown as EntityHistoryRow[];
       return rows.map(rowToEntry);
     },
   };

@@ -9,6 +9,9 @@ import { saveSettingsAction } from "./actions.js";
 import { themeOptions } from "../../../components/theme/themeOptions.js";
 import { ThemeSelect } from "../../../components/theme/ThemeSelect.js";
 import { getTheme } from "../../../lib/themeServer.js";
+import Link from "next/link";
+import { getAuditLog } from "../../../lib/services/auditService.js";
+import { AuditLogList } from "../../../components/audit/AuditLogList.js";
 
 const REGISTERED_CURRENCIES = ["EUR", "USD", "GBP", "CHF", "JPY", "KWD"] as const;
 const APP_VERSION = "0.1.0";
@@ -21,7 +24,7 @@ export default async function SettingsPage({ params }: { params: Promise<{ lang:
   const { lang } = await params;
   if (!isSupportedLanguage(lang)) notFound();
   const dict = getDictionary(lang);
-  const [settings, theme] = await Promise.all([getSettings(), getTheme()]);
+  const [settings, theme, audit] = await Promise.all([getSettings(), getTheme(), getAuditLog({ limit: 8 })]);
   const boundAction = saveSettingsAction.bind(null, lang);
 
   // Truthful, not decorative: only claim "100% offline" when it's actually the case
@@ -54,6 +57,11 @@ export default async function SettingsPage({ params }: { params: Promise<{ lang:
               <li>
                 <a className="block py-1.5 text-on-surface-variant hover:text-on-surface hover:underline underline-offset-4 decoration-1 text-label-md" href="#appearance">
                   {dict.common.theme}
+                </a>
+              </li>
+              <li>
+                <a className="block py-1.5 text-on-surface-variant hover:text-on-surface hover:underline underline-offset-4 decoration-1 text-label-md" href="#audit">
+                  {dict.audit.title}
                 </a>
               </li>
               <li>
@@ -276,6 +284,20 @@ export default async function SettingsPage({ params }: { params: Promise<{ lang:
               options={themeOptions(dict.common)}
               className="max-w-xs"
             />
+          </Section>
+
+          <Section id="audit" title={dict.audit.title}>
+            <p className="text-body-sm text-on-surface-variant -mt-1">{dict.audit.subtitle}</p>
+            <h3 className="sr-only">{dict.audit.recent}</h3>
+            <AuditLogList events={audit.events} names={audit.names} dict={dict} lang={lang} />
+            <Link
+              href={`/${lang}/settings/audit`}
+              className="self-start inline-flex items-center gap-1 text-label-md text-primary border-b border-primary/40 hover:border-primary pb-0.5"
+            >
+              {dict.audit.viewAll}
+              {audit.total > audit.events.length ? <span className="font-mono text-on-surface-variant">({audit.total})</span> : null}
+              <span aria-hidden>→</span>
+            </Link>
           </Section>
 
           <Section id="privacy" icon="verified_user" title={dict.settings.privacyAndStatus}>

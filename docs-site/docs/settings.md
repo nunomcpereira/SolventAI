@@ -32,6 +32,12 @@ Five themes, switchable from the bottom of the sidebar or from the **Theme** sec
 - **Original:** the look before the redesign, including its sidebar, top bar and dashboard
 - **Classic (dark)** and **Ledger (dark):** the same two palettes for dark surroundings
 
+## Audit log
+
+The **Audit log** section lists the latest changes, and **View full audit log** opens the complete history with a filter per type: accounts, income, expenses, loans, scenarios and settings. Each entry shows when it happened, what was created, changed or deleted, and for changes every field's old and new value, for example *Loan · CGD mortgage · Index rate (e.g. Euribor) 2.683% → 3.016%* or *Account · Balance €66,300.00 → €70,000.00*.
+
+Every change is written in the same database transaction as the change itself, so the log can't miss or invent one. Saves that changed nothing are left out. Items that existed before tracking started get a silent starting point the first time the app opens, so their next change shows the old value; values from before that point aren't available.
+
 ## Security & AI engine
 
 - **Local LLM endpoint:** an OpenAI-compatible server such as Ollama or llama.cpp, for example `http://localhost:8050/v1`

@@ -3,6 +3,7 @@ import { mkdirSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { cookies } from "next/headers";
 import { openDatabase, type Database } from "../db/client.js";
+import { ensureHistoryBaselines } from "../db/historyBaseline.js";
 
 export const DATA_DIR = process.env["SOLVENT_DATA_DIR"] ?? "./data";
 export const DEFAULT_TENANT_ID = "solvent";
@@ -36,9 +37,19 @@ function openTenantDb(path: string): Database {
 
 /** Connection to the currently-selected tenant's local SQLite database (spec section
  * 26), cached per tenant for the life of the process. */
+const baselined = new Map<string, Promise<unknown>>();
+
 export async function getDb(): Promise<Database> {
   const path = process.env["SOLVENT_DB_PATH"] ?? tenantDbPath(await currentTenantId());
-  return openTenantDb(path);
+  const db = openTenantDb(path);
+  // Once per connection: give pre-existing data a history starting point (see historyBaseline.ts).
+  let pending = baselined.get(path);
+  if (pending === undefined) {
+    pending = ensureHistoryBaselines(db);
+    baselined.set(path, pending);
+  }
+  await pending;
+  return db;
 }
 
 /** Opens (creating + migrating if needed) a specific tenant's database without going

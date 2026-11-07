@@ -70,3 +70,23 @@ export function monthStartsBetween(startIso: string, endIso: string): string[] {
   }
   return ticks;
 }
+
+/** Clock time of a real timestamp (ISO datetime), in the machine's local timezone: "14:32". */
+export function formatTime(isoDateTime: string, lang: string): string {
+  const locale = LOCALE_BY_LANG[lang] ?? "en-US";
+  return new Intl.DateTimeFormat(locale, { hour: "2-digit", minute: "2-digit" }).format(new Date(isoDateTime));
+}
+
+/** Local calendar day of a real timestamp, for grouping: "Saturday, 7 November 2026". */
+export function formatDayHeading(isoDateTime: string, lang: string): string {
+  const locale = LOCALE_BY_LANG[lang] ?? "en-US";
+  return new Intl.DateTimeFormat(locale, { weekday: "long", day: "numeric", month: "long", year: "numeric" }).format(
+    new Date(isoDateTime),
+  );
+}
+
+/** Local "YYYY-MM-DD" of a real timestamp, as a grouping key. */
+export function localDayKey(isoDateTime: string): string {
+  const d = new Date(isoDateTime);
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+}
