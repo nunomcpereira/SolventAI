@@ -16,3 +16,6 @@ blob-report/
 # Private contracts (real loan documents) — never commit
 docs/*.pdf
 /.next-e2e/
+
+# Ignite scan output
+.ignite/scans/
