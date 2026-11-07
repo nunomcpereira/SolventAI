@@ -50,8 +50,7 @@ export function useLoanDraftWizard(
       setExtractionStepIndex((step) => Math.min(step + 1, extractionStepLabels.length - 1));
     }, 2500);
     return () => window.clearInterval(timer);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isExtracting]);
+  }, [isExtracting, extractionStepLabels.length]);
 
   const selectedAccountCurrency = useMemo(
     () => accounts.find((a) => a.id === sourceAccountId)?.currency,
