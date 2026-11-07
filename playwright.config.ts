@@ -4,6 +4,7 @@ const PORT = 3510;
 
 export default defineConfig({
   testDir: "./e2e",
+  globalTeardown: "./e2e/global-teardown.ts",
   fullyParallel: false,
   workers: 1,
   reporter: [["list"]],
