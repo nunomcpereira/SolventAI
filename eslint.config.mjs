@@ -33,6 +33,12 @@ const config = [
       ],
     },
   },
+  {
+    // CommonJS files (including config files tooling drops next to this one) load modules
+    // with require(); that rule is only meant for ES-module TypeScript sources.
+    files: ["**/*.cjs"],
+    rules: { "@typescript-eslint/no-require-imports": "off" },
+  },
 ];
 
 export default config;
