@@ -19,6 +19,11 @@ describe("parseEuriborTable", () => {
     const garbled = fixture.replace("3.016 %", "n/a");
     expect(() => parseEuriborTable(garbled)).toThrow(/Euribor 6M/);
   });
+
+  it("never lets markup through into a parsed label or value", () => {
+    const hostile = fixture.replace("3.016 %", "<scr<b>ipt>3.016 %").replace(">Euribor 6 months<", "><b>Euribor</b> 6 months<");
+    expect(parseEuriborTable(hostile).rates["6M"]).toBe("0.03016");
+  });
 });
 
 describe("percentToDecimalString", () => {

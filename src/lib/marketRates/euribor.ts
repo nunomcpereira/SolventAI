@@ -52,7 +52,20 @@ function usDateToIso(text: string): string | undefined {
   return `${year}-${month.padStart(2, "0")}-${day.padStart(2, "0")}`;
 }
 
-const stripTags = (html: string) => html.replace(/<[^>]*>/g, "").replace(/&nbsp;/g, " ").trim();
+/**
+ * Cell text from a table cell's inner HTML. Only ever used to read labels and numbers, never
+ * rendered. Tags are removed until none remain (so nested/overlapping fragments like
+ * "<scr<b>ipt>" can't reassemble), then any stray angle bracket is dropped.
+ */
+function stripTags(html: string): string {
+  let text = html;
+  let previous: string;
+  do {
+    previous = text;
+    text = text.replace(/<[^<>]*>/g, "");
+  } while (text !== previous);
+  return text.replace(/[<>]/g, "").replace(/&nbsp;/g, " ").trim();
+}
 
 /**
  * Reads the first (most recent) column of the "current Euribor rates" table: header row of
