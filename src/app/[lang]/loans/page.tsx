@@ -19,6 +19,8 @@ import { sumMoney } from "../../../engine/money/money.js";
 import { Decimal } from "../../../engine/money/decimal.js";
 import { EXPENSE_CATEGORIES } from "../../../domain/expenses/expense.js";
 import { listRecurringExpenses } from "../../../lib/services/recurringItemsService.js";
+import { serializeLoan } from "../../../domain/loans/loan.js";
+import { PrepaymentOptimizerCard } from "../../../components/loans/PrepaymentOptimizerCard.js";
 import {
   createLoanAction,
   updateLoanAction,
@@ -78,6 +80,7 @@ export default async function LoansPage({ params }: { params: Promise<{ lang: st
   const boundDeleteExpense = deleteRecurringExpenseAction.bind(null, lang);
   const accountOptionsForRows = accounts.map((account) => ({ id: account.id, name: account.name, currency: account.currency }));
   const expenseCategoryOptions = EXPENSE_CATEGORIES.map((category) => ({ value: category, label: category }));
+  const serializedLoans = summaries.map((s) => serializeLoan(s.loan));
 
   const totalLiabilities = summaries.length > 0 ? sumMoney(currency, summaries.map((s) => s.outstandingPrincipal)) : undefined;
   const totalMonthlyPayment =
@@ -548,6 +551,32 @@ export default async function LoansPage({ params }: { params: Promise<{ lang: st
       </div>
 
       {summaries.length === 0 ? <p className="text-body-md text-on-surface-variant">{dict.loans.empty}</p> : null}
+
+      {summaries.length > 0 ? (
+        <PrepaymentOptimizerCard
+          serializedLoans={serializedLoans}
+          currency={currency}
+          lang={lang}
+          labels={{
+            title: dict.loans.optimizerTitle,
+            subtitle: dict.loans.optimizerSubtitle,
+            lumpSum: dict.loans.optimizerLumpSum,
+            strategy: dict.loans.optimizerStrategy,
+            reducePayment: dict.loans.optimizerReducePayment,
+            shortenTerm: dict.loans.optimizerShortenTerm,
+            rank: dict.loans.optimizerRank,
+            bestOption: dict.loans.optimizerBestOption,
+            interestSaved: dict.loans.optimizerInterestSaved,
+            netSavings: dict.loans.optimizerNetSavings,
+            penalty: dict.loans.optimizerPenalty,
+            paymentDrop: dict.loans.optimizerPaymentDrop,
+            termShortened: dict.loans.optimizerTermShortened,
+            months: dict.loans.optimizerMonths,
+            simulate: dict.loans.optimizerSimulate,
+            noLoans: dict.loans.optimizerNoLoans,
+          }}
+        />
+      ) : null}
 
       <div className="bg-surface-container-lowest border border-outline-variant rounded-xl p-6">
         <h2 className="text-headline-sm text-on-surface mb-stack-md">{dict.loans.recurringExpensesTitle}</h2>

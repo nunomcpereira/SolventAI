@@ -160,11 +160,23 @@ export async function getDashboardData(monthOffset = 0): Promise<DashboardData> 
   // months from today rather than a fixed calendar year.
   const horizonStart = IsoDate.fromString(new Date().toISOString().slice(0, 10));
 
+  const simulationAccounts = await buildSimulationAccounts(activeAccounts, currency);
+  const currentTotalLiquidity = sumMoney(
+    currency,
+    simulationAccounts.map((a) => a.initialBalance),
+  );
+  const currentAvailableLiquidity = currentTotalLiquidity.sub(
+    sumMoney(
+      currency,
+      simulationAccounts.map((a) => a.minimumReserve),
+    ),
+  );
+
   const snapshots =
     activeAccounts.length > 0
       ? runSimulation({
           currency,
-          accounts: await buildSimulationAccounts(activeAccounts, currency),
+          accounts: simulationAccounts,
           incomeItems,
           expenseItems,
           debtPayments,
@@ -176,16 +188,6 @@ export async function getDashboardData(monthOffset = 0): Promise<DashboardData> 
       : [];
 
   const liquiditySnapshots = toLiquiditySnapshots(snapshots);
-
-  const firstSnapshot = liquiditySnapshots[0];
-  const currentTotalLiquidity =
-    firstSnapshot !== undefined
-      ? totalLiquidity(currency, firstSnapshot)
-      : sumMoney(currency, activeAccounts.map((a) => a.initialBalance));
-  const currentAvailableLiquidity =
-    firstSnapshot !== undefined
-      ? availableLiquidity(currency, firstSnapshot)
-      : currentTotalLiquidity.sub(sumMoney(currency, activeAccounts.map((a) => a.minimumReserve)));
 
   // "Projected minimum liquidity"/runway/breaches always reflect the forward run's own
   // 12-month window (today onward), regardless of which past/future window is charted —

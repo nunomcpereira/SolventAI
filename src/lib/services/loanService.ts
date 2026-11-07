@@ -23,7 +23,7 @@ export interface IndexRateOverride {
   newAnnualValue: Decimal;
 }
 
-function loanAnnualRateForPeriod(loan: Loan, override?: IndexRateOverride): (periodIndex: number) => Decimal {
+export function loanAnnualRateForPeriod(loan: Loan, override?: IndexRateOverride): (periodIndex: number) => Decimal {
   return (periodIndex: number): Decimal => {
     if (loan.rate.type === "fixed") {
       return loan.rate.annualRate;
@@ -42,6 +42,18 @@ function loanAnnualRateForPeriod(loan: Loan, override?: IndexRateOverride): (per
   };
 }
 
+export function buildLoanScheduleInput(loan: Loan, indexRateOverride?: IndexRateOverride) {
+  return {
+    principal: loan.principal,
+    startDate: loan.startDate,
+    numberOfPeriods: loan.numberOfPeriods,
+    paymentFrequency: loan.paymentFrequency,
+    dayCountConvention: loan.dayCountConvention,
+    amortizationType: loan.amortizationType,
+    annualRateForPeriod: loanAnnualRateForPeriod(loan, indexRateOverride),
+  };
+}
+
 /**
  * Builds a loan's full amortization schedule (always over the loan's own
  * `numberOfPeriods` — the annuity payment for "french" amortization depends on the
@@ -55,15 +67,7 @@ function loanAnnualRateForPeriod(loan: Loan, override?: IndexRateOverride): (per
  * managed in-app.
  */
 export function getLoanSchedule(loan: Loan, maxPeriods?: number, indexRateOverride?: IndexRateOverride): AmortizationEntry[] {
-  const fullSchedule = generateAmortizationSchedule({
-    principal: loan.principal,
-    startDate: loan.startDate,
-    numberOfPeriods: loan.numberOfPeriods,
-    paymentFrequency: loan.paymentFrequency,
-    dayCountConvention: loan.dayCountConvention,
-    amortizationType: loan.amortizationType,
-    annualRateForPeriod: loanAnnualRateForPeriod(loan, indexRateOverride),
-  });
+  const fullSchedule = generateAmortizationSchedule(buildLoanScheduleInput(loan, indexRateOverride));
 
   return maxPeriods === undefined ? fullSchedule : fullSchedule.slice(0, maxPeriods);
 }
@@ -91,15 +95,7 @@ export function computeLoanPrepayment(
   params: { periodsElapsed: number; prepaymentAmount: Money; strategy: PrepaymentStrategy; indexRateOverride?: IndexRateOverride },
 ): PrepaymentResult {
   return applyPrepayment({
-    originalSchedule: {
-      principal: loan.principal,
-      startDate: loan.startDate,
-      numberOfPeriods: loan.numberOfPeriods,
-      paymentFrequency: loan.paymentFrequency,
-      dayCountConvention: loan.dayCountConvention,
-      amortizationType: loan.amortizationType,
-      annualRateForPeriod: loanAnnualRateForPeriod(loan, params.indexRateOverride),
-    },
+    originalSchedule: buildLoanScheduleInput(loan, params.indexRateOverride),
     periodsElapsed: Math.min(Math.max(params.periodsElapsed, 0), loan.numberOfPeriods - 1),
     prepaymentAmount: params.prepaymentAmount,
     strategy: params.strategy,

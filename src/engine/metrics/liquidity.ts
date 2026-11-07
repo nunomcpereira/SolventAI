@@ -25,6 +25,19 @@ export function totalLiquidity(currency: CurrencyCode, snapshot: PeriodLiquidity
 }
 
 /**
+ * Solvency risk: 100% once the balance is negative (or non-positive with no debt to
+ * offset it), 0% once the balance covers the total outstanding debt, and ramping
+ * linearly between those — so a positive balance trending down toward zero shows
+ * rising risk period over period, without needing to look at multiple periods at
+ * once (each period's risk is a pure function of that period's balance vs. debt).
+ */
+export function computeSolvencyRisk(balance: number, debt: number): number {
+  if (balance <= 0) return 100;
+  if (debt <= 0 || balance >= debt) return 0;
+  return Math.max(0, Math.min(100, 100 * (1 - balance / debt)));
+}
+
+/**
  * Liquidity above configured minimum reserves (spec section 16, "Available
  * liquidity"), computed in aggregate: sum(balances) - sum(minimumReserves). A single
  * account below its own reserve while another is well above it will not show up here

@@ -9,10 +9,10 @@ test.describe("Simulation scenarios", () => {
 
     await page.goto("/en/simulation");
     await page.getByPlaceholder("New scenario name").fill(scenarioName);
-    await page.getByRole("button", { name: "Create" }).click();
+    await page.getByRole("button", { name: "Create", exact: true }).click();
     await page.waitForLoadState("networkidle");
 
-    await expect(page.getByText(scenarioName, { exact: false })).toBeVisible();
+    await expect(page.getByRole("link", { name: new RegExp(scenarioName) })).toBeVisible();
 
     await page.getByRole("link", { name: new RegExp(scenarioName) }).click();
     await page.waitForLoadState("networkidle");
@@ -21,16 +21,16 @@ test.describe("Simulation scenarios", () => {
     await page.getByRole("button", { name: "Add event" }).click();
     await page.waitForLoadState("networkidle");
 
-    await expect(page.getByText(`${scenarioName} (1 events)`)).toBeVisible();
+    await expect(page.getByRole("link", { name: `${scenarioName} (1 events)` })).toBeVisible();
 
     // Survives reload (persisted, not just client state).
     await page.reload();
-    await expect(page.getByText(`${scenarioName} (1 events)`)).toBeVisible();
+    await expect(page.getByRole("link", { name: `${scenarioName} (1 events)` })).toBeVisible();
 
     // Clean up.
     const row = page.locator("li", { hasText: scenarioName });
     await row.getByRole("button", { name: "Delete" }).click();
     await page.waitForLoadState("networkidle");
-    await expect(page.getByText(scenarioName, { exact: false })).toHaveCount(0);
+    await expect(page.locator("li", { hasText: scenarioName })).toHaveCount(0);
   });
 });

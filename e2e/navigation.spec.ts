@@ -5,7 +5,7 @@ import { test, expect } from "@playwright/test";
 test.describe("Navigation", () => {
   const pages: { path: string; heading: string }[] = [
     { path: "/en/dashboard", heading: "Dashboard" },
-    { path: "/en/accounts", heading: "Accounts" },
+    { path: "/en/accounts", heading: "Income and balances" },
     { path: "/en/loans", heading: "Loans" },
     { path: "/en/upload", heading: "Upload contract" },
     { path: "/en/simulation", heading: "Simulation" },
@@ -22,7 +22,7 @@ test.describe("Navigation", () => {
 
   test("nav links move between pages without a full reload error", async ({ page }) => {
     await page.goto("/en/dashboard");
-    await page.getByRole("link", { name: "Portfolio" }).first().click();
+    await page.getByRole("link", { name: "Loans and expenses" }).first().click();
     await expect(page).toHaveURL(/\/en\/loans$/);
     await page.getByRole("link", { name: "Settings" }).first().click();
     await expect(page).toHaveURL(/\/en\/settings$/);

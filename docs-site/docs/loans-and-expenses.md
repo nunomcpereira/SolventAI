@@ -45,6 +45,17 @@ For variable and mixed loans, the payment is recalculated when the fixed period 
 
 ![Add loan wizard](/img/screenshots/loans-add-loan.png)
 
+## Prepayment Optimizer
+
+The **Prepayment Optimizer** calculates which loan yields the highest interest savings for any extra cash payment you wish to make:
+
+- **Lump-sum payment amount:** Enter any amount in your base currency.
+- **Payoff strategy:**
+  - **Reduce monthly payment:** Keeps the loan duration identical while lowering your monthly payment burden.
+  - **Shorten term:** Keeps your monthly payment amount constant and pays off the loan earlier, shaving months off the maturity date.
+- **Deterministic ranking:** Ranks loans by total interest saved minus statutory early repayment penalties (e.g. 0.5% variable, 2.0% fixed), highlighting the optimal choice.
+- **Simulate in Scenarios:** Quickly navigate to the Simulation page to test the prepayment within a broader what-if scenario.
+
 ## Expenses
 
 **Add expense** works like income: **recurring** (amount, frequency, category, start and optional end date, paying account) or **one-off**. The **Recurring expenses** table supports inline edit and delete.

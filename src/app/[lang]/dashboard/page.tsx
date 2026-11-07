@@ -5,6 +5,7 @@ import { getDashboardData, getBalanceDriftData, MAX_DASHBOARD_MONTH_OFFSET } fro
 import { getSettings } from "../../../lib/services/settingsService.js";
 import { getAccountTypeOptions, getLoanCategoryOptions } from "../../../lib/settings/typeOptions.js";
 import { formatMoney, formatMonthYear } from "../../../lib/format.js";
+import { computeSolvencyRisk } from "../../../engine/metrics/index.js";
 import { Badge } from "../../../components/ui/Badge.js";
 import { LiquidityChart } from "../../../components/charts/LiquidityChart.js";
 import { BalanceDriftChart } from "../../../components/charts/BalanceDriftChart.js";
@@ -23,7 +24,7 @@ function isSupportedLanguage(value: string): value is Language {
   return (SUPPORTED_LANGUAGES as readonly string[]).includes(value);
 }
 
-function effortRateTone(percent: string): "healthy" | "warning" | "danger" {
+function effortRateTone(percent: string | number): "healthy" | "warning" | "danger" {
   const value = Number(percent);
   if (value > 45) return "danger";
   if (value >= 30) return "warning";
@@ -68,6 +69,18 @@ export default async function DashboardPage({
         ? dict.dashboard.effortWarning.replace("{percent}", String(roundedPercent))
         : dict.dashboard.effortCritical.replace("{percent}", String(roundedPercent));
 
+  const balanceNumber = Number(data.totalLiquidity.toDecimalString());
+  const debtNumber = Number(data.debtOutstanding.toDecimalString());
+  const solvencyRiskPercent = Math.round(computeSolvencyRisk(balanceNumber, debtNumber));
+  const solvencyTone = effortRateTone(solvencyRiskPercent);
+
+  const solvencyMessage =
+    solvencyTone === "healthy"
+      ? dict.dashboard.solvencyHealthy
+      : solvencyTone === "warning"
+        ? dict.dashboard.solvencyWarning.replace("{percent}", String(solvencyRiskPercent))
+        : dict.dashboard.solvencyCritical.replace("{percent}", String(solvencyRiskPercent));
+
   const hasActionItems = data.liquidityBreachMonths.length > 0 || data.loanWarnings.length > 0;
 
   const monthOffsetHref = (offset: number) =>
@@ -89,18 +102,31 @@ export default async function DashboardPage({
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-12 lg:items-start gap-gutter">
-        {/* Effort Rate Gauge */}
-        <div className="lg:col-span-4 bg-surface-container-lowest border border-outline-variant rounded-xl p-6 flex flex-col">
-          <h3 className="text-headline-sm text-on-surface mb-6">{dict.dashboard.effortRate}</h3>
-          <div className="flex flex-col items-center gap-stack-md flex-1 justify-center">
-            <EffortGauge percent={Number(data.effortRatePercent)} tone={tone} />
-            <Badge tone={tone}>{dict.common[tone === "danger" ? "critical" : tone]}</Badge>
-            <p className="text-body-md text-on-surface-variant text-center">{effortMessage}</p>
+        {/* Risk Gauges: Effort Rate & Solvency Risk */}
+        <div className="lg:col-span-4 flex flex-col gap-gutter">
+          {/* Effort Rate Gauge */}
+          <div className="bg-surface-container-lowest border border-outline-variant rounded-xl p-6 flex flex-col">
+            <h3 className="text-headline-sm text-on-surface mb-4">{dict.dashboard.effortRate}</h3>
+            <div className="flex flex-col items-center gap-3 flex-1 justify-center">
+              <EffortGauge percent={Number(data.effortRatePercent)} tone={tone} sizePx={150} />
+              <Badge tone={tone}>{dict.common[tone === "danger" ? "critical" : tone]}</Badge>
+              <p className="text-body-md text-on-surface-variant text-center">{effortMessage}</p>
+            </div>
+          </div>
+
+          {/* Solvency Risk Gauge */}
+          <div className="bg-surface-container-lowest border border-outline-variant rounded-xl p-6 flex flex-col">
+            <h3 className="text-headline-sm text-on-surface mb-4">{dict.dashboard.solvencyRisk}</h3>
+            <div className="flex flex-col items-center gap-3 flex-1 justify-center">
+              <EffortGauge percent={solvencyRiskPercent} tone={solvencyTone} sizePx={150} />
+              <Badge tone={solvencyTone}>{dict.common[solvencyTone === "danger" ? "critical" : solvencyTone]}</Badge>
+              <p className="text-body-md text-on-surface-variant text-center">{solvencyMessage}</p>
+            </div>
           </div>
         </div>
 
         {/* Liquidity chart + summary cards */}
-        <div className="lg:col-span-5 flex flex-col gap-gutter">
+        <div className="lg:col-span-8 flex flex-col gap-gutter">
           <div className="bg-surface-container-lowest border border-outline-variant rounded-xl p-6 flex-1 flex flex-col">
             <div className="flex items-center justify-between flex-wrap gap-3 mb-6">
               <h3 className="text-headline-sm text-on-surface">{dict.dashboard.projectedMinimumLiquidity.replace(" (12mo)", "")}</h3>
@@ -170,7 +196,7 @@ export default async function DashboardPage({
                 </a>
               </div>
             </div>
-            <div className="flex-1 min-h-[200px]">
+            <div className="flex-1 min-h-[220px]">
               {data.projection.length > 0 ? (
                 <LiquidityChart
                   data={data.projection}
@@ -190,58 +216,42 @@ export default async function DashboardPage({
               )}
             </div>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-gutter">
-            <div className="bg-surface-container-lowest border border-outline-variant rounded-xl p-4">
-              <h4 className="text-label-sm text-on-surface-variant mb-1 uppercase tracking-wider">{dict.dashboard.netMonthlyIncome}</h4>
-              <p className="text-headline-md text-on-surface">{formatMoney(data.netMonthlyIncome, lang)}</p>
-            </div>
-            <div className="bg-surface-container-lowest border border-outline-variant rounded-xl p-4">
-              <h4 className="text-label-sm text-on-surface-variant mb-1 uppercase tracking-wider">{dict.dashboard.totalDebtService}</h4>
-              <p className="text-headline-md text-on-surface">{formatMoney(data.monthlyDebtObligations, lang)}</p>
-            </div>
-            <div className="bg-surface-container-lowest border border-outline-variant rounded-xl p-4">
-              <h4 className="text-label-sm text-on-surface-variant mb-1 uppercase tracking-wider">{dict.dashboard.liquidReserve}</h4>
-              <p className="text-headline-md text-on-surface">{formatMoney(data.totalLiquidity, lang)}</p>
-            </div>
-          </div>
-        </div>
 
-        {/* Action Required */}
-        <div className="lg:col-span-3 bg-surface-container-lowest border border-outline-variant rounded-xl p-6 self-start lg:max-h-[560px] lg:overflow-y-auto hide-scrollbar">
-          <div className="flex items-center gap-2 mb-6">
-            <span className="material-symbols-outlined text-primary" style={{ fontVariationSettings: "'FILL' 1" }}>
-              campaign
-            </span>
-            <h3 className="text-headline-sm text-on-surface">{dict.dashboard.actionRequired}</h3>
-          </div>
-          {!hasActionItems ? (
-            <p className="text-body-md text-on-surface-variant">{dict.dashboard.noActionItems}</p>
-          ) : (
-            <div className="flex flex-col gap-stack-md">
-              {data.liquidityBreachMonths.map((month) => (
-                <div key={month} className="p-4 bg-surface-container-low border border-outline-variant rounded-lg">
-                  <div className="flex items-center gap-2 mb-2">
-                    <span className="material-symbols-outlined text-status-danger" style={{ fontSize: "18px" }}>
-                      warning
-                    </span>
-                    <span className="text-label-md text-on-surface font-semibold">{dict.dashboard.reserveBreach}</span>
-                  </div>
-                  <p className="text-body-md text-on-surface-variant">{dict.dashboard.breachWarning.replace("{month}", String(month))}</p>
-                </div>
-              ))}
-              {data.loanWarnings.map((warning) => (
-                <div key={warning.loanId} className="p-4 bg-surface-container-low border border-outline-variant rounded-lg">
-                  <div className="flex items-center gap-2 mb-2">
-                    <span className="material-symbols-outlined text-status-warning" style={{ fontSize: "18px" }}>
-                      info
-                    </span>
-                    <span className="text-label-md text-on-surface font-semibold">{warning.loanName}</span>
-                  </div>
-                  <p className="text-body-md text-on-surface-variant">{warning.message}</p>
-                </div>
-              ))}
+          {/* Summary Cards Row (2 above, 2 below) */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-gutter">
+            <div className="bg-surface-container-lowest border border-outline-variant rounded-xl p-5 xl:p-6 flex flex-col justify-between min-h-[120px]">
+              <h4 className="text-label-sm text-on-surface-variant mb-2 uppercase tracking-wider">
+                {dict.dashboard.netMonthlyIncome}
+              </h4>
+              <p className="text-headline-md font-bold text-on-surface tracking-tight" title={formatMoney(data.netMonthlyIncome, lang)}>
+                {formatMoney(data.netMonthlyIncome, lang)}
+              </p>
             </div>
-          )}
+            <div className="bg-surface-container-lowest border border-outline-variant rounded-xl p-5 xl:p-6 flex flex-col justify-between min-h-[120px]">
+              <h4 className="text-label-sm text-on-surface-variant mb-2 uppercase tracking-wider">
+                {dict.dashboard.totalDebtService}
+              </h4>
+              <p className="text-headline-md font-bold text-on-surface tracking-tight" title={formatMoney(data.monthlyDebtObligations, lang)}>
+                {formatMoney(data.monthlyDebtObligations, lang)}
+              </p>
+            </div>
+            <div className="bg-surface-container-lowest border border-outline-variant rounded-xl p-5 xl:p-6 flex flex-col justify-between min-h-[120px]">
+              <h4 className="text-label-sm text-on-surface-variant mb-2 uppercase tracking-wider">
+                {dict.dashboard.debtOutstanding}
+              </h4>
+              <p className="text-headline-md font-bold text-on-surface tracking-tight" title={formatMoney(data.debtOutstanding, lang)}>
+                {formatMoney(data.debtOutstanding, lang)}
+              </p>
+            </div>
+            <div className="bg-surface-container-lowest border border-outline-variant rounded-xl p-5 xl:p-6 flex flex-col justify-between min-h-[120px]">
+              <h4 className="text-label-sm text-on-surface-variant mb-2 uppercase tracking-wider">
+                {dict.dashboard.liquidReserve}
+              </h4>
+              <p className="text-headline-md font-bold text-on-surface tracking-tight" title={formatMoney(data.totalLiquidity, lang)}>
+                {formatMoney(data.totalLiquidity, lang)}
+              </p>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -262,6 +272,44 @@ export default async function DashboardPage({
           </div>
         </div>
       )}
+
+      {/* Action Required */}
+      <div className="bg-surface-container-lowest border border-outline-variant rounded-xl p-6">
+        <div className="flex items-center gap-2 mb-6">
+          <span className="material-symbols-outlined text-primary" style={{ fontVariationSettings: "'FILL' 1" }}>
+            campaign
+          </span>
+          <h3 className="text-headline-sm text-on-surface">{dict.dashboard.actionRequired}</h3>
+        </div>
+        {!hasActionItems ? (
+          <p className="text-body-md text-on-surface-variant">{dict.dashboard.noActionItems}</p>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-stack-md">
+            {data.liquidityBreachMonths.map((month) => (
+              <div key={month} className="p-4 bg-surface-container-low border border-outline-variant rounded-lg">
+                <div className="flex items-center gap-2 mb-2">
+                  <span className="material-symbols-outlined text-status-danger" style={{ fontSize: "18px" }}>
+                    warning
+                  </span>
+                  <span className="text-label-md text-on-surface font-semibold">{dict.dashboard.reserveBreach}</span>
+                </div>
+                <p className="text-body-md text-on-surface-variant">{dict.dashboard.breachWarning.replace("{month}", String(month))}</p>
+              </div>
+            ))}
+            {data.loanWarnings.map((warning) => (
+              <div key={warning.loanId} className="p-4 bg-surface-container-low border border-outline-variant rounded-lg">
+                <div className="flex items-center gap-2 mb-2">
+                  <span className="material-symbols-outlined text-status-warning" style={{ fontSize: "18px" }}>
+                    info
+                  </span>
+                  <span className="text-label-md text-on-surface font-semibold">{warning.loanName}</span>
+                </div>
+                <p className="text-body-md text-on-surface-variant">{warning.message}</p>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
 
       <DashboardSuggestionWizards
         actions={{

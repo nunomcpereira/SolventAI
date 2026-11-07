@@ -15,9 +15,16 @@ test.describe("Dashboard", () => {
 
   test("navigating to Accounts shows bank accounts list", async ({ page }) => {
     await page.goto("/en/accounts");
-    await expect(page.getByRole("heading", { name: "Accounts" })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Income and balances" })).toBeVisible();
     await expect(page.getByText("Main Checking").first()).toBeVisible();
     await expect(page.getByText("checking").first()).toBeVisible();
+  });
+
+  test("navigating to Loans shows Prepayment Optimizer with ranked recommendations", async ({ page }) => {
+    await page.goto("/en/loans");
+    await expect(page.getByRole("heading", { name: "Loans and expenses" })).toBeVisible();
+    await expect(page.getByText("Prepayment Optimizer")).toBeVisible();
+    await expect(page.getByText("Best option")).toBeVisible();
   });
 });
 

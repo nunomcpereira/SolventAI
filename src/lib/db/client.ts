@@ -26,6 +26,10 @@ export function openDatabase(path: string): Database {
   const { DatabaseSync } = loadSqliteModule();
   const db = new DatabaseSync(path);
   db.exec("PRAGMA foreign_keys = ON;");
+  if (path !== ":memory:") {
+    db.exec("PRAGMA journal_mode = WAL;");
+    db.exec("PRAGMA busy_timeout = 5000;");
+  }
   runMigrations(db);
   return db;
 }

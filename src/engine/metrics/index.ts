@@ -5,6 +5,7 @@ export {
   type LiquidityBreachEvent,
   totalLiquidity,
   availableLiquidity,
+  computeSolvencyRisk,
   findAccountReserveBreaches,
   liquidityRunway,
   minimumLiquidity,

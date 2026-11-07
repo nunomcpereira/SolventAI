@@ -8,6 +8,7 @@ import {
   liquidityRunway,
   minimumLiquidity,
   findLiquidityBreaches,
+  computeSolvencyRisk,
   type PeriodLiquiditySnapshot,
 } from "./liquidity.js";
 
@@ -88,5 +89,24 @@ describe("findLiquidityBreaches", () => {
       { period: 0, date: periods[0]!.date, scope: "global" },
       { period: 0, date: periods[0]!.date, scope: "account", accountId: "a" },
     ]);
+  });
+});
+
+describe("computeSolvencyRisk", () => {
+  it("returns 100% when balance is zero or negative", () => {
+    expect(computeSolvencyRisk(0, 100000)).toBe(100);
+    expect(computeSolvencyRisk(-500, 100000)).toBe(100);
+    expect(computeSolvencyRisk(0, 0)).toBe(100);
+  });
+
+  it("returns 0% when debt is zero or balance exceeds debt", () => {
+    expect(computeSolvencyRisk(10000, 0)).toBe(0);
+    expect(computeSolvencyRisk(100000, 50000)).toBe(0);
+    expect(computeSolvencyRisk(50000, 50000)).toBe(0);
+  });
+
+  it("scales linearly with the ratio of balance to debt", () => {
+    expect(computeSolvencyRisk(50000, 100000)).toBe(50);
+    expect(computeSolvencyRisk(75000, 100000)).toBe(25);
   });
 });
