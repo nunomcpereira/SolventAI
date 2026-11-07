@@ -4,6 +4,7 @@ import { SUPPORTED_LANGUAGES, type Language } from "../../lib/i18n/locales.js";
 import { getDictionary } from "../../lib/i18n/getDictionary.js";
 import { AppShell } from "../../components/shell/AppShell.js";
 import { LanguagePreferenceSync } from "../../components/i18n/LanguagePreferenceSync.js";
+import { getTheme } from "../../lib/themeServer.js";
 
 export function generateStaticParams() {
   return SUPPORTED_LANGUAGES.map((lang) => ({ lang }));
@@ -25,9 +26,10 @@ export default async function LangLayout({
     notFound();
   }
   const dict = getDictionary(lang);
+  const theme = await getTheme();
 
   return (
-    <AppShell lang={lang} dict={dict}>
+    <AppShell lang={lang} dict={dict} theme={theme}>
       <LanguagePreferenceSync lang={lang} />
       {children}
     </AppShell>

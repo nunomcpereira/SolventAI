@@ -94,9 +94,9 @@ export default async function AccountsPage({ params }: { params: Promise<{ lang:
   const accountOptionsForRows = accounts.map((account) => ({ id: account.id, name: account.name, currency: account.currency }));
 
   return (
-    <div className="flex flex-col gap-stack-lg max-w-4xl mx-auto w-full">
+    <div className="flex flex-col gap-stack-lg w-full">
       <LiveRefresh scope="accounts" />
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-4">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-4 border-b border-on-surface pb-5">
         <div>
           <h1 className="text-display-lg-mobile md:text-display-lg text-on-surface">{dict.accounts.title}</h1>
           <p className="text-body-lg text-on-surface-variant mt-stack-sm">{dict.accounts.subtitle}</p>
@@ -113,11 +113,11 @@ export default async function AccountsPage({ params }: { params: Promise<{ lang:
       </div>
 
       {totalLiquidity ? (
-        <div className="bg-surface-container-lowest border border-outline-variant rounded-xl p-6">
-          <h2 className="text-label-sm text-on-surface-variant uppercase tracking-wider">
+        <div className="border-b border-outline-variant pb-5 -mt-2">
+          <h2 className="eyebrow !font-sans">
             {dict.accounts.totalAvailableLiquidity}
           </h2>
-          <div className="text-display-lg-mobile md:text-display-lg text-on-surface mt-stack-sm">
+          <div className="figure text-[32px] md:text-[40px] leading-tight text-primary mt-2">
             {formatMoney(totalLiquidity, lang)}
           </div>
         </div>
@@ -128,19 +128,14 @@ export default async function AccountsPage({ params }: { params: Promise<{ lang:
           const belowReserve = account.initialBalance.compare(account.minimumReserve) < 0;
           const displayAmounts = accountDisplayAmounts.get(account.id);
           return (
-            <div key={account.id} className="bg-surface-container-lowest border border-outline-variant rounded-xl p-6 flex flex-col justify-between">
+            <div key={account.id} className="bg-surface-container-lowest border border-outline-variant rounded-sm p-6 flex flex-col justify-between">
               <div className="flex justify-between items-start mb-stack-md">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 bg-surface-container rounded-full flex items-center justify-center">
-                    <span className="material-symbols-outlined text-primary">
-                      {ACCOUNT_TYPE_ICON[account.type] ?? "account_balance_wallet"}
-                    </span>
-                  </div>
                   <div>
                     <div className="flex items-center gap-2">
                       <InlineAccountNameEditor accountId={account.id} name={account.name} renameAction={boundRename} />
                       {account.isDefault ? (
-                        <span className="text-label-sm text-primary bg-surface-container rounded-full px-2 py-0.5">
+                        <span className="text-label-sm text-primary bg-surface-container rounded-sm px-2 py-0.5">
                           {dict.accounts.defaultAccount}
                         </span>
                       ) : null}
@@ -159,7 +154,7 @@ export default async function AccountsPage({ params }: { params: Promise<{ lang:
                         type="submit"
                         aria-label={dict.accounts.setDefaultAccount}
                         title={dict.accounts.setDefaultAccount}
-                        className="w-9 h-9 rounded-full border border-outline-variant text-on-surface-variant hover:text-primary hover:border-primary hover:bg-surface-container-low transition-colors flex items-center justify-center"
+                        className="w-9 h-9 rounded-sm border border-outline-variant text-on-surface-variant hover:text-primary hover:border-primary hover:bg-surface-container-low transition-colors flex items-center justify-center"
                       >
                         <span className="material-symbols-outlined" style={{ fontSize: "20px" }}>
                           star_outline
@@ -173,7 +168,7 @@ export default async function AccountsPage({ params }: { params: Promise<{ lang:
                       type="submit"
                       aria-label={dict.accounts.delete}
                       title={dict.accounts.delete}
-                      className="w-9 h-9 rounded-full border border-outline-variant text-on-surface-variant hover:text-status-danger hover:border-status-danger hover:bg-surface-container-low transition-colors flex items-center justify-center"
+                      className="w-9 h-9 rounded-sm border border-outline-variant text-on-surface-variant hover:text-status-danger hover:border-status-danger hover:bg-surface-container-low transition-colors flex items-center justify-center"
                     >
                       <span className="material-symbols-outlined" style={{ fontSize: "20px" }}>
                         delete
@@ -185,7 +180,7 @@ export default async function AccountsPage({ params }: { params: Promise<{ lang:
 
               <div className="flex items-end justify-between">
                 <div className="w-full space-y-2">
-                  <p className="text-label-sm text-on-surface-variant">{dict.accounts.availableBalance}</p>
+                  <p className="eyebrow">{dict.accounts.availableBalance}</p>
                   <InlineAccountBalanceEditor
                     accountId={account.id}
                     balance={account.initialBalance.toDecimalString()}
@@ -198,7 +193,7 @@ export default async function AccountsPage({ params }: { params: Promise<{ lang:
                     warning={belowReserve}
                     updateAction={boundUpdate}
                   />
-                  <p className="text-label-sm text-on-surface-variant">{dict.accounts.minimumReserve}</p>
+                  <p className="eyebrow">{dict.accounts.minimumReserve}</p>
                   <InlineAccountReserveEditor
                     accountId={account.id}
                     balance={account.initialBalance.toDecimalString()}
@@ -210,7 +205,7 @@ export default async function AccountsPage({ params }: { params: Promise<{ lang:
                       : {})}
                     updateAction={boundUpdate}
                   />
-                  <p className="text-label-sm text-on-surface-variant">{dict.accounts.status}</p>
+                  <p className="eyebrow">{dict.accounts.status}</p>
                   <InlineAccountActiveEditor
                     accountId={account.id}
                     balance={account.initialBalance.toDecimalString()}
@@ -226,21 +221,18 @@ export default async function AccountsPage({ params }: { params: Promise<{ lang:
           );
         })}
 
-        <details className="border border-dashed border-outline-variant rounded-xl p-6 flex flex-col items-center justify-center min-h-[140px] group [&_summary]:list-none">
+        <details className="self-start border border-dashed border-outline rounded-sm p-5 flex flex-col items-center justify-center min-h-[72px] group [&_summary]:list-none">
           <summary className="cursor-pointer select-none flex flex-col items-center text-center">
-            <div className="w-10 h-10 rounded-full bg-surface-container-lowest flex items-center justify-center mb-2 shadow-sm">
-              <span className="material-symbols-outlined text-primary">add</span>
-            </div>
-            <span className="text-label-md text-on-surface-variant group-hover:text-primary transition-colors">
+            <span className="text-label-md text-on-surface-variant group-hover:text-on-surface transition-colors border-b border-outline-variant group-hover:border-on-surface pb-0.5"><span className="font-mono text-primary mr-1.5">+</span>
               {dict.accounts.addAccount}
             </span>
           </summary>
           <form action={boundCreate} className="flex flex-col gap-stack-sm mt-stack-md text-left w-full max-w-xs mx-auto">
-            <label className="flex flex-col gap-1 text-label-sm text-on-surface-variant">
+            <label className="flex flex-col gap-1 eyebrow">
               {dict.accounts.name}
               <input name="name" required className="border border-outline-variant rounded-lg px-3 py-2 text-body-md focus:outline-none focus:border-primary" />
             </label>
-            <label className="flex flex-col gap-1 text-label-sm text-on-surface-variant">
+            <label className="flex flex-col gap-1 eyebrow">
               {dict.accounts.type}
               <select name="type" className="border border-outline-variant rounded-lg px-3 py-2 text-body-md focus:outline-none focus:border-primary">
                 {accountTypeOptions.map((option) => (
@@ -250,19 +242,19 @@ export default async function AccountsPage({ params }: { params: Promise<{ lang:
                 ))}
               </select>
             </label>
-            <label className="flex flex-col gap-1 text-label-sm text-on-surface-variant">
+            <label className="flex flex-col gap-1 eyebrow">
               {dict.accounts.currency}
               <input name="currency" defaultValue={currency} className="border border-outline-variant rounded-lg px-3 py-2 text-body-md focus:outline-none focus:border-primary" />
             </label>
-            <label className="flex flex-col gap-1 text-label-sm text-on-surface-variant">
+            <label className="flex flex-col gap-1 eyebrow">
               {dict.accounts.balance}
               <input type="number" step="0.01" name="balance" defaultValue="0" className="border border-outline-variant rounded-lg px-3 py-2 text-body-md focus:outline-none focus:border-primary" />
             </label>
-            <label className="flex flex-col gap-1 text-label-sm text-on-surface-variant">
+            <label className="flex flex-col gap-1 eyebrow">
               {dict.accounts.minimumReserve}
               <input type="number" step="0.01" name="minimumReserve" defaultValue="0" className="border border-outline-variant rounded-lg px-3 py-2 text-body-md focus:outline-none focus:border-primary" />
             </label>
-            <label className="flex items-center gap-2 text-label-sm text-on-surface-variant">
+            <label className="flex items-center gap-2 eyebrow">
               <input type="checkbox" name="active" defaultChecked />
               {dict.accounts.active}
             </label>
@@ -272,12 +264,9 @@ export default async function AccountsPage({ params }: { params: Promise<{ lang:
           </form>
         </details>
 
-        <details className="border border-dashed border-outline-variant rounded-xl p-6 flex flex-col items-center justify-center min-h-[140px] group [&_summary]:list-none">
+        <details className="self-start border border-dashed border-outline rounded-sm p-5 flex flex-col items-center justify-center min-h-[72px] group [&_summary]:list-none">
           <summary className="cursor-pointer select-none flex flex-col items-center text-center">
-            <div className="w-10 h-10 rounded-full bg-surface-container-lowest flex items-center justify-center mb-2 shadow-sm">
-              <span className="material-symbols-outlined text-primary">trending_up</span>
-            </div>
-            <span className="text-label-md text-on-surface-variant group-hover:text-primary transition-colors">
+            <span className="text-label-md text-on-surface-variant group-hover:text-on-surface transition-colors border-b border-outline-variant group-hover:border-on-surface pb-0.5"><span className="font-mono text-primary mr-1.5">+</span>
               {dict.accounts.addRecurringIncome}
             </span>
           </summary>
@@ -309,7 +298,7 @@ export default async function AccountsPage({ params }: { params: Promise<{ lang:
 
       {accounts.length === 0 ? <p className="text-body-md text-on-surface-variant">{dict.accounts.empty}</p> : null}
 
-      <div className="bg-surface-container-lowest border border-outline-variant rounded-xl p-6">
+      <div className="bg-surface-container-lowest border border-outline-variant rounded-sm p-6">
         <h2 className="text-headline-sm text-on-surface mb-stack-md">{dict.accounts.recurringIncomesTitle}</h2>
         {incomes.length === 0 ? (
           <p className="text-body-md text-on-surface-variant">{dict.accounts.noRecurringIncomes}</p>

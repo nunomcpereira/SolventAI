@@ -324,24 +324,23 @@ export default async function SimulationPage({
   return (
     <div className="flex flex-col gap-stack-lg">
       <LiveRefresh scope="accounts" />
-      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
+      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 border-b border-on-surface pb-5">
         <div>
           <h2 className="text-display-lg-mobile md:text-display-lg text-on-surface">{dict.simulation.title}</h2>
           <p className="text-body-lg text-on-surface-variant mt-2">{dict.simulation.subtitle}</p>
         </div>
         <div className="flex items-center gap-3">
-          <span className="text-label-sm text-on-surface-variant uppercase tracking-wider">{dict.simulation.activeScenario}</span>
-          <div className="bg-surface-container-lowest border border-outline-variant rounded-lg px-3 py-1.5 flex items-center gap-2">
-            <span className="w-2 h-2 rounded-full bg-primary" />
+          <span className="eyebrow">{dict.simulation.activeScenario}</span>
+          <div className="flex items-center gap-2">
+            <span className="w-2 h-2 bg-primary" />
             <span className="text-label-md text-on-surface">{selected ? selected.name : dict.simulation.baseScenario}</span>
           </div>
         </div>
       </div>
 
       {/* Liquidity projection */}
-      <div className="bg-surface-container-lowest border border-outline-variant rounded-xl p-6">
+      <div className="bg-surface-container-lowest border border-outline-variant rounded-sm p-6">
         <div className="flex items-center gap-2 mb-6">
-          <span className="material-symbols-outlined text-primary">timeline</span>
           <h3 className="text-headline-sm text-on-surface">{dict.simulation.liquidityProjection}</h3>
         </div>
         <SimulationChartCard
@@ -391,20 +390,19 @@ export default async function SimulationPage({
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-gutter">
         {/* Left: Liquidity Impact */}
         <div className="lg:col-span-5 flex flex-col gap-gutter">
-          <div className="bg-surface-container-lowest border border-outline-variant rounded-xl p-5">
+          <div className="bg-surface-container-lowest border border-outline-variant rounded-sm p-5">
             <div className="flex items-center gap-2 mb-4">
-              <span className="material-symbols-outlined text-outline">account_balance</span>
               <h4 className="text-label-md text-on-surface font-semibold">{dict.simulation.liquidityImpact}</h4>
             </div>
             <div className="flex flex-col gap-4">
               <div className="flex justify-between items-end border-b border-outline-variant pb-2">
-                <span className="text-label-sm text-on-surface-variant">{dict.simulation.availableLiquidityNow}</span>
+                <span className="eyebrow">{dict.simulation.availableLiquidityNow}</span>
                 <span className="text-headline-sm text-on-surface">
                   {formatMoney(Money.fromDecimalString(activeImpact.availableLiquidityNow, result.currency), lang)}
                 </span>
               </div>
               <div className="flex justify-between items-end">
-                <span className="text-label-sm text-on-surface-variant">{dict.simulation.projectedMinimumLiquidity}</span>
+                <span className="eyebrow">{dict.simulation.projectedMinimumLiquidity}</span>
                 <span className="text-headline-sm text-on-surface">
                   {formatMoney(Money.fromDecimalString(activeImpact.projectedMinimumLiquidity, result.currency), lang)}
                 </span>
@@ -415,7 +413,7 @@ export default async function SimulationPage({
 
         {/* Right: Scenario management + event form */}
         <div className="lg:col-span-7 flex flex-col gap-gutter">
-          <div className="bg-surface-container-lowest border border-outline-variant rounded-xl p-6">
+          <div className="bg-surface-container-lowest border border-outline-variant rounded-sm p-6">
             <h4 className="text-headline-sm text-on-surface mb-4">{dict.simulation.scenarios}</h4>
             {scenarios.length === 0 ? (
               <p className="text-body-md text-on-surface-variant mb-stack-md">{dict.simulation.noScenariosYet}</p>
@@ -458,11 +456,8 @@ export default async function SimulationPage({
           </div>
 
           {selected ? (
-            <div className="bg-surface-container-lowest border border-outline-variant rounded-xl p-6 flex flex-col">
+            <div className="bg-surface-container-lowest border border-outline-variant rounded-sm p-6 flex flex-col">
               <div className="flex items-center gap-2 mb-6 border-b border-outline-variant pb-4">
-                <span className="material-symbols-outlined text-primary" style={{ fontVariationSettings: "'FILL' 1" }}>
-                  payments
-                </span>
                 <h4 className="text-headline-sm text-on-surface">{dict.simulation.scenarioEvents}</h4>
               </div>
 
@@ -477,7 +472,7 @@ export default async function SimulationPage({
                     >
                       <div className="flex flex-col">
                         <span className="text-body-md text-on-surface">{describeEvent(event, eventDescriptionCtx)}</span>
-                        <span className="text-label-sm text-on-surface-variant">{formatDate(event.date.toString(), lang)}</span>
+                        <span className="eyebrow">{formatDate(event.date.toString(), lang)}</span>
                       </div>
                       <div className="flex items-center gap-3 shrink-0">
                         <a href={`?scenarioId=${selected.id}&editEventId=${event.id}`} className="text-label-sm text-primary">

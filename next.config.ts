@@ -2,6 +2,9 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   reactStrictMode: true,
+  // e2e builds into its own dir so it never clobbers a running `next dev` (.next).
+  distDir: process.env.NEXT_DIST_DIR ?? ".next",
+  devIndicators: { position: "bottom-right" },
   // pdfjs-dist manages its own worker-thread loading internally (including a
   // "fake worker" fallback path); webpack's bundling of that logic breaks worker
   // module resolution under Next's server runtime. Leaving it external makes

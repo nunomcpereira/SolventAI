@@ -71,7 +71,7 @@ function NavButton({ href, disabled, label, icon }: { href: string; disabled: bo
       aria-disabled={disabled}
       title={label}
       aria-label={label}
-      className={`w-8 h-8 rounded-full border border-outline-variant flex items-center justify-center transition-colors ${
+      className={`w-8 h-8 rounded-sm border border-outline-variant flex items-center justify-center transition-colors ${
         disabled ? "text-on-surface-variant opacity-40 pointer-events-none" : "text-on-surface-variant hover:text-primary hover:border-primary"
       }`}
     >
@@ -89,7 +89,7 @@ function SectionHeaderRow({ label, colSpan }: { label: string; colSpan: number }
   return (
     <tr>
       <td colSpan={colSpan} className="pt-3 pb-2 bg-surface-container-low">
-        <span className="text-label-sm text-primary font-bold uppercase tracking-wider">{label}</span>
+        <span className="text-label-sm text-primary font-bold">{label}</span>
       </td>
     </tr>
   );
@@ -242,7 +242,7 @@ export function SimulationChartCard({
     <div
       className={
         isMaximized
-          ? "fixed inset-4 z-50 bg-surface-container-lowest border border-outline-variant rounded-xl p-6 overflow-auto shadow-2xl flex flex-col gap-gutter"
+          ? "fixed inset-4 z-50 bg-surface-container-lowest border border-outline-variant rounded-sm p-6 overflow-auto shadow-2xl flex flex-col gap-gutter"
           : "flex flex-col gap-gutter"
       }
     >
@@ -266,7 +266,7 @@ export function SimulationChartCard({
           {/* Lets the user switch which scenario is being compared without leaving
               fullscreen — this select lives inside the card (unlike the full scenario
               management panel) specifically so it's still reachable while maximized. */}
-          <label className="flex items-center gap-2 text-label-sm text-on-surface-variant">
+          <label className="flex items-center gap-2 eyebrow">
             {scenarioSelectorLabel}
             <select
               value={selectedScenarioId}
@@ -288,7 +288,7 @@ export function SimulationChartCard({
             onClick={() => setIsMaximized((v) => !v)}
             aria-label={isMaximized ? minimizeLabel : maximizeLabel}
             title={isMaximized ? minimizeLabel : maximizeLabel}
-            className="w-8 h-8 rounded-full border border-outline-variant text-on-surface-variant hover:text-primary hover:border-primary hover:bg-surface-container-low transition-colors inline-flex items-center justify-center shrink-0"
+            className="w-8 h-8 rounded-sm border border-outline-variant text-on-surface-variant hover:text-primary hover:border-primary hover:bg-surface-container-low transition-colors inline-flex items-center justify-center shrink-0"
           >
             <span className="material-symbols-outlined" style={{ fontSize: "18px" }}>
               {isMaximized ? "close_fullscreen" : "open_in_full"}
@@ -335,7 +335,7 @@ export function SimulationChartCard({
                 {hasNegativeBalance ? <span className="text-label-sm text-status-danger font-medium">{negativeBalanceWarning}</span> : null}
               </>
             ) : (
-              <div className="w-[100px] h-[100px] rounded-full border border-dashed border-outline-variant flex items-center justify-center text-label-sm text-on-surface-variant">
+              <div className="w-full h-[68px] rounded-sm border border-dashed border-outline-variant flex items-center justify-center eyebrow">
                 —
               </div>
             )}
@@ -348,12 +348,12 @@ export function SimulationChartCard({
                 <Badge tone={solvencyTone}>{toneLabels[solvencyTone === "danger" ? "critical" : solvencyTone]}</Badge>
               </>
             ) : (
-              <div className="w-[100px] h-[100px] rounded-full border border-dashed border-outline-variant flex items-center justify-center text-label-sm text-on-surface-variant">
+              <div className="w-full h-[68px] rounded-sm border border-dashed border-outline-variant flex items-center justify-center eyebrow">
                 —
               </div>
             )}
           </div>
-          <span className="text-label-sm text-on-surface-variant">{`${shownPoint?.date ?? ""}`}</span>
+          <span className="eyebrow">{`${shownPoint?.date ?? ""}`}</span>
         </div>
       </div>
 

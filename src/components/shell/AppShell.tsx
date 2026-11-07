@@ -5,110 +5,91 @@ import { buildNavItems } from "./navItems.js";
 import { SidebarNav, BottomNav } from "./SidebarNav.js";
 import { TenantSwitcher } from "./TenantSwitcher.js";
 import { listTenants, getCurrentTenantId } from "../../lib/services/tenantService.js";
+import { ThemeSelect } from "../theme/ThemeSelect.js";
+import { type Theme } from "../../lib/theme.js";
+
+function Wordmark({ inSidebar = false }: { inSidebar?: boolean }) {
+  return (
+    <span
+      className={`font-serif text-[22px] leading-none tracking-tight ${inSidebar ? "text-[var(--sidebar-strong)]" : "text-on-surface"}`}
+    >
+      Solvent<span className={inSidebar ? "text-[var(--sidebar-accent)]" : "text-primary"}>.</span>
+    </span>
+  );
+}
 
 /**
- * The Stitch mockups' shell, ported 1:1 per breakpoint:
- *  - Desktop (md+): fixed left sidebar (desktop_* mockups) — logo, "New Analysis" CTA (opens the scenario planner),
- *    4 primary nav items (Dashboard / Portfolio / Scenario / Settings), account footer.
- *  - Mobile (<md): top app bar + bottom nav bar (the "_updated" mobile mockups).
- * "Portfolio" covers both Loans and Accounts (the mockups only ever show 4 sidebar
- * items) — the Loans and Accounts pages cross-link to each other via an in-page tab.
+ * Desktop (lg+): left rail with the wordmark, numbered navigation, a quiet
+ * "new scenario" link, and the account + theme switchers at the foot. Sidebar colours
+ * come from the --sidebar-* variables so each theme can style the rail independently.
+ * Mobile: slim paper header + bottom tab bar.
  */
-export async function AppShell({ lang, dict, children }: { lang: Language; dict: Dictionary; children: ReactNode }) {
+export async function AppShell({
+  lang,
+  dict,
+  theme,
+  children,
+}: {
+  lang: Language;
+  dict: Dictionary;
+  theme: Theme;
+  children: ReactNode;
+}) {
   const items = buildNavItems(lang, dict);
   const [tenants, currentTenantId] = await Promise.all([listTenants(), getCurrentTenantId()]);
+  const today = new Intl.DateTimeFormat(lang, { day: "numeric", month: "long", year: "numeric" }).format(new Date());
 
   return (
     <div className="flex min-h-screen text-on-surface bg-background">
-      {/* Desktop sidebar */}
-      <aside className="fixed left-0 top-0 h-full flex flex-col py-stack-lg bg-surface-container-low border-r border-outline-variant w-64 z-40 hidden lg:flex">
-        <div className="px-gutter mb-8">
-          <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded bg-primary flex items-center justify-center text-on-primary">
-              <span className="material-symbols-outlined" style={{ fontVariationSettings: "'FILL' 1" }}>
-                account_balance
-              </span>
-            </div>
-            <div>
-              <h1 className="text-headline-sm font-bold text-primary">Solvent AI</h1>
-              <p className="text-label-sm text-on-surface-variant">Enterprise Finance</p>
-            </div>
-          </div>
+      <aside className="fixed left-0 top-0 h-full w-60 z-40 hidden lg:flex flex-col bg-[var(--sidebar-bg)] text-[var(--sidebar-fg)] border-r border-[var(--sidebar-border)]">
+        <div className="px-6 pt-7 pb-8">
+          <a href={`/${lang}/dashboard`} className="block">
+            <Wordmark inSidebar />
+          </a>
+          <p className="mt-2 text-[11.5px] text-[var(--sidebar-fg)] font-mono">{today}</p>
         </div>
-        <div className="px-gutter mb-6">
+
+        <SidebarNav items={items} />
+
+        <div className="px-6 mt-6">
           <a
             href={`/${lang}/simulation?new=1`}
-            className="block w-full text-center bg-primary text-on-primary text-label-md py-2 rounded-lg hover:opacity-90 transition-opacity"
+            className="group inline-flex items-center gap-2 text-[13px] text-[var(--sidebar-strong)] border-b border-[var(--sidebar-border)] hover:border-[var(--sidebar-accent)] pb-0.5"
           >
+            <span className="font-mono text-[var(--sidebar-accent)]">+</span>
             {dict.nav.newAnalysis}
           </a>
         </div>
-        <SidebarNav items={items} />
+
+        <div className="mt-auto px-6 pb-6 pt-5 border-t border-[var(--sidebar-border)] flex flex-col gap-3">
+          <TenantSwitcher
+            tenants={tenants}
+            currentTenantId={currentTenantId}
+            label={dict.common.tenantLabel}
+            createDemoLabel={dict.common.createDemoAccount}
+          />
+          <ThemeSelect
+            initialTheme={theme}
+            label={dict.common.theme}
+            options={[
+              { value: "classic", label: dict.common.themeClassic },
+              { value: "ledger", label: dict.common.themeLedger },
+            ]}
+          />
+        </div>
       </aside>
 
-      {/* Mobile top app bar */}
-      <header className="fixed top-0 w-full z-50 bg-surface-container-lowest border-b border-outline-variant lg:hidden flex justify-between items-center px-container-padding-mobile py-4">
-        <div className="flex items-center gap-2">
-          <span className="material-symbols-outlined text-primary">account_balance_wallet</span>
-          <h1 className="text-headline-md font-bold text-primary tracking-tight">Solvent AI</h1>
-        </div>
+      <header className="fixed top-0 inset-x-0 z-50 h-14 bg-background/95 backdrop-blur border-b border-on-surface lg:hidden flex items-center justify-between px-container-padding-mobile">
+        <a href={`/${lang}/dashboard`}>
+          <Wordmark />
+        </a>
+        <span className="text-[11.5px] text-on-surface-variant font-mono">{today}</span>
       </header>
 
-      {/* Main content */}
-      <div className="flex-1 flex flex-col lg:ml-64 w-full max-w-[1280px] mx-auto pt-16 lg:pt-0 pb-24 lg:pb-0">
-        {/* Desktop top bar */}
-        <header className="hidden lg:flex w-full h-16 bg-surface-container-lowest border-b border-outline-variant justify-between items-center px-container-padding-desktop sticky top-0 z-30">
-          <div className="flex items-center bg-surface-container-low rounded-full px-4 py-2 border border-outline-variant focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/20 transition-all w-64">
-            <span className="material-symbols-outlined text-on-surface-variant mr-2" style={{ fontSize: "20px" }}>
-              search
-            </span>
-            <input
-              className="bg-transparent border-none outline-none text-body-md w-full placeholder:text-on-surface-variant text-on-surface"
-              placeholder="Search..."
-              type="text"
-            />
-          </div>
-          <div className="flex items-center gap-4">
-            <TenantSwitcher
-              tenants={tenants}
-              currentTenantId={currentTenantId}
-              label={dict.common.tenantLabel}
-              createDemoLabel={dict.common.createDemoAccount}
-            />
-            <button
-              type="button"
-              className="p-2 rounded-full text-on-surface-variant hover:bg-surface-container-low transition-colors"
-              aria-label="Notifications"
-              title="Notifications"
-            >
-              <span className="material-symbols-outlined">notifications</span>
-            </button>
-            <button
-              type="button"
-              className="p-2 rounded-full text-on-surface-variant hover:bg-surface-container-low transition-colors"
-              aria-label="Help"
-              title="Help"
-            >
-              <span className="material-symbols-outlined">help</span>
-            </button>
-            <div className="hidden xl:flex items-center gap-2">
-              <button
-                type="button"
-                className="px-4 py-2 rounded-lg text-label-md text-primary hover:bg-surface-container-low transition-colors"
-              >
-                Support
-              </button>
-              <button
-                type="button"
-                className="px-4 py-2 rounded-lg text-label-md bg-primary text-on-primary hover:opacity-90 transition-opacity"
-              >
-                Upgrade
-              </button>
-            </div>
-          </div>
-        </header>
-
-        <main className="flex-1 p-container-padding-mobile md:p-container-padding-desktop">{children}</main>
+      <div className="flex-1 flex flex-col lg:ml-60 min-w-0 pt-14 lg:pt-0 pb-24 lg:pb-0">
+        <main className="flex-1 w-full max-w-[1240px] px-container-padding-mobile md:px-container-padding-desktop py-6 md:py-10">
+          {children}
+        </main>
       </div>
 
       <BottomNav items={items} />

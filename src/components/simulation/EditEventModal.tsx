@@ -25,7 +25,7 @@ export function EditEventModal({ cancelHref, children }: { cancelHref: string; c
   return (
     <div className="fixed inset-0 z-[70] flex items-center justify-center bg-black/40 p-4" onClick={() => router.push(cancelHref)}>
       <div
-        className="w-full max-w-lg bg-surface-container-lowest border border-outline-variant rounded-xl p-6 shadow-2xl max-h-[90vh] overflow-y-auto"
+        className="w-full max-w-lg bg-surface-container-lowest border border-outline-variant rounded-sm p-6 shadow-2xl max-h-[90vh] overflow-y-auto"
         onClick={(e) => e.stopPropagation()}
       >
         {children}

@@ -38,7 +38,7 @@ export function CustomTypeListEditor({
           <button
             type="button"
             onClick={() => setValues(values.filter((_, current) => current !== index))}
-            className="w-9 h-9 rounded-full border border-outline-variant text-on-surface-variant hover:text-status-danger hover:border-status-danger hover:bg-surface-container-low transition-colors flex items-center justify-center"
+            className="w-9 h-9 rounded-sm border border-outline-variant text-on-surface-variant hover:text-status-danger hover:border-status-danger hover:bg-surface-container-low transition-colors flex items-center justify-center"
             aria-label="Delete custom type"
             title="Delete custom type"
           >

@@ -284,7 +284,10 @@
     "critical": "Kritisch",
     "tenantLabel": "Konto",
     "createDemoAccount": "Demo-Konto erstellen",
-    "close": "Schließen"
+    "close": "Schließen",
+    "theme": "Design",
+    "themeClassic": "Klassisch",
+    "themeLedger": "Kassenbuch"
   },
   "wizards": {
     "suggestionsTitle": "Vorschläge",

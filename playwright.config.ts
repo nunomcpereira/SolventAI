@@ -17,6 +17,7 @@ export default defineConfig({
     reuseExistingServer: false,
     timeout: 180_000,
     env: {
+      NEXT_DIST_DIR: ".next-e2e",
       SOLVENT_DB_PATH: "./data/e2e-test.db",
     },
   },

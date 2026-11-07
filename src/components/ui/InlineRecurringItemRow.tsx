@@ -212,7 +212,7 @@ export function InlineRecurringItemRow({
             aria-label={labels.edit}
             title={labels.edit}
             onClick={() => setIsEditing(true)}
-            className="w-8 h-8 rounded-full border border-outline-variant text-on-surface-variant hover:text-primary hover:border-primary hover:bg-surface-container-low transition-colors inline-flex items-center justify-center"
+            className="w-8 h-8 rounded-sm border border-outline-variant text-on-surface-variant hover:text-primary hover:border-primary hover:bg-surface-container-low transition-colors inline-flex items-center justify-center"
           >
             <span className="material-symbols-outlined" style={{ fontSize: "18px" }}>
               edit
@@ -224,7 +224,7 @@ export function InlineRecurringItemRow({
               type="submit"
               aria-label={labels.delete}
               title={labels.delete}
-              className="w-8 h-8 rounded-full border border-outline-variant text-on-surface-variant hover:text-status-danger hover:border-status-danger hover:bg-surface-container-low transition-colors inline-flex items-center justify-center"
+              className="w-8 h-8 rounded-sm border border-outline-variant text-on-surface-variant hover:text-status-danger hover:border-status-danger hover:bg-surface-container-low transition-colors inline-flex items-center justify-center"
             >
               <span className="material-symbols-outlined" style={{ fontSize: "18px" }}>
                 delete

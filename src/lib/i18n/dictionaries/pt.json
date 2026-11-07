@@ -284,7 +284,10 @@
     "critical": "Crítico",
     "tenantLabel": "Conta",
     "createDemoAccount": "Criar conta de demonstração",
-    "close": "Fechar"
+    "close": "Fechar",
+    "theme": "Tema",
+    "themeClassic": "Clássico",
+    "themeLedger": "Livro-razão"
   },
   "wizards": {
     "suggestionsTitle": "Sugestões",

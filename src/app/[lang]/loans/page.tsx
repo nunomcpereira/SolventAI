@@ -106,44 +106,35 @@ export default async function LoansPage({ params }: { params: Promise<{ lang: st
   return (
     <div className="flex flex-col gap-stack-lg">
       <LiveRefresh scope="loans" />
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-stack-md">
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-stack-md border-b border-on-surface pb-5">
         <div>
           <h1 className="text-display-lg-mobile md:text-display-lg text-on-surface">{dict.loans.title}</h1>
           <p className="text-body-lg text-on-surface-variant mt-1">{dict.loans.subtitle}</p>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-gutter">
-        <div className="bg-surface-container-lowest border border-outline-variant rounded-xl p-stack-lg shadow-sm">
+      <div className="grid grid-cols-1 md:grid-cols-3 border-y border-outline-variant divide-y md:divide-y-0 md:divide-x divide-outline-variant">
+        <div className="py-4 md:px-5 md:first:pl-0">
           <div className="flex justify-between items-start mb-2">
-            <h3 className="text-label-sm text-on-surface-variant uppercase tracking-wider">Total liabilities</h3>
-            <span className="material-symbols-outlined text-outline" style={{ fontSize: "20px" }}>
-              trending_down
-            </span>
+            <h3 className="eyebrow">Total liabilities</h3>
           </div>
-          <div className="text-headline-md text-on-surface">
+          <div className="figure text-[24px] leading-8 text-on-surface">
             {totalLiabilities ? `-${formatMoney(totalLiabilities, lang)}` : "—"}
           </div>
         </div>
-        <div className="bg-surface-container-lowest border border-outline-variant rounded-xl p-stack-lg shadow-sm">
+        <div className="py-4 md:px-5">
           <div className="flex justify-between items-start mb-2">
-            <h3 className="text-label-sm text-on-surface-variant uppercase tracking-wider">{dict.loans.avgInterestRate}</h3>
-            <span className="material-symbols-outlined text-outline" style={{ fontSize: "20px" }}>
-              percent
-            </span>
+            <h3 className="eyebrow">{dict.loans.avgInterestRate}</h3>
           </div>
-          <div className="text-headline-md text-on-surface">
+          <div className="figure text-[24px] leading-8 text-on-surface">
             {weightedAvgRatePercent !== undefined ? `${Number(weightedAvgRatePercent).toFixed(2)}%` : "—"}
           </div>
         </div>
-        <div className="bg-surface-container-lowest border border-outline-variant rounded-xl p-stack-lg shadow-sm">
+        <div className="py-4 md:px-5">
           <div className="flex justify-between items-start mb-2">
-            <h3 className="text-label-sm text-on-surface-variant uppercase tracking-wider">{dict.loans.totalMonthlyPayment}</h3>
-            <span className="material-symbols-outlined text-outline" style={{ fontSize: "20px" }}>
-              payments
-            </span>
+            <h3 className="eyebrow">{dict.loans.totalMonthlyPayment}</h3>
           </div>
-          <div className="text-headline-md text-on-surface">
+          <div className="figure text-[24px] leading-8 text-on-surface">
             {totalMonthlyPayment ? formatMoney(totalMonthlyPayment, lang) : "—"}
           </div>
         </div>
@@ -166,12 +157,9 @@ export default async function LoansPage({ params }: { params: Promise<{ lang: st
           const fixedRatePeriodsInput = loan.rate.type === "mixed" ? String(loan.rate.fixedPeriodCount) : "12";
 
           return (
-            <div key={loan.id} className="bg-surface-container-lowest border border-outline-variant rounded-xl p-stack-lg shadow-sm flex flex-col">
+            <div key={loan.id} className="bg-surface-container-lowest border border-outline-variant rounded-sm p-stack-lg shadow-sm flex flex-col">
               <div className="flex justify-between items-start mb-stack-md border-b border-outline-variant pb-stack-md">
                 <div className="flex items-center gap-3">
-                  <div className="w-12 h-12 rounded-lg bg-surface-container-low flex items-center justify-center text-primary border border-outline-variant">
-                    <span className="material-symbols-outlined">{CATEGORY_ICON[loan.category] ?? "account_balance_wallet"}</span>
-                  </div>
                   <div>
                     <h3 className="text-headline-sm text-on-surface">{loan.name}</h3>
                     <p className="text-label-sm text-on-surface-variant capitalize">{loanCategoryLabelMap.get(loan.category) ?? loan.category}</p>
@@ -181,7 +169,7 @@ export default async function LoansPage({ params }: { params: Promise<{ lang: st
                   {rateDataMissing ? (
                     <Badge tone="warning">{dict.loans.rateDataMissing}</Badge>
                   ) : (
-                    <span className="text-label-sm text-on-surface-variant bg-surface-container px-2 py-1 rounded-full">
+                    <span className="text-label-sm text-on-surface-variant bg-surface-container px-2 py-1 rounded-sm">
                       {loan.rate.type === "fixed" ? dict.loans.fixed : loan.rate.type === "mixed" ? "Mixed" : dict.loans.variable}
                     </span>
                   )}
@@ -191,7 +179,7 @@ export default async function LoansPage({ params }: { params: Promise<{ lang: st
                       type="submit"
                       aria-label={dict.loans.deleteLoan}
                       title={dict.loans.deleteLoan}
-                      className="w-9 h-9 rounded-full border border-outline-variant text-on-surface-variant hover:text-status-danger hover:border-status-danger hover:bg-surface-container-low transition-colors flex items-center justify-center"
+                      className="w-9 h-9 rounded-sm border border-outline-variant text-on-surface-variant hover:text-status-danger hover:border-status-danger hover:bg-surface-container-low transition-colors flex items-center justify-center"
                     >
                       <span className="material-symbols-outlined" style={{ fontSize: "20px" }}>
                         delete
@@ -245,8 +233,8 @@ export default async function LoansPage({ params }: { params: Promise<{ lang: st
                   <span className="text-on-surface-variant">{dict.loans.payoffProgress}</span>
                   <span className="text-on-surface">{payoffPercent}%</span>
                 </div>
-                <div className="w-full h-2 bg-surface-container-high rounded-full overflow-hidden">
-                  <div className="h-full bg-primary rounded-full" style={{ width: `${payoffPercent}%` }} />
+                <div className="w-full h-2 bg-surface-container-high overflow-hidden">
+                  <div className="h-full bg-primary" style={{ width: `${payoffPercent}%` }} />
                 </div>
               </div>
 
@@ -254,7 +242,7 @@ export default async function LoansPage({ params }: { params: Promise<{ lang: st
                 <summary className="text-label-sm text-primary cursor-pointer select-none">{dict.loans.editLoan}</summary>
                 <form action={boundUpdate} className="grid grid-cols-1 md:grid-cols-2 gap-stack-sm mt-stack-sm">
                   <input type="hidden" name="loanId" value={loan.id} />
-                  <label className="flex flex-col gap-1 text-label-sm text-on-surface-variant">
+                  <label className="flex flex-col gap-1 eyebrow">
                     {dict.loans.name}
                     <input
                       name="name"
@@ -263,7 +251,7 @@ export default async function LoansPage({ params }: { params: Promise<{ lang: st
                       className="border border-outline-variant rounded-lg px-3 py-2 text-body-md focus:outline-none focus:border-primary"
                     />
                   </label>
-                  <label className="flex flex-col gap-1 text-label-sm text-on-surface-variant">
+                  <label className="flex flex-col gap-1 eyebrow">
                     {dict.loans.category}
                     <select
                       name="category"
@@ -277,7 +265,7 @@ export default async function LoansPage({ params }: { params: Promise<{ lang: st
                       ))}
                     </select>
                   </label>
-                  <label className="flex flex-col gap-1 text-label-sm text-on-surface-variant">
+                  <label className="flex flex-col gap-1 eyebrow">
                     {dict.loans.principal} ({loan.principal.currency})
                     <input
                       type="number"
@@ -288,7 +276,7 @@ export default async function LoansPage({ params }: { params: Promise<{ lang: st
                       className="border border-outline-variant rounded-lg px-3 py-2 text-body-md focus:outline-none focus:border-primary"
                     />
                   </label>
-                  <label className="flex flex-col gap-1 text-label-sm text-on-surface-variant">
+                  <label className="flex flex-col gap-1 eyebrow">
                     Currency
                     <input
                       name="currency"
@@ -297,7 +285,7 @@ export default async function LoansPage({ params }: { params: Promise<{ lang: st
                       className="border border-outline-variant rounded-lg px-3 py-2 text-body-md focus:outline-none focus:border-primary"
                     />
                   </label>
-                  <label className="flex flex-col gap-1 text-label-sm text-on-surface-variant">
+                  <label className="flex flex-col gap-1 eyebrow">
                     {dict.loans.startDate}
                     <input
                       type="date"
@@ -307,7 +295,7 @@ export default async function LoansPage({ params }: { params: Promise<{ lang: st
                       className="border border-outline-variant rounded-lg px-3 py-2 text-body-md focus:outline-none focus:border-primary"
                     />
                   </label>
-                  <label className="flex flex-col gap-1 text-label-sm text-on-surface-variant">
+                  <label className="flex flex-col gap-1 eyebrow">
                     {dict.loans.remainingTerm}
                     <input
                       type="number"
@@ -319,7 +307,7 @@ export default async function LoansPage({ params }: { params: Promise<{ lang: st
                       className="border border-outline-variant rounded-lg px-3 py-2 text-body-md focus:outline-none focus:border-primary"
                     />
                   </label>
-                  <label className="flex flex-col gap-1 text-label-sm text-on-surface-variant">
+                  <label className="flex flex-col gap-1 eyebrow">
                     Payment frequency
                     <select
                       name="paymentFrequency"
@@ -335,7 +323,7 @@ export default async function LoansPage({ params }: { params: Promise<{ lang: st
                       <option value="daily">Daily</option>
                     </select>
                   </label>
-                  <label className="flex flex-col gap-1 text-label-sm text-on-surface-variant">
+                  <label className="flex flex-col gap-1 eyebrow">
                     Amortization
                     <select
                       name="amortizationType"
@@ -349,7 +337,7 @@ export default async function LoansPage({ params }: { params: Promise<{ lang: st
                   </label>
                   {loan.category === "mortgage" ? (
                     <>
-                      <label className="flex flex-col gap-1 text-label-sm text-on-surface-variant">
+                      <label className="flex flex-col gap-1 eyebrow">
                         Mortgage rate type
                         <select
                           name="rateType"
@@ -361,7 +349,7 @@ export default async function LoansPage({ params }: { params: Promise<{ lang: st
                           <option value="mixed">Mixed (fixed then variable)</option>
                         </select>
                       </label>
-                      <label className="flex flex-col gap-1 text-label-sm text-on-surface-variant">
+                      <label className="flex flex-col gap-1 eyebrow">
                         Fixed rate (%)
                         <input
                           type="number"
@@ -373,7 +361,7 @@ export default async function LoansPage({ params }: { params: Promise<{ lang: st
                           className="border border-outline-variant rounded-lg px-3 py-2 text-body-md focus:outline-none focus:border-primary"
                         />
                       </label>
-                      <label className="flex flex-col gap-1 text-label-sm text-on-surface-variant">
+                      <label className="flex flex-col gap-1 eyebrow">
                         Euribor rate (%)
                         <input
                           type="number"
@@ -383,7 +371,7 @@ export default async function LoansPage({ params }: { params: Promise<{ lang: st
                           className="border border-outline-variant rounded-lg px-3 py-2 text-body-md focus:outline-none focus:border-primary"
                         />
                       </label>
-                      <label className="flex flex-col gap-1 text-label-sm text-on-surface-variant">
+                      <label className="flex flex-col gap-1 eyebrow">
                         Spread (%)
                         <input
                           type="number"
@@ -393,7 +381,7 @@ export default async function LoansPage({ params }: { params: Promise<{ lang: st
                           className="border border-outline-variant rounded-lg px-3 py-2 text-body-md focus:outline-none focus:border-primary"
                         />
                       </label>
-                      <label className="flex flex-col gap-1 text-label-sm text-on-surface-variant">
+                      <label className="flex flex-col gap-1 eyebrow">
                         Fixed-rate periods (mixed)
                         <input
                           type="number"
@@ -408,7 +396,7 @@ export default async function LoansPage({ params }: { params: Promise<{ lang: st
                   ) : (
                     <>
                       <input type="hidden" name="rateType" value="fixed" />
-                      <label className="flex flex-col gap-1 text-label-sm text-on-surface-variant">
+                      <label className="flex flex-col gap-1 eyebrow">
                         {dict.loans.rate} (%)
                         <input
                           type="number"
@@ -454,7 +442,7 @@ export default async function LoansPage({ params }: { params: Promise<{ lang: st
 
                 <form action={boundUploadContract} className="mt-stack-sm flex flex-col gap-2">
                   <input type="hidden" name="loanId" value={loan.id} />
-                  <label className="flex flex-col gap-1 text-label-sm text-on-surface-variant">
+                  <label className="flex flex-col gap-1 eyebrow">
                     {dict.loans.associatedContract}
                     <input
                       type="file"
@@ -484,12 +472,9 @@ export default async function LoansPage({ params }: { params: Promise<{ lang: st
           );
         })}
 
-        <details className="border border-dashed border-outline-variant rounded-xl p-6 flex flex-col items-center justify-center min-h-[140px] group [&_summary]:list-none">
+        <details className="self-start border border-dashed border-outline rounded-sm p-5 flex flex-col items-center justify-center min-h-[72px] group [&_summary]:list-none">
           <summary className="cursor-pointer select-none flex flex-col items-center text-center">
-            <div className="w-10 h-10 rounded-full bg-surface-container-lowest flex items-center justify-center mb-2 shadow-sm">
-              <span className="material-symbols-outlined text-primary">add</span>
-            </div>
-            <span className="text-label-md text-on-surface-variant group-hover:text-primary transition-colors">
+            <span className="text-label-md text-on-surface-variant group-hover:text-on-surface transition-colors border-b border-outline-variant group-hover:border-on-surface pb-0.5"><span className="font-mono text-primary mr-1.5">+</span>
               {dict.loans.addLoan}
             </span>
           </summary>
@@ -515,12 +500,9 @@ export default async function LoansPage({ params }: { params: Promise<{ lang: st
           />
         </details>
 
-        <details className="border border-dashed border-outline-variant rounded-xl p-6 flex flex-col items-center justify-center min-h-[140px] group [&_summary]:list-none">
+        <details className="self-start border border-dashed border-outline rounded-sm p-5 flex flex-col items-center justify-center min-h-[72px] group [&_summary]:list-none">
           <summary className="cursor-pointer select-none flex flex-col items-center text-center">
-            <div className="w-10 h-10 rounded-full bg-surface-container-lowest flex items-center justify-center mb-2 shadow-sm">
-              <span className="material-symbols-outlined text-primary">trending_down</span>
-            </div>
-            <span className="text-label-md text-on-surface-variant group-hover:text-primary transition-colors">
+            <span className="text-label-md text-on-surface-variant group-hover:text-on-surface transition-colors border-b border-outline-variant group-hover:border-on-surface pb-0.5"><span className="font-mono text-primary mr-1.5">+</span>
               {dict.loans.addRecurringExpense}
             </span>
           </summary>
@@ -578,7 +560,7 @@ export default async function LoansPage({ params }: { params: Promise<{ lang: st
         />
       ) : null}
 
-      <div className="bg-surface-container-lowest border border-outline-variant rounded-xl p-6">
+      <div className="bg-surface-container-lowest border border-outline-variant rounded-sm p-6">
         <h2 className="text-headline-sm text-on-surface mb-stack-md">{dict.loans.recurringExpensesTitle}</h2>
         {expenses.length === 0 ? (
           <p className="text-body-md text-on-surface-variant">{dict.loans.noRecurringExpenses}</p>

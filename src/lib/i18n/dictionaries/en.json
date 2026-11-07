@@ -284,7 +284,10 @@
     "critical": "Critical",
     "tenantLabel": "Account",
     "createDemoAccount": "Create demo account",
-    "close": "Close"
+    "close": "Close",
+    "theme": "Theme",
+    "themeClassic": "Classic",
+    "themeLedger": "Ledger"
   },
   "wizards": {
     "suggestionsTitle": "Suggestions",

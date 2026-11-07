@@ -3,7 +3,7 @@
 import { useTransition, type ReactNode } from "react";
 
 const iconButtonClass =
-  "w-7 h-7 rounded-full border border-outline-variant text-on-surface-variant hover:text-primary hover:border-primary hover:bg-surface-container-low transition-colors flex items-center justify-center";
+  "w-7 h-7 rounded-sm border border-outline-variant text-on-surface-variant hover:text-primary hover:border-primary hover:bg-surface-container-low transition-colors flex items-center justify-center";
 
 export function InlineEditTrigger({ label, onClick }: { label: string; onClick: () => void }) {
   return (

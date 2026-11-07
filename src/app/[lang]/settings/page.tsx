@@ -6,6 +6,8 @@ import { getSettings } from "../../../lib/services/settingsService.js";
 import { isLocalEndpoint } from "../../../lib/ai/extraction/llmClient.js";
 import { CustomTypeListEditor } from "../../../components/settings/CustomTypeListEditor.js";
 import { saveSettingsAction } from "./actions.js";
+import { ThemeSelect } from "../../../components/theme/ThemeSelect.js";
+import { getTheme } from "../../../lib/themeServer.js";
 
 const REGISTERED_CURRENCIES = ["EUR", "USD", "GBP", "CHF", "JPY", "KWD"] as const;
 const APP_VERSION = "0.1.0";
@@ -18,7 +20,7 @@ export default async function SettingsPage({ params }: { params: Promise<{ lang:
   const { lang } = await params;
   if (!isSupportedLanguage(lang)) notFound();
   const dict = getDictionary(lang);
-  const settings = await getSettings();
+  const [settings, theme] = await Promise.all([getSettings(), getTheme()]);
   const boundAction = saveSettingsAction.bind(null, lang);
 
   // Truthful, not decorative: only claim "100% offline" when it's actually the case
@@ -28,28 +30,33 @@ export default async function SettingsPage({ params }: { params: Promise<{ lang:
 
   return (
     <div className="flex flex-col gap-stack-lg">
-      <div>
+      <div className="border-b border-on-surface pb-5">
         <h1 className="text-display-lg-mobile md:text-display-lg text-on-background">{dict.settings.title}</h1>
         <p className="text-body-lg text-on-surface-variant mt-2">{dict.settings.subtitle}</p>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-gutter items-start">
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-x-10 gap-y-gutter items-start">
         {/* Section anchor nav (desktop only) */}
         <div className="hidden lg:block lg:col-span-1">
-          <div className="bg-surface-container-lowest rounded-xl border border-outline-variant p-4 sticky top-20">
-            <ul className="flex flex-col gap-1">
+          <div className="sticky top-10 border-t border-on-surface pt-3">
+            <ul className="flex flex-col">
               <li>
-                <a className="block px-3 py-2 rounded-lg text-on-surface-variant hover:bg-surface-container-low transition-colors text-label-md" href="#financial">
+                <a className="block py-1.5 text-on-surface-variant hover:text-on-surface hover:underline underline-offset-4 decoration-1 text-label-md" href="#financial">
                   {dict.settings.financialEngine}
                 </a>
               </li>
               <li>
-                <a className="block px-3 py-2 rounded-lg text-on-surface-variant hover:bg-surface-container-low transition-colors text-label-md" href="#security">
+                <a className="block py-1.5 text-on-surface-variant hover:text-on-surface hover:underline underline-offset-4 decoration-1 text-label-md" href="#security">
                   {dict.settings.security}
                 </a>
               </li>
               <li>
-                <a className="block px-3 py-2 rounded-lg text-on-surface-variant hover:bg-surface-container-low transition-colors text-label-md" href="#privacy">
+                <a className="block py-1.5 text-on-surface-variant hover:text-on-surface hover:underline underline-offset-4 decoration-1 text-label-md" href="#appearance">
+                  {dict.common.theme}
+                </a>
+              </li>
+              <li>
+                <a className="block py-1.5 text-on-surface-variant hover:text-on-surface hover:underline underline-offset-4 decoration-1 text-label-md" href="#privacy">
                   {dict.settings.privacyAndStatus}
                 </a>
               </li>
@@ -58,7 +65,7 @@ export default async function SettingsPage({ params }: { params: Promise<{ lang:
         </div>
 
         {/* Settings content */}
-        <div className="lg:col-span-2 flex flex-col gap-stack-lg">
+        <div className="lg:col-span-3 flex flex-col gap-10">
           <form action={boundAction} className="flex flex-col gap-stack-lg">
             <Section id="financial" icon="account_balance" title={dict.settings.financialEngine}>
               <FieldRow label={dict.settings.baseCurrency} help={dict.settings.baseCurrencyHelp}>
@@ -258,6 +265,19 @@ export default async function SettingsPage({ params }: { params: Promise<{ lang:
             </button>
           </form>
 
+          <Section id="appearance" title={dict.common.theme}>
+            <ThemeSelect
+              variant="form"
+              initialTheme={theme}
+              label={dict.common.theme}
+              options={[
+                { value: "classic", label: dict.common.themeClassic },
+                { value: "ledger", label: dict.common.themeLedger },
+              ]}
+              className="max-w-xs"
+            />
+          </Section>
+
           <Section id="privacy" icon="verified_user" title={dict.settings.privacyAndStatus}>
             <div
               className={`flex items-center gap-3 p-4 rounded-lg border ${
@@ -292,11 +312,10 @@ export default async function SettingsPage({ params }: { params: Promise<{ lang:
   );
 }
 
-function Section({ id, icon, title, children }: { id: string; icon: string; title: string; children: ReactNode }) {
+function Section({ id, title, children }: { id: string; icon?: string; title: string; children: ReactNode }) {
   return (
-    <section id={id} className="bg-surface-container-lowest rounded-xl border border-outline-variant p-6 flex flex-col gap-stack-md scroll-mt-20">
-      <div className="flex items-center gap-3">
-        <span className="material-symbols-outlined text-primary">{icon}</span>
+    <section id={id} className="flex flex-col gap-stack-md scroll-mt-20">
+      <div className="border-b border-on-surface pb-2">
         <h2 className="text-headline-sm text-on-background">{title}</h2>
       </div>
       {children}

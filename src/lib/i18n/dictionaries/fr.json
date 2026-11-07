@@ -284,7 +284,10 @@
     "critical": "Critique",
     "tenantLabel": "Compte",
     "createDemoAccount": "Créer un compte de démonstration",
-    "close": "Fermer"
+    "close": "Fermer",
+    "theme": "Thème",
+    "themeClassic": "Classique",
+    "themeLedger": "Registre"
   },
   "wizards": {
     "suggestionsTitle": "Suggestions",

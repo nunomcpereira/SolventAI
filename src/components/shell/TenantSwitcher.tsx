@@ -37,8 +37,8 @@ export function TenantSwitcher({
   const [pendingId, setPendingId] = useState(currentTenantId);
 
   return (
-    <div className="flex items-center gap-2">
-      <label className="flex items-center gap-2 text-label-sm text-on-surface-variant">
+    <div className="flex items-end gap-2">
+      <label className="flex-1 min-w-0 flex flex-col gap-1 text-[11.5px] text-[var(--sidebar-fg)]">
         {label}
         <select
           value={pendingId}
@@ -53,7 +53,7 @@ export function TenantSwitcher({
               window.location.reload();
             });
           }}
-          className="border border-outline-variant rounded-lg px-3 py-1.5 text-label-md bg-surface-container-low focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 disabled:opacity-60"
+          className="w-full rounded-sm border border-[var(--sidebar-border)] !bg-[var(--sidebar-field-bg)] text-[var(--sidebar-strong)] px-2 py-1.5 text-[13px] disabled:opacity-60"
         >
           {tenants.map((tenant) => (
             <option key={tenant.id} value={tenant.id}>
@@ -73,11 +73,9 @@ export function TenantSwitcher({
             window.location.reload();
           });
         }}
-        className="w-8 h-8 rounded-full border border-outline-variant text-on-surface-variant hover:text-primary hover:border-primary hover:bg-surface-container-low transition-colors inline-flex items-center justify-center disabled:opacity-60"
+        className="h-[31px] w-[31px] shrink-0 rounded-sm border border-[var(--sidebar-border)] !bg-[var(--sidebar-field-bg)] text-[var(--sidebar-fg)] hover:text-[var(--sidebar-accent)] hover:border-[var(--sidebar-accent)] font-mono text-[15px] inline-flex items-center justify-center disabled:opacity-60"
       >
-        <span className="material-symbols-outlined" style={{ fontSize: "18px" }}>
-          add_moderator
-        </span>
+        +
       </button>
     </div>
   );

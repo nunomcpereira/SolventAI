@@ -38,9 +38,10 @@
     "isolatedModules": true
   },
   "include": [
-    "src",
+    ".next/types/**/*.ts",
     "next-env.d.ts",
-    ".next/types/**/*.ts"
+    "src",
+    ".next-e2e/types/**/*.ts"
   ],
   "exclude": [
     "node_modules"

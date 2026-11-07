@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis, CartesianGrid, Legend, ReferenceLine } from "recharts";
 import { type SimulationProjectionPoint } from "../../lib/services/simulationService.js";
 import { formatMonthTick } from "../../lib/format.js";
+import { CHART, AXIS_PROPS, TOOLTIP_PROPS, LEGEND_PROPS, compactTick } from "./chartTheme.js";
 
 export interface ChartEventMarker {
   monthInYear: number;
@@ -46,12 +47,12 @@ function EventBubble({
     // pointer-events), confining the clickable area to exactly what the user sees.
     <g pointerEvents="none">
       <g pointerEvents={onClick ? "auto" : "none"} style={{ cursor: onClick ? "pointer" : undefined }} onClick={onClick}>
-        <rect x={x - width / 2} y={top} width={width} height={height} rx={6} fill="#6b21a8" opacity={0.94} />
-        <text x={x} y={top + lineHeight - 2} textAnchor="middle" fontSize={10} fontWeight={600} fill="#ffffff">
+        <rect x={x - width / 2} y={top} width={width} height={height} rx={1} fill={CHART.event} />
+        <text x={x} y={top + lineHeight - 2} textAnchor="middle" fontSize={10} fontWeight={600} fill={CHART.onEvent}>
           {title}
         </text>
         {subtitle ? (
-          <text x={x} y={top + lineHeight * 2 - 2} textAnchor="middle" fontSize={10} fill="#ffffff">
+          <text x={x} y={top + lineHeight * 2 - 2} textAnchor="middle" fontSize={10} fill={CHART.onEvent}>
             {subtitle}
           </text>
         ) : null}
@@ -154,28 +155,24 @@ export function ComparisonChart({
         }}
         onMouseLeave={() => onHoverIndex?.(null)}
       >
-        <CartesianGrid stroke="#e0e3e5" vertical={false} />
+        <CartesianGrid stroke={CHART.grid} vertical={false} />
         <XAxis
           dataKey="month"
           type="category"
           allowDuplicatedCategory={false}
           tickFormatter={(value: number) => monthLabelByIndex.get(value) ?? String(value)}
-          tickLine={false}
-          axisLine={false}
-          fontSize={12}
-          stroke="#434656"
+          {...AXIS_PROPS}
         />
-        <YAxis yAxisId="liquidity" tickLine={false} axisLine={false} fontSize={12} stroke="#434656" width={70} />
+        <YAxis yAxisId="liquidity" {...AXIS_PROPS} tickFormatter={compactTick} width={48} />
         <YAxis
           yAxisId="cashflow"
           orientation="right"
-          tickLine={false}
-          axisLine={false}
-          fontSize={12}
-          stroke="#434656"
-          width={70}
+          {...AXIS_PROPS}
+          tickFormatter={compactTick}
+          width={48}
         />
         <Tooltip
+          {...TOOLTIP_PROPS}
           formatter={(value, name, item) => {
             const formatted = Number(value).toLocaleString();
             if (name === loanPaymentsLabel) {
@@ -188,13 +185,13 @@ export function ComparisonChart({
           }}
           labelFormatter={(m) => monthLabelByIndex.get(Number(m)) ?? String(m)}
         />
-        <Legend />
+        <Legend {...LEGEND_PROPS} />
         {events?.map((event, i) => (
           <ReferenceLine
             key={`${event.monthInYear}-${i}`}
             x={event.monthInYear}
             yAxisId="cashflow"
-            stroke="#9333ea"
+            stroke={CHART.event}
             strokeDasharray="4 4"
             style={{ pointerEvents: "none" }}
             label={
@@ -208,15 +205,15 @@ export function ComparisonChart({
             }
           />
         ))}
-        <Line yAxisId="liquidity" type="monotone" dataKey="base" name={baseLabel} stroke="#747688" strokeWidth={2} dot={false} />
-        <Line yAxisId="liquidity" type="monotone" dataKey="scenario" name={scenarioLabel} stroke="#0040e0" strokeWidth={2} dot={false} />
-        <Line yAxisId="liquidity" type="monotone" dataKey="debt" name={currentDebtLabel} stroke="#db2777" strokeWidth={2} dot={false} />
+        <Line yAxisId="liquidity" type="monotone" dataKey="base" name={baseLabel} stroke={CHART.muted} strokeWidth={2} dot={false} />
+        <Line yAxisId="liquidity" type="monotone" dataKey="scenario" name={scenarioLabel} stroke={CHART.accent} strokeWidth={2.25} dot={false} />
+        <Line yAxisId="liquidity" type="monotone" dataKey="debt" name={currentDebtLabel} stroke={CHART.debt} strokeWidth={2} dot={false} />
         {actualLabel ? (
-          <Line yAxisId="liquidity" type="linear" dataKey="actual" name={actualLabel} stroke="#c2410c" strokeWidth={2} dot={{ r: 4 }} connectNulls />
+          <Line yAxisId="liquidity" type="linear" dataKey="actual" name={actualLabel} stroke={CHART.actual} strokeWidth={1.5} dot={{ r: 3, strokeWidth: 1.5, fill: CHART.dotFill }} connectNulls />
         ) : null}
-        <Line yAxisId="cashflow" type="monotone" dataKey="income" name={incomeLabel} stroke="#0891b2" strokeWidth={2} dot={false} />
-        <Line yAxisId="cashflow" type="monotone" dataKey="loanPayments" name={loanPaymentsLabel} stroke="#c2410c" strokeWidth={2} dot={false} />
-        <Line yAxisId="cashflow" type="monotone" dataKey="expenses" name={expensesLabel} stroke="#15803d" strokeWidth={2} dot={false} />
+        <Line yAxisId="cashflow" type="monotone" dataKey="income" name={incomeLabel} stroke={CHART.income} strokeWidth={2} dot={false} />
+        <Line yAxisId="cashflow" type="monotone" dataKey="loanPayments" name={loanPaymentsLabel} stroke={CHART.loanPayments} strokeWidth={2} dot={false} />
+        <Line yAxisId="cashflow" type="monotone" dataKey="expenses" name={expensesLabel} stroke={CHART.expenses} strokeWidth={2} dot={false} />
       </LineChart>
     </ResponsiveContainer>
     {selectedEvent && closeLabel ? (
@@ -225,7 +222,7 @@ export function ComparisonChart({
         onClick={() => setSelectedEventIndex(null)}
       >
         <div
-          className="w-full max-w-sm bg-surface-container-lowest border border-outline-variant rounded-xl p-5 shadow-2xl flex flex-col gap-stack-sm"
+          className="w-full max-w-sm bg-surface-container-lowest border border-outline-variant rounded-sm p-5 shadow-2xl flex flex-col gap-stack-sm"
           onClick={(e) => e.stopPropagation()}
         >
           <div className="flex items-start justify-between gap-3">
@@ -234,7 +231,7 @@ export function ComparisonChart({
               type="button"
               onClick={() => setSelectedEventIndex(null)}
               aria-label={closeLabel}
-              className="w-7 h-7 shrink-0 rounded-full border border-outline-variant text-on-surface-variant hover:text-primary hover:border-primary transition-colors inline-flex items-center justify-center"
+              className="w-7 h-7 shrink-0 rounded-sm border border-outline-variant text-on-surface-variant hover:text-primary hover:border-primary transition-colors inline-flex items-center justify-center"
             >
               <span className="material-symbols-outlined" style={{ fontSize: "16px" }}>
                 close

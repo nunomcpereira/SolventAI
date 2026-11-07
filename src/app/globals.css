@@ -8,10 +8,16 @@
   src: url("/fonts/material-symbols-outlined.woff2") format("woff2");
 }
 
+/*
+ * Classic theme: original Solvent colour scheme (Stitch/Material tokens). Default.
+ * Token names are kept from the original Material scheme so every existing utility
+ * (bg-surface-container-low, text-on-surface-variant, ...) picks the new values up.
+ */
 @theme {
-  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-sans: var(--font-plex-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-serif: var(--font-plex-serif), ui-serif, Georgia, serif;
+  --font-mono: var(--font-plex-mono), ui-monospace, "SF Mono", Menlo, monospace;
 
-  /* Colors — from docs/design/.../solvent_ai/DESIGN.md (Stitch export) */
   --color-surface: #f7f9fb;
   --color-surface-dim: #d8dadc;
   --color-surface-bright: #f7f9fb;
@@ -47,69 +53,208 @@
   --color-on-background: #191c1e;
   --color-surface-variant: #e0e3e5;
 
-  /* Status colors, spec section "Components > Status Badges" */
   --color-status-healthy: #059669;
   --color-status-warning: #d97706;
   --color-status-danger: #dc2626;
 
-  /* Typography scale */
-  --text-display-lg: 48px;
-  --text-display-lg--line-height: 56px;
-  --text-display-lg--letter-spacing: -0.02em;
-  --text-display-lg-mobile: 32px;
-  --text-display-lg-mobile--line-height: 40px;
+  --text-display-lg: 44px;
+  --text-display-lg--line-height: 50px;
+  --text-display-lg--letter-spacing: -0.015em;
+  --text-display-lg-mobile: 30px;
+  --text-display-lg-mobile--line-height: 36px;
   --text-headline-md: 24px;
-  --text-headline-md--line-height: 32px;
-  --text-headline-sm: 20px;
-  --text-headline-sm--line-height: 28px;
-  --text-body-lg: 18px;
-  --text-body-lg--line-height: 28px;
-  --text-body-md: 16px;
-  --text-body-md--line-height: 24px;
+  --text-headline-md--line-height: 30px;
+  --text-headline-sm: 19px;
+  --text-headline-sm--line-height: 26px;
+  --text-body-lg: 17px;
+  --text-body-lg--line-height: 26px;
+  --text-body-md: 15px;
+  --text-body-md--line-height: 22px;
+  --text-body-sm: 14px;
+  --text-body-sm--line-height: 20px;
   --text-label-md: 14px;
   --text-label-md--line-height: 20px;
-  --text-label-sm: 12px;
+  --text-label-sm: 12.5px;
   --text-label-sm--line-height: 16px;
+  --text-label-xs: 11.5px;
+  --text-label-xs--line-height: 14px;
 
-  /* Spacing tokens (base 8px rhythm) */
   --spacing-stack-sm: 4px;
   --spacing-stack-md: 12px;
-  --spacing-stack-lg: 24px;
-  --spacing-gutter: 24px;
-  --spacing-container-padding-desktop: 40px;
+  --spacing-stack-lg: 28px;
+  --spacing-gutter: 20px;
+  --spacing-container-padding-desktop: 48px;
   --spacing-container-padding-mobile: 16px;
 
-  /* Radii — exact values from the Stitch mockups' tailwind.config (borderRadius) */
-  --radius-DEFAULT: 0.25rem;
-  --radius-lg: 0.5rem;
-  --radius-xl: 0.75rem;
+  /* Squared-off corners: ledgers have edges, not pills. */
+  --radius-sm: 1px;
+  --radius-DEFAULT: 2px;
+  --radius-md: 2px;
+  --radius-lg: 3px;
+  --radius-xl: 3px;
+  --radius-2xl: 4px;
+}
+
+/*
+ * Theme switch. `@theme` above is "classic" (the original Solvent colours) and is the
+ * default. `data-theme="ledger"` on <html> swaps in the warm paper / bottle-green palette.
+ * Utilities read var(--color-*), so overriding the variables re-themes everything.
+ * Sidebar and chart colours are separate variables because they don't map 1:1 onto
+ * the Material roles (the ledger sidebar is dark, the classic one light).
+ */
+:root {
+  --sidebar-bg: var(--color-surface-container-low);
+  --sidebar-fg: var(--color-on-surface-variant);
+  --sidebar-strong: var(--color-on-surface);
+  --sidebar-muted: var(--color-outline);
+  --sidebar-accent: var(--color-primary);
+  --sidebar-active-bg: var(--color-surface-container-high);
+  --sidebar-hover-bg: var(--color-surface-container);
+  --sidebar-border: var(--color-outline-variant);
+  --sidebar-field-bg: var(--color-surface-container-lowest);
+  --selection: #d5e3fc;
+
+  --chart-grid: #e0e3e5;
+  --chart-axis: #434656;
+  --chart-ink: #0040e0;
+  --chart-muted: #747688;
+  --chart-accent: #0040e0;
+  --chart-actual: #c2410c;
+  --chart-trend: #15803d;
+  --chart-debt: #db2777;
+  --chart-income: #0891b2;
+  --chart-expenses: #15803d;
+  --chart-loan-payments: #c2410c;
+  --chart-event: #9333ea;
+  --chart-on-event: #ffffff;
+  --chart-healthy: #059669;
+  --chart-warning: #f59e0b;
+  --chart-danger: #dc2626;
+  --chart-tooltip-bg: #ffffff;
+  --chart-tooltip-border: #c4c5d9;
+  --chart-tooltip-label: #434656;
+  --chart-cursor: #747688;
+  --chart-dot-fill: #ffffff;
+}
+
+:root[data-theme="ledger"] {
+  --color-surface: #f3f0e8;
+  --color-surface-dim: #ddd8cb;
+  --color-surface-bright: #faf8f3;
+  --color-surface-container-lowest: #fbfaf6;
+  --color-surface-container-low: #efebe1;
+  --color-surface-container: #e9e4d8;
+  --color-surface-container-high: #e3ddcf;
+  --color-surface-container-highest: #dad3c3;
+  --color-on-surface: #1a1916;
+  --color-on-surface-variant: #5f5a50;
+  --color-inverse-surface: #1a1916;
+  --color-inverse-on-surface: #f3f0e8;
+  --color-outline: #8d877a;
+  --color-outline-variant: #d6d0c2;
+  --color-primary: #1f4535;
+  --color-on-primary: #f6f3ea;
+  --color-primary-container: #dce5db;
+  --color-on-primary-container: #1f4535;
+  --color-inverse-primary: #a9c7b3;
+  --color-secondary: #6a5f4c;
+  --color-on-secondary: #f6f3ea;
+  --color-secondary-container: #e7e0cf;
+  --color-on-secondary-container: #3d3528;
+  --color-tertiary: #2f6a46;
+  --color-on-tertiary: #f6f3ea;
+  --color-tertiary-container: #2f6a46;
+  --color-on-tertiary-container: #e3efe5;
+  --color-error: #9c2f1f;
+  --color-on-error: #f6f3ea;
+  --color-error-container: #f3dcd4;
+  --color-on-error-container: #6e1f13;
+  --color-background: #f3f0e8;
+  --color-on-background: #1a1916;
+  --color-surface-variant: #e3ddcf;
+  --color-status-healthy: #2f6a46;
+  --color-status-warning: #a86a12;
+  --color-status-danger: #a3341f;
+
+  --sidebar-bg: #1a1916;
+  --sidebar-fg: #a8a293;
+  --sidebar-strong: #f3f0e8;
+  --sidebar-muted: #5f5a50;
+  --sidebar-accent: #7fa88d;
+  --sidebar-active-bg: transparent;
+  --sidebar-hover-bg: transparent;
+  --sidebar-border: #2e2c27;
+  --sidebar-field-bg: #24221e;
+  --selection: #d9e4c8;
+
+  --chart-grid: #e3ddcf;
+  --chart-axis: #8d877a;
+  --chart-ink: #1a1916;
+  --chart-muted: #a8a293;
+  --chart-accent: #1f4535;
+  --chart-actual: #b4532a;
+  --chart-trend: #5e8c6c;
+  --chart-debt: #a3341f;
+  --chart-income: #3f6b84;
+  --chart-expenses: #a07a1f;
+  --chart-loan-payments: #1a1916;
+  --chart-event: #6a4c74;
+  --chart-on-event: #f6f3ea;
+  --chart-healthy: #2f6a46;
+  --chart-warning: #a86a12;
+  --chart-danger: #a3341f;
+  --chart-tooltip-bg: #fbfaf6;
+  --chart-tooltip-border: #1a1916;
+  --chart-tooltip-label: #5f5a50;
+  --chart-cursor: #1a1916;
+  --chart-dot-fill: #fbfaf6;
 }
 
 body {
   background-color: var(--color-background);
   color: var(--color-on-background);
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "ss02";
 }
 
 @layer base {
+  h1,
+  h2,
+  h3 {
+    font-family: var(--font-serif);
+    font-weight: 500;
+    letter-spacing: -0.005em;
+  }
+
   input,
   select,
   textarea {
     border-radius: var(--radius-lg);
     border-color: var(--color-outline-variant);
+    background-color: var(--color-surface-container-lowest);
   }
 
   input:focus,
   select:focus,
   textarea:focus {
     outline: none;
-    border-color: var(--color-primary);
-    box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-primary) 18%, transparent);
+    border-color: var(--color-on-surface);
+    box-shadow: none;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
   }
 
   button {
-    transition-property: color, background-color, border-color, opacity, transform, box-shadow;
-    transition-duration: 160ms;
+    transition-property: color, background-color, border-color, opacity;
+    transition-duration: 120ms;
     transition-timing-function: ease;
+  }
+
+  ::selection {
+    background: var(--selection);
   }
 }
 
@@ -120,24 +265,48 @@ body {
     border-radius: var(--radius-xl);
   }
 
-  .surface-card-hover:hover {
-    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.05);
+  /* Small, quiet label above a figure. Replaces the shouty uppercase-tracked label. */
+  .eyebrow {
+    font-family: var(--font-sans);
+    font-size: 12.5px;
+    line-height: 16px;
+    font-weight: 500;
+    color: var(--color-on-surface-variant);
+    letter-spacing: 0.01em;
   }
 
-  .bg-surface-container-lowest.border.border-outline-variant.rounded-xl {
-    transition: box-shadow 160ms ease;
+  /* Money and percentages. */
+  .figure {
+    font-family: var(--font-mono);
+    font-variant-numeric: tabular-nums slashed-zero;
+    letter-spacing: -0.02em;
   }
 
-  .bg-surface-container-lowest.border.border-outline-variant.rounded-xl:hover {
-    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.05);
+  /* Section header: serif title sitting on a hairline. */
+  .section-rule {
+    border-bottom: 1px solid var(--color-on-surface);
+    padding-bottom: 8px;
   }
+}
+
+/* Shadows don't belong on paper. Flatten the ad-hoc ones used around the app. */
+.shadow-sm,
+.shadow,
+.shadow-md,
+.shadow-lg,
+.card-shadow {
+  box-shadow: none;
+}
+.shadow-xl,
+.shadow-2xl {
+  box-shadow: 0 1px 0 rgba(25, 28, 30, 0.08), 0 12px 32px -12px rgba(25, 28, 30, 0.28);
 }
 
 .material-symbols-outlined {
   font-family: "Material Symbols Outlined";
   font-weight: normal;
   font-style: normal;
-  font-size: 24px;
+  font-size: 22px;
   line-height: 1;
   letter-spacing: normal;
   text-transform: none;
@@ -145,15 +314,11 @@ body {
   white-space: nowrap;
   word-wrap: normal;
   direction: ltr;
-  font-variation-settings: "FILL" 0, "wght" 400, "GRAD" 0, "opsz" 24;
+  font-variation-settings: "FILL" 0, "wght" 300, "GRAD" 0, "opsz" 24;
 }
 
 .fill-icon {
   font-variation-settings: "FILL" 1;
-}
-
-.card-shadow {
-  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.05);
 }
 
 .hide-scrollbar::-webkit-scrollbar {

@@ -76,14 +76,9 @@ export function PrepaymentOptimizerCard({
   }, [loans, lumpSum, currency, strategy]);
 
   return (
-    <div className="bg-surface-container-lowest border border-outline-variant rounded-xl p-stack-lg shadow-sm">
+    <div className="bg-surface-container-lowest border border-outline-variant rounded-sm p-stack-lg shadow-sm">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-stack-md border-b border-outline-variant pb-stack-md">
         <div className="flex items-center gap-3">
-          <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center text-primary border border-primary/20">
-            <span className="material-symbols-outlined text-primary" style={{ fontSize: "28px" }}>
-              auto_awesome
-            </span>
-          </div>
           <div>
             <h2 className="text-headline-sm text-on-surface flex items-center gap-2">
               {labels.title}
@@ -138,7 +133,7 @@ export function PrepaymentOptimizerCard({
             return (
               <div
                 key={item.loanId}
-                className={`rounded-xl p-4 transition-all border ${
+                className={`rounded-sm p-4 transition-all border ${
                   isTop
                     ? "border-primary bg-primary/5 shadow-sm ring-1 ring-primary/20"
                     : "border-outline-variant bg-surface-container-lowest hover:border-outline"
@@ -160,11 +155,11 @@ export function PrepaymentOptimizerCard({
                           {CATEGORY_ICON[item.category] ?? "account_balance_wallet"}
                         </span>
                         <h4 className="text-title-md text-on-surface font-semibold">{item.loanName}</h4>
-                        <span className="text-label-sm px-2 py-0.5 rounded-full bg-surface-container text-on-surface-variant">
+                        <span className="text-label-sm px-2 py-0.5 rounded-sm bg-surface-container text-on-surface-variant">
                           {item.rateDescription}
                         </span>
                         {isTop && (
-                          <span className="text-label-sm font-semibold px-2.5 py-0.5 rounded-full bg-status-healthy/15 text-status-healthy flex items-center gap-1">
+                          <span className="text-label-sm font-semibold px-2.5 py-0.5 rounded-sm bg-status-healthy/15 text-status-healthy flex items-center gap-1">
                             <span className="material-symbols-outlined text-sm">stars</span>
                             {labels.bestOption}
                           </span>
@@ -181,19 +176,19 @@ export function PrepaymentOptimizerCard({
 
                   <div className="flex flex-wrap items-center gap-6 lg:justify-end">
                     <div className="text-left lg:text-right">
-                      <p className="text-label-xs text-on-surface-variant uppercase tracking-wider">
+                      <p className="eyebrow">
                         {labels.netSavings}
                       </p>
                       <p className="text-headline-sm text-status-healthy font-bold">
                         +{formatMoney(item.netSavings, lang)}
                       </p>
-                      <p className="text-label-xs text-on-surface-variant">
+                      <p className="eyebrow">
                         ({labels.interestSaved}: {formatMoney(item.interestSaved, lang)})
                       </p>
                     </div>
 
                     <div className="text-left lg:text-right min-w-[160px]">
-                      <p className="text-label-xs text-on-surface-variant uppercase tracking-wider">
+                      <p className="eyebrow">
                         {strategy === "reduce_payment" ? labels.paymentDrop : labels.termShortened}
                       </p>
                       <p className="text-title-md text-on-surface font-semibold">
@@ -207,7 +202,7 @@ export function PrepaymentOptimizerCard({
                           `${item.periodsSaved} ${labels.months}`
                         )}
                       </p>
-                      <p className="text-label-xs text-on-surface-variant">
+                      <p className="eyebrow">
                         {strategy === "reduce_payment" && item.newMonthlyPayment
                           ? `New: ${formatMoney(item.newMonthlyPayment, lang)} / mo`
                           : `${item.newRemainingPeriods} ${labels.months} left`}

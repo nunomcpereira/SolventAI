@@ -2,6 +2,7 @@
 
 import { Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis, CartesianGrid, Legend } from "recharts";
 import { formatMonthTick } from "../../lib/format.js";
+import { CHART, AXIS_PROPS, TOOLTIP_PROPS, LEGEND_PROPS, compactTick } from "./chartTheme.js";
 
 export interface LiquidityChartPoint {
   month: number;
@@ -54,29 +55,27 @@ export function LiquidityChart({
   return (
     <ResponsiveContainer width="100%" height={240}>
       <LineChart data={points} margin={{ top: 8, right: 8, bottom: 0, left: 0 }}>
-        <CartesianGrid stroke="#e0e3e5" vertical={false} />
+        <CartesianGrid stroke={CHART.grid} vertical={false} />
         <XAxis
           dataKey="month"
           type="category"
           allowDuplicatedCategory={false}
           tickFormatter={(value: number) => monthLabelByIndex.get(value) ?? String(value)}
-          tickLine={false}
-          axisLine={false}
-          fontSize={12}
-          stroke="#434656"
+          {...AXIS_PROPS}
         />
-        <YAxis tickLine={false} axisLine={false} fontSize={12} stroke="#434656" width={70} />
+        <YAxis {...AXIS_PROPS} tickFormatter={compactTick} width={48} />
         <Tooltip
+          {...TOOLTIP_PROPS}
           formatter={(value) => Number(value).toLocaleString()}
           labelFormatter={(m) => monthLabelByIndex.get(Number(m)) ?? String(m)}
         />
-        {actualLabel || trendLabel ? <Legend /> : null}
-        <Line type="monotone" dataKey="value" {...(projectedLabel ? { name: projectedLabel } : {})} stroke="#0040e0" strokeWidth={2} dot={false} />
+        {actualLabel || trendLabel ? <Legend {...LEGEND_PROPS} /> : null}
+        <Line type="monotone" dataKey="value" {...(projectedLabel ? { name: projectedLabel } : {})} stroke={CHART.ink} strokeWidth={2} dot={false} />
         {actualLabel ? (
-          <Line type="linear" dataKey="actual" name={actualLabel} stroke="#c2410c" strokeWidth={2} dot={{ r: 4 }} connectNulls />
+          <Line type="linear" dataKey="actual" name={actualLabel} stroke={CHART.actual} strokeWidth={1.5} dot={{ r: 3, strokeWidth: 1.5, fill: CHART.dotFill }} connectNulls />
         ) : null}
         {trendLabel && trendByDate.size > 0 ? (
-          <Line type="linear" dataKey="trend" name={trendLabel} stroke="#15803d" strokeWidth={2} strokeDasharray="6 4" dot={false} />
+          <Line type="linear" dataKey="trend" name={trendLabel} stroke={CHART.trend} strokeWidth={2} strokeDasharray="6 4" dot={false} />
         ) : null}
       </LineChart>
     </ResponsiveContainer>

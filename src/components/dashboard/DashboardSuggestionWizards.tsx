@@ -46,42 +46,39 @@ export function DashboardSuggestionWizards({
   const [activeWizard, setActiveWizard] = useState<"account" | "loan" | "scenario" | null>(null);
 
   return (
-    <div className="bg-surface-container-lowest border border-outline-variant rounded-xl p-6">
-      <div className="flex items-center gap-2 mb-4">
-        <span className="material-symbols-outlined text-primary" style={{ fontVariationSettings: "'FILL' 1" }}>
-          auto_awesome
-        </span>
+    <section>
+      <div className="border-b border-on-surface pb-2">
         <h3 className="text-headline-sm text-on-surface">{labels.suggestionsTitle}</h3>
       </div>
 
-      <p className="text-body-md text-on-surface-variant mb-5">{labels.suggestionsSubtitle}</p>
+      <p className="text-body-sm text-on-surface-variant mt-3 mb-4">{labels.suggestionsSubtitle}</p>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-5">
+      <div className="grid grid-cols-1 md:grid-cols-3 border-y border-outline-variant divide-y md:divide-y-0 md:divide-x divide-outline-variant mb-5">
         <button
           type="button"
           onClick={() => setActiveWizard("account")}
-          className="text-left p-4 rounded-lg border border-outline-variant bg-surface hover:border-primary transition-colors"
+          className="group text-left py-4 md:px-5 md:first:pl-0 hover:bg-surface-container-low transition-colors"
         >
-          <p className="text-label-md text-on-surface font-semibold">{labels.createAccountTitle}</p>
-          <p className="text-label-sm text-on-surface-variant mt-1">{labels.createAccountDesc}</p>
+          <p className="text-label-md text-on-surface font-medium flex items-baseline gap-2"><span className="font-mono text-[11px] text-primary">→</span><span className="group-hover:underline underline-offset-4 decoration-1">{labels.createAccountTitle}</span></p>
+          <p className="text-label-sm text-on-surface-variant mt-1 pl-5">{labels.createAccountDesc}</p>
         </button>
 
         <button
           type="button"
           onClick={() => setActiveWizard("loan")}
-          className="text-left p-4 rounded-lg border border-outline-variant bg-surface hover:border-primary transition-colors"
+          className="group text-left py-4 md:px-5 md:first:pl-0 hover:bg-surface-container-low transition-colors"
         >
-          <p className="text-label-md text-on-surface font-semibold">{labels.createLoanTitle}</p>
-          <p className="text-label-sm text-on-surface-variant mt-1">{labels.createLoanDesc}</p>
+          <p className="text-label-md text-on-surface font-medium flex items-baseline gap-2"><span className="font-mono text-[11px] text-primary">→</span><span className="group-hover:underline underline-offset-4 decoration-1">{labels.createLoanTitle}</span></p>
+          <p className="text-label-sm text-on-surface-variant mt-1 pl-5">{labels.createLoanDesc}</p>
         </button>
 
         <button
           type="button"
           onClick={() => setActiveWizard("scenario")}
-          className="text-left p-4 rounded-lg border border-outline-variant bg-surface hover:border-primary transition-colors"
+          className="group text-left py-4 md:px-5 md:first:pl-0 hover:bg-surface-container-low transition-colors"
         >
-          <p className="text-label-md text-on-surface font-semibold">{labels.createScenarioTitle}</p>
-          <p className="text-label-sm text-on-surface-variant mt-1">{labels.createScenarioDesc}</p>
+          <p className="text-label-md text-on-surface font-medium flex items-baseline gap-2"><span className="font-mono text-[11px] text-primary">→</span><span className="group-hover:underline underline-offset-4 decoration-1">{labels.createScenarioTitle}</span></p>
+          <p className="text-label-sm text-on-surface-variant mt-1 pl-5">{labels.createScenarioDesc}</p>
         </button>
       </div>
 
@@ -110,7 +107,7 @@ export function DashboardSuggestionWizards({
       {activeWizard === "scenario" ? (
         <ScenarioWizard createAction={actions.createScenario} labels={labels} onClose={() => setActiveWizard(null)} />
       ) : null}
-    </div>
+    </section>
   );
 }
 
@@ -135,7 +132,7 @@ function AccountWizard({
   const [minimumReserve, setMinimumReserve] = useState("0");
 
   return (
-    <form action={createAction} className="rounded-xl border border-outline-variant bg-surface-container-low p-4 flex flex-col gap-4">
+    <form action={createAction} className="rounded-sm border border-outline-variant bg-surface-container-low p-4 flex flex-col gap-4">
       <div className="flex items-center justify-between">
         <h4 className="text-label-md text-on-surface font-semibold">{labels.accountWizardTitle}</h4>
         <button type="button" onClick={onClose} className="text-label-sm text-on-surface-variant">
@@ -255,7 +252,7 @@ function LoanWizard({
 
   if (accounts.length === 0) {
     return (
-      <div className="rounded-xl border border-outline-variant bg-surface-container-low p-4">
+      <div className="rounded-sm border border-outline-variant bg-surface-container-low p-4">
         <div className="flex items-center justify-between mb-2">
           <h4 className="text-label-md text-on-surface font-semibold">{labels.loanWizardTitle}</h4>
           <button type="button" onClick={onClose} className="text-label-sm text-on-surface-variant">{labels.close}</button>
@@ -266,7 +263,7 @@ function LoanWizard({
   }
 
   return (
-    <form action={createAction} className="rounded-xl border border-outline-variant bg-surface-container-low p-4 flex flex-col gap-4">
+    <form action={createAction} className="rounded-sm border border-outline-variant bg-surface-container-low p-4 flex flex-col gap-4">
       <div className="flex items-center justify-between">
         <h4 className="text-label-md text-on-surface font-semibold">{labels.loanWizardTitle}</h4>
         <button type="button" onClick={onClose} className="text-label-sm text-on-surface-variant">{labels.close}</button>
@@ -471,7 +468,7 @@ function ScenarioWizard({
   const [name, setName] = useState("Aggressive Paydown '26");
 
   return (
-    <form action={createAction} className="rounded-xl border border-outline-variant bg-surface-container-low p-4 flex flex-col gap-4">
+    <form action={createAction} className="rounded-sm border border-outline-variant bg-surface-container-low p-4 flex flex-col gap-4">
       <div className="flex items-center justify-between">
         <h4 className="text-label-md text-on-surface font-semibold">{labels.scenarioWizardTitle}</h4>
         <button type="button" onClick={onClose} className="text-label-sm text-on-surface-variant">{labels.close}</button>

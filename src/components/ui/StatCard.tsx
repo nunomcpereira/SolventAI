@@ -5,7 +5,7 @@ export function StatCard({ label, value, hint }: { label: string; value: ReactNo
   return (
     <Card className="p-4">
       <CardLabel>{label}</CardLabel>
-      <div className="text-headline-sm text-on-background font-semibold">{value}</div>
+      <div className="figure text-[22px] leading-7 text-on-surface">{value}</div>
       {hint !== undefined ? <div className="text-label-sm text-on-surface-variant mt-1">{hint}</div> : null}
     </Card>
   );

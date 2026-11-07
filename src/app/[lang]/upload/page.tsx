@@ -68,12 +68,12 @@ export default async function UploadPage({ params }: { params: Promise<{ lang: s
   const mostRecentExtraction = mostRecent ? await getContractExtraction(mostRecent.id) : undefined;
 
   return (
-    <div className="flex flex-col items-center w-full">
+    <div className="flex flex-col w-full">
       <LiveRefresh scope="upload" />
-      <div className="w-full max-w-2xl">
-        <div className="text-center mb-stack-lg">
-          <h2 className="text-headline-md text-on-background mb-stack-sm">{dict.upload.title}</h2>
-          <p className="text-body-md text-on-surface-variant">{dict.upload.description}</p>
+      <div className="w-full max-w-3xl">
+        <div className="mb-stack-lg border-b border-on-surface pb-5">
+          <h2 className="text-display-lg-mobile lg:text-display-lg text-on-background">{dict.upload.title}</h2>
+          <p className="text-body-lg text-on-surface-variant mt-1 max-w-2xl">{dict.upload.description}</p>
         </div>
 
         {!settings.llmEnabled ? (
@@ -85,22 +85,20 @@ export default async function UploadPage({ params }: { params: Promise<{ lang: s
           </div>
         ) : null}
 
-        <div className="bg-surface-container-lowest border border-outline-variant rounded-xl shadow-sm overflow-hidden">
+        <div className="bg-surface-container-lowest border border-outline-variant rounded-sm shadow-sm overflow-hidden">
           <form action={boundAction} className="p-8 md:p-12 flex flex-col items-center text-center gap-stack-md">
             <label
               htmlFor="contract-file"
-              className="w-full border-2 border-dashed border-outline-variant hover:border-primary bg-surface rounded-xl p-12 transition-all cursor-pointer flex flex-col items-center gap-stack-md"
+              className="w-full border-2 border-dashed border-outline-variant hover:border-primary bg-surface rounded-sm p-12 transition-all cursor-pointer flex flex-col items-center gap-stack-md"
             >
-              <div className="h-16 w-16 rounded-full bg-primary-container text-on-primary-container flex items-center justify-center">
-                <span className="material-symbols-outlined text-3xl">upload_file</span>
-              </div>
+              <span className="font-mono text-[28px] leading-none text-outline">↑ .pdf</span>
               <div>
                 <p className="text-headline-sm text-on-surface mb-1">{dict.upload.dropHint}</p>
               </div>
               <input id="contract-file" type="file" name="file" accept="application/pdf" className="sr-only" required />
             </label>
 
-            <div className="flex items-center gap-2 text-tertiary bg-tertiary-container/10 px-4 py-2 rounded-full">
+            <div className="flex items-center gap-2 text-tertiary">
               <span className="material-symbols-outlined" style={{ fontSize: "18px" }}>
                 lock
               </span>
@@ -112,16 +110,12 @@ export default async function UploadPage({ params }: { params: Promise<{ lang: s
         </div>
 
         {mostRecent && mostRecentExtraction ? (
-          <div className="mt-stack-lg bg-surface-container-lowest border border-outline-variant rounded-xl overflow-hidden">
+          <div className="mt-stack-lg bg-surface-container-lowest border border-outline-variant rounded-sm overflow-hidden">
             <div className="bg-surface-container-low border-b border-outline-variant px-6 py-4 flex items-center gap-3">
-              <div className="h-8 w-8 rounded-full bg-tertiary/10 text-tertiary flex items-center justify-center">
-                <span className="material-symbols-outlined" style={{ fontSize: "18px" }}>
-                  check_circle
-                </span>
-              </div>
+              <span aria-hidden className="w-2 h-2 bg-status-healthy" />
               <div>
                 <h3 className="text-label-md text-on-surface font-semibold">{dict.upload.reviewTitle}</h3>
-                <p className="text-label-sm text-on-surface-variant">{mostRecent.fileName}</p>
+                <p className="eyebrow">{mostRecent.fileName}</p>
               </div>
             </div>
 
@@ -135,7 +129,7 @@ export default async function UploadPage({ params }: { params: Promise<{ lang: s
                     className={`bg-surface border rounded-lg p-4 flex flex-col justify-between ${flagged ? "border-status-warning" : "border-outline-variant"}`}
                   >
                     <div className="flex justify-between items-start mb-2">
-                      <span className="text-label-sm text-on-surface-variant uppercase tracking-wider">{fieldLabel(dict, key)}</span>
+                      <span className="eyebrow">{fieldLabel(dict, key)}</span>
                       <span className="material-symbols-outlined text-outline-variant" style={{ fontSize: "16px" }}>
                         {icon}
                       </span>
@@ -157,7 +151,7 @@ export default async function UploadPage({ params }: { params: Promise<{ lang: s
               <input type="hidden" name="contractDocumentId" value={mostRecent.id} />
               
               <div className="grid grid-cols-1 md:grid-cols-3 gap-stack-md">
-                <label className="flex flex-col gap-1 text-label-sm text-on-surface-variant">
+                <label className="flex flex-col gap-1 eyebrow">
                   {dict.loans.name}
                   <input
                     type="text"
@@ -167,7 +161,7 @@ export default async function UploadPage({ params }: { params: Promise<{ lang: s
                     className="border border-outline-variant rounded-lg px-3 py-2 text-body-md bg-surface text-on-surface"
                   />
                 </label>
-                <label className="flex flex-col gap-1 text-label-sm text-on-surface-variant">
+                <label className="flex flex-col gap-1 eyebrow">
                   {dict.loans.startDate}
                   <input
                     type="date"
@@ -177,7 +171,7 @@ export default async function UploadPage({ params }: { params: Promise<{ lang: s
                     className="border border-outline-variant rounded-lg px-3 py-2 text-body-md bg-surface text-on-surface"
                   />
                 </label>
-                <label className="flex flex-col gap-1 text-label-sm text-on-surface-variant">
+                <label className="flex flex-col gap-1 eyebrow">
                   {dict.loans.sourceAccount}
                   <select
                     name="sourceAccountId"
@@ -269,21 +263,17 @@ export default async function UploadPage({ params }: { params: Promise<{ lang: s
           {documents.length === 0 ? (
             <p className="text-body-md text-on-surface-variant">{dict.upload.empty}</p>
           ) : (
-            <div className="flex flex-col gap-stack-sm">
+            <div className="flex flex-col border-t border-on-surface divide-y divide-outline-variant">
               {[...documents].reverse().map((doc) => (
                 <div
                   key={doc.id}
-                  className="bg-surface-container-lowest border border-outline-variant rounded-xl p-4 flex items-center justify-between"
+                  className="py-3 flex items-center justify-between gap-4"
                 >
                   <div className="flex items-center gap-4">
-                    <div className="h-10 w-10 rounded-full bg-primary-container text-on-primary-container flex items-center justify-center">
-                      <span className="material-symbols-outlined" style={{ fontSize: "20px" }}>
-                        description
-                      </span>
-                    </div>
+                    <span aria-hidden className="font-mono text-[11px] text-outline border border-outline-variant px-1 py-0.5">PDF</span>
                     <div>
                       <p className="text-label-md text-on-surface font-semibold">{doc.fileName}</p>
-                      <p className="text-label-sm text-on-surface-variant">{formatDate(doc.uploadedAt.toString(), lang)}</p>
+                      <p className="eyebrow">{formatDate(doc.uploadedAt.toString(), lang)}</p>
                       {doc.status === "extracting" && doc.chunkTotal && doc.chunkLabel ? (
                         <p className="text-label-sm text-primary mt-1">
                           {dict.upload.analyzingSection

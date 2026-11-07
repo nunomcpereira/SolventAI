@@ -2,6 +2,7 @@
 
 import { Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis, CartesianGrid, Legend } from "recharts";
 import { formatMonthTick } from "../../lib/format.js";
+import { CHART, AXIS_PROPS, TOOLTIP_PROPS, LEGEND_PROPS, compactTick } from "./chartTheme.js";
 
 export interface BalanceDriftPoint {
   date: string;
@@ -41,26 +42,24 @@ export function BalanceDriftChart({
     <div className="h-[280px] w-full min-w-0">
       <ResponsiveContainer width="100%" height="100%">
         <LineChart data={points} margin={{ top: 8, right: 12, bottom: 8, left: 8 }}>
-        <CartesianGrid stroke="#e0e3e5" vertical={false} />
+        <CartesianGrid stroke={CHART.grid} vertical={false} />
         <XAxis
           dataKey="date"
           tickFormatter={(value: string) => formatMonthTick(value, lang)}
-          tickLine={false}
-          axisLine={false}
-          fontSize={12}
-          stroke="#434656"
+          {...AXIS_PROPS}
         />
-        <YAxis tickLine={false} axisLine={false} fontSize={12} stroke="#434656" width={84} />
+        <YAxis {...AXIS_PROPS} tickFormatter={compactTick} width={52} />
         <Tooltip
+          {...TOOLTIP_PROPS}
           formatter={(value) => Number(value).toLocaleString()}
           labelFormatter={(value) => formatMonthTick(String(value), lang)}
         />
-        <Legend />
+        <Legend {...LEGEND_PROPS} />
         <Line
           type="monotone"
           dataKey="projected"
           name={projectedLabel}
-          stroke="#0040e0"
+          stroke={CHART.ink}
           strokeWidth={2}
           dot={false}
           connectNulls
@@ -69,9 +68,9 @@ export function BalanceDriftChart({
           type="linear"
           dataKey="actual"
           name={actualLabel}
-          stroke="#c2410c"
+          stroke={CHART.actual}
           strokeWidth={2}
-          dot={{ r: 4 }}
+          dot={{ r: 3, strokeWidth: 1.5, fill: CHART.dotFill }}
           connectNulls
         />
         </LineChart>
