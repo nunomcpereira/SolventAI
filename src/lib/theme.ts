@@ -1,4 +1,4 @@
-export const THEMES = ["classic", "ledger", "original"] as const;
+export const THEMES = ["classic", "classic-dark", "ledger", "ledger-dark", "original"] as const;
 export type Theme = (typeof THEMES)[number];
 
 export const DEFAULT_THEME: Theme = "classic";

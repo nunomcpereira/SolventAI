@@ -13,7 +13,7 @@ const TENANT = process.env.SOLVENT_DOCS_TENANT ?? "demo-2";
 const DEFAULT_THEME = "classic";
 const OUT_DIR = fileURLToPath(new URL("../static/img/screenshots/", import.meta.url));
 
-/** @type {{ name: string; path: string; theme?: "classic" | "ledger" | "original"; mobile?: boolean; fullPage?: boolean; before?: (page: import("@playwright/test").Page) => Promise<void> }[]} */
+/** @type {{ name: string; path: string; theme?: "classic" | "classic-dark" | "ledger" | "ledger-dark" | "original"; mobile?: boolean; fullPage?: boolean; before?: (page: import("@playwright/test").Page) => Promise<void> }[]} */
 const SHOTS = [
   { name: "dashboard", path: "/en/dashboard" },
   { name: "dashboard-full", path: "/en/dashboard", fullPage: true },

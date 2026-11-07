@@ -338,7 +338,9 @@
     "close": "Schließen",
     "theme": "Design",
     "themeClassic": "Klassisch",
+    "themeClassicDark": "Klassisch (dunkel)",
     "themeLedger": "Kassenbuch",
+    "themeLedgerDark": "Kassenbuch (dunkel)",
     "themeOriginal": "Original"
   },
   "wizards": {

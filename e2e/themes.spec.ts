@@ -1,6 +1,6 @@
 import { test, expect } from "@playwright/test";
 
-const THEMES = ["classic", "ledger", "original"] as const;
+const THEMES = ["classic", "classic-dark", "ledger", "ledger-dark", "original"] as const;
 const PAGES = ["dashboard", "accounts", "loans", "simulation", "settings", "upload"] as const;
 
 test.describe("Themes", () => {

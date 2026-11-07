@@ -56,6 +56,7 @@
   --color-status-healthy: #059669;
   --color-status-warning: #d97706;
   --color-status-danger: #dc2626;
+  --color-status-success: #059669;
 
   --text-display-lg: 44px;
   --text-display-lg--line-height: 50px;
@@ -175,6 +176,7 @@
   --color-status-healthy: #2f6a46;
   --color-status-warning: #a86a12;
   --color-status-danger: #a3341f;
+  --color-status-success: #2f6a46;
 
   --sidebar-bg: #1a1916;
   --sidebar-fg: #a8a293;
@@ -208,6 +210,153 @@
   --chart-tooltip-label: #5f5a50;
   --chart-cursor: #1a1916;
   --chart-dot-fill: #fbfaf6;
+}
+
+/*
+ * Dark variants. Same layout and typography as classic/ledger; only colours change.
+ * `color-scheme: dark` makes native controls (date pickers, select menus, scrollbars) match.
+ */
+:root[data-theme="classic-dark"],
+:root[data-theme="ledger-dark"] {
+  color-scheme: dark;
+}
+
+:root[data-theme="classic-dark"] {
+  --color-surface: #111318;
+  --color-surface-dim: #111318;
+  --color-surface-bright: #373a42;
+  --color-surface-container-lowest: #171a20;
+  --color-surface-container-low: #1b1e25;
+  --color-surface-container: #20232a;
+  --color-surface-container-high: #282b33;
+  --color-surface-container-highest: #32353d;
+  --color-on-surface: #e2e2e9;
+  --color-on-surface-variant: #b3b6c4;
+  --color-inverse-surface: #e2e2e9;
+  --color-inverse-on-surface: #2e3036;
+  --color-outline: #8c8f9d;
+  --color-outline-variant: #393c47;
+  --color-primary: #a8b8ff;
+  --color-on-primary: #0b1a5c;
+  --color-primary-container: #233a8f;
+  --color-on-primary-container: #dde1ff;
+  --color-inverse-primary: #0040e0;
+  --color-secondary: #b9c7df;
+  --color-on-secondary: #233144;
+  --color-secondary-container: #39475b;
+  --color-on-secondary-container: #d5e3fc;
+  --color-tertiary: #6fdbac;
+  --color-on-tertiary: #003826;
+  --color-tertiary-container: #00513a;
+  --color-on-tertiary-container: #8cf8c6;
+  --color-error: #ffb4ab;
+  --color-on-error: #690005;
+  --color-error-container: #93000a;
+  --color-on-error-container: #ffdad6;
+  --color-background: #111318;
+  --color-on-background: #e2e2e9;
+  --color-surface-variant: #32353d;
+  --color-status-healthy: #34d399;
+  --color-status-warning: #fbbf24;
+  --color-status-danger: #f87171;
+  --color-status-success: #34d399;
+  --selection: #233a8f;
+
+  --chart-grid: #282b33;
+  --chart-axis: #9ea1ae;
+  --chart-ink: #a8b8ff;
+  --chart-muted: #6e7180;
+  --chart-accent: #a8b8ff;
+  --chart-actual: #fb923c;
+  --chart-trend: #4ade80;
+  --chart-debt: #f472b6;
+  --chart-income: #22d3ee;
+  --chart-expenses: #4ade80;
+  --chart-loan-payments: #fb923c;
+  --chart-event: #c084fc;
+  --chart-on-event: #111318;
+  --chart-healthy: #34d399;
+  --chart-warning: #fbbf24;
+  --chart-danger: #f87171;
+  --chart-tooltip-bg: #171a20;
+  --chart-tooltip-border: #393c47;
+  --chart-tooltip-label: #b3b6c4;
+  --chart-cursor: #8c8f9d;
+  --chart-dot-fill: #171a20;
+}
+
+:root[data-theme="ledger-dark"] {
+  --color-surface: #171612;
+  --color-surface-dim: #171612;
+  --color-surface-bright: #3a3830;
+  --color-surface-container-lowest: #1d1c17;
+  --color-surface-container-low: #22211b;
+  --color-surface-container: #292720;
+  --color-surface-container-high: #302e27;
+  --color-surface-container-highest: #3a3830;
+  --color-on-surface: #ece7da;
+  --color-on-surface-variant: #aba493;
+  --color-inverse-surface: #ece7da;
+  --color-inverse-on-surface: #1a1916;
+  --color-outline: #7f796c;
+  --color-outline-variant: #3a372f;
+  --color-primary: #93c3a3;
+  --color-on-primary: #0f2519;
+  --color-primary-container: #25412f;
+  --color-on-primary-container: #cfe7d6;
+  --color-inverse-primary: #1f4535;
+  --color-secondary: #cdbfa5;
+  --color-on-secondary: #2c2618;
+  --color-secondary-container: #423a2a;
+  --color-on-secondary-container: #e9dfc9;
+  --color-tertiary: #93c3a3;
+  --color-on-tertiary: #0f2519;
+  --color-tertiary-container: #25412f;
+  --color-on-tertiary-container: #cfe7d6;
+  --color-error: #f0a693;
+  --color-on-error: #4d150a;
+  --color-error-container: #5c2214;
+  --color-on-error-container: #f8d9cf;
+  --color-background: #171612;
+  --color-on-background: #ece7da;
+  --color-surface-variant: #302e27;
+  --color-status-healthy: #8cc59b;
+  --color-status-warning: #e0aa4f;
+  --color-status-danger: #e8806a;
+  --color-status-success: #8cc59b;
+
+  --sidebar-bg: #0f0e0b;
+  --sidebar-fg: #a39d8d;
+  --sidebar-strong: #f3f0e8;
+  --sidebar-muted: #5f5a50;
+  --sidebar-accent: #93c3a3;
+  --sidebar-active-bg: transparent;
+  --sidebar-hover-bg: transparent;
+  --sidebar-border: #26241e;
+  --sidebar-field-bg: #1d1c17;
+  --selection: #25412f;
+
+  --chart-grid: #2c2a23;
+  --chart-axis: #8d877a;
+  --chart-ink: #ece7da;
+  --chart-muted: #6c675b;
+  --chart-accent: #93c3a3;
+  --chart-actual: #e2895c;
+  --chart-trend: #93c3a3;
+  --chart-debt: #e8806a;
+  --chart-income: #82b2cf;
+  --chart-expenses: #d6b45d;
+  --chart-loan-payments: #ece7da;
+  --chart-event: #bb98c7;
+  --chart-on-event: #171612;
+  --chart-healthy: #8cc59b;
+  --chart-warning: #e0aa4f;
+  --chart-danger: #e8806a;
+  --chart-tooltip-bg: #1d1c17;
+  --chart-tooltip-border: #ece7da;
+  --chart-tooltip-label: #aba493;
+  --chart-cursor: #ece7da;
+  --chart-dot-fill: #1d1c17;
 }
 
 /*

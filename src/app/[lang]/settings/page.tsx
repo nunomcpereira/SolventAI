@@ -6,6 +6,7 @@ import { getSettings } from "../../../lib/services/settingsService.js";
 import { isLocalEndpoint } from "../../../lib/ai/extraction/llmClient.js";
 import { CustomTypeListEditor } from "../../../components/settings/CustomTypeListEditor.js";
 import { saveSettingsAction } from "./actions.js";
+import { themeOptions } from "../../../components/theme/themeOptions.js";
 import { ThemeSelect } from "../../../components/theme/ThemeSelect.js";
 import { getTheme } from "../../../lib/themeServer.js";
 
@@ -272,11 +273,7 @@ export default async function SettingsPage({ params }: { params: Promise<{ lang:
               variant="form"
               initialTheme={theme}
               label={dict.common.theme}
-              options={[
-                { value: "classic", label: dict.common.themeClassic },
-                { value: "ledger", label: dict.common.themeLedger },
-                { value: "original", label: dict.common.themeOriginal },
-              ]}
+              options={themeOptions(dict.common)}
               className="max-w-xs"
             />
           </Section>

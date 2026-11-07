@@ -338,7 +338,9 @@
     "close": "Fermer",
     "theme": "Thème",
     "themeClassic": "Classique",
+    "themeClassicDark": "Classique (sombre)",
     "themeLedger": "Registre",
+    "themeLedgerDark": "Registre (sombre)",
     "themeOriginal": "Original"
   },
   "wizards": {

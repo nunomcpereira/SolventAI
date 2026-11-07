@@ -8,6 +8,7 @@ import { type Dictionary } from "../../lib/i18n/getDictionary.js";
 import { buildNavItems } from "../shell/navItems.js";
 import { OriginalSidebarNav as SidebarNav, OriginalBottomNav as BottomNav } from "./OriginalSidebarNav.js";
 import { TenantSwitcher } from "../shell/TenantSwitcher.js";
+import { themeOptions } from "../theme/themeOptions.js";
 import { ThemeSelect } from "../theme/ThemeSelect.js";
 import { type Theme } from "../../lib/theme.js";
 import { listTenants, getCurrentTenantId } from "../../lib/services/tenantService.js";
@@ -65,11 +66,7 @@ export async function OriginalAppShell({
             variant="form"
             initialTheme={theme}
             label={dict.common.theme}
-            options={[
-              { value: "classic", label: dict.common.themeClassic },
-              { value: "ledger", label: dict.common.themeLedger },
-              { value: "original", label: dict.common.themeOriginal },
-            ]}
+            options={themeOptions(dict.common)}
           />
         </div>
       </aside>

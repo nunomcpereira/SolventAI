@@ -5,6 +5,7 @@ import { buildNavItems } from "./navItems.js";
 import { SidebarNav, BottomNav } from "./SidebarNav.js";
 import { TenantSwitcher } from "./TenantSwitcher.js";
 import { listTenants, getCurrentTenantId } from "../../lib/services/tenantService.js";
+import { themeOptions } from "../theme/themeOptions.js";
 import { ThemeSelect } from "../theme/ThemeSelect.js";
 import { type Theme } from "../../lib/theme.js";
 
@@ -71,11 +72,7 @@ export async function AppShell({
           <ThemeSelect
             initialTheme={theme}
             label={dict.common.theme}
-            options={[
-              { value: "classic", label: dict.common.themeClassic },
-              { value: "ledger", label: dict.common.themeLedger },
-              { value: "original", label: dict.common.themeOriginal },
-            ]}
+            options={themeOptions(dict.common)}
           />
         </div>
       </aside>

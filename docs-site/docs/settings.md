@@ -21,7 +21,7 @@ title: Settings
 
 ## Theme
 
-Three colour themes, switchable from the bottom of the sidebar or from the **Theme** section here. The choice is remembered in this browser.
+Five themes, switchable from the bottom of the sidebar or from the **Theme** section here. The choice is remembered in this browser.
 
 | Classic (default) | Ledger | Original |
 |---|---|---|
@@ -30,6 +30,7 @@ Three colour themes, switchable from the bottom of the sidebar or from the **The
 - **Classic:** the original blue colours with the current layout
 - **Ledger:** warm paper colours, a bottle-green accent and a dark sidebar
 - **Original:** the look before the redesign, including its sidebar, top bar and dashboard
+- **Classic (dark)** and **Ledger (dark):** the same two palettes for dark surroundings
 
 ## Security & AI engine
 
