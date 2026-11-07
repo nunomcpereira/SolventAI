@@ -439,6 +439,8 @@
     "trackingNote": "Les modifications sont suivies depuis le premier enregistrement de chaque élément avec l’historique actif ; les valeurs antérieures ne sont pas disponibles.",
     "eventBalanceOverride": "Ajustement du solde",
     "eventAccountTransfer": "Virement entre comptes",
+    "showAllFields": "Afficher tous les champs",
+    "changed": "modifié",
     "types": {
       "account": "Compte",
       "income": "Revenu",

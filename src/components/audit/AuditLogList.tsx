@@ -1,5 +1,5 @@
 import type { Dictionary } from "../../lib/i18n/getDictionary.js";
-import { type AuditEvent } from "../../lib/audit/auditLog.js";
+import { allFields, type AuditEvent } from "../../lib/audit/auditLog.js";
 import { entityName, fieldLabel, formatAuditValue, type AuditNames } from "../../lib/audit/formatAudit.js";
 import { formatDayHeading, formatTime, localDayKey } from "../../lib/format.js";
 
@@ -64,6 +64,28 @@ export function AuditLogList({
                       ))}
                     </ul>
                   ) : null}
+                  <details className="mt-1.5 group">
+                    <summary className="cursor-pointer select-none text-label-sm text-primary w-fit">{dict.audit.showAllFields}</summary>
+                    <dl className="mt-2 border-l border-outline-variant pl-3 flex flex-col gap-0.5">
+                      {allFields(event).map((field) => (
+                        <div key={field.path} className={`text-body-sm grid grid-cols-1 sm:grid-cols-[minmax(9rem,14rem)_1fr] gap-x-3 ${field.changed ? "font-medium" : ""}`}>
+                          <dt className="text-on-surface-variant">{fieldLabel(field.path, dict)}</dt>
+                          <dd className="min-w-0 break-words">
+                            {field.changed ? (
+                              <>
+                                <span className="text-on-surface-variant">{formatAuditValue(field.path, field.before, lang, dict, names)}</span>
+                                <span aria-hidden className="mx-1.5 text-outline">→</span>
+                                <span className="text-on-surface">{formatAuditValue(field.path, field.after, lang, dict, names)}</span>
+                                <span className="ml-2 text-label-sm text-primary">◀ {dict.audit.changed}</span>
+                              </>
+                            ) : (
+                              <span className="text-on-surface">{formatAuditValue(field.path, field.after, lang, dict, names)}</span>
+                            )}
+                          </dd>
+                        </div>
+                      ))}
+                    </dl>
+                  </details>
                 </div>
               </li>
             ))}

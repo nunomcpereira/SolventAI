@@ -23,6 +23,8 @@ export interface AuditEvent {
   action: AuditAction;
   /** The entity's state after the change (before it, for deletions). */
   snapshot: unknown;
+  /** The entity's state just before an update; absent for created/deleted. */
+  previousSnapshot?: unknown;
   /** Field-level differences; empty for created/deleted. */
   changes: AuditChange[];
 }
@@ -60,6 +62,31 @@ function flatten(value: unknown, prefix = "", out: Flat = new Map()): Flat {
 }
 
 const same = (a: unknown, b: unknown) => JSON.stringify(a) === JSON.stringify(b);
+
+export interface AuditField {
+  path: string;
+  before: unknown;
+  after: unknown;
+  changed: boolean;
+}
+
+/**
+ * Every field of the entity for the "show all fields" view, in snapshot order: for an update,
+ * each field's value before and after (changed ones flagged); for created/deleted, the value
+ * at that moment (as `after`).
+ */
+export function allFields(event: Pick<AuditEvent, "snapshot" | "previousSnapshot">): AuditField[] {
+  const after = flatten(event.snapshot);
+  const before = event.previousSnapshot !== undefined ? flatten(event.previousSnapshot) : undefined;
+  const paths = [...after.keys(), ...[...(before?.keys() ?? [])].filter((k) => !after.has(k))];
+  return paths
+    .filter((path) => path !== "id")
+    .map((path) => {
+      const a = after.get(path);
+      const b = before ? before.get(path) : a;
+      return { path, before: b, after: a, changed: before !== undefined && !same(a, b) };
+    });
+}
 
 /** Field-level differences between two snapshots of the same entity. */
 export function diffSnapshots(before: unknown, after: unknown): AuditChange[] {
@@ -100,7 +127,7 @@ export function buildAuditEvents(entries: readonly EntityHistoryEntry[]): AuditE
       continue;
     }
     const changes = diffSnapshots(previous.snapshot, entry.snapshot);
-    if (changes.length > 0) events.push({ ...base(entry), action: "updated", changes });
+    if (changes.length > 0) events.push({ ...base(entry), action: "updated", changes, previousSnapshot: previous.snapshot });
   }
   return events.reverse();
 }

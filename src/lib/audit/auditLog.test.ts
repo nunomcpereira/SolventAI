@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { buildAuditEvents, diffSnapshots } from "./auditLog.js";
+import { allFields, buildAuditEvents, diffSnapshots } from "./auditLog.js";
 import { type EntityHistoryEntry } from "../../domain/history/entityHistory.js";
 
 let seq = 0;
@@ -83,5 +83,28 @@ describe("baselines", () => {
     expect(events).toHaveLength(1);
     expect(events[0]?.action).toBe("updated");
     expect(events[0]?.changes).toEqual([{ path: "rate.currentIndexRate", before: "0.02683", after: "0.03016" }]);
+  });
+});
+
+describe("allFields", () => {
+  it("lists every field of an update with before/after, flagging only what changed", () => {
+    const before = { id: "a1", name: "Crypto", initialBalance: money("7427000"), active: true };
+    const [event] = buildAuditEvents([
+      entry({ entityType: "account", entityId: "a1", snapshot: before }),
+      entry({ entityType: "account", entityId: "a1", snapshot: { ...before, active: false } }),
+    ]);
+    expect(allFields(event!)).toEqual([
+      { path: "name", before: "Crypto", after: "Crypto", changed: false },
+      { path: "initialBalance", before: money("7427000"), after: money("7427000"), changed: false },
+      { path: "active", before: true, after: false, changed: true },
+    ]);
+  });
+
+  it("lists the item as it was for created and deleted entries, and keeps removed fields", () => {
+    expect(allFields({ snapshot: { id: "x", name: "Plan" } })).toEqual([{ path: "name", before: "Plan", after: "Plan", changed: false }]);
+    expect(allFields({ snapshot: { name: "A" }, previousSnapshot: { name: "A", endDate: "2027-01-01" } })).toEqual([
+      { path: "name", before: "A", after: "A", changed: false },
+      { path: "endDate", before: "2027-01-01", after: undefined, changed: true },
+    ]);
   });
 });

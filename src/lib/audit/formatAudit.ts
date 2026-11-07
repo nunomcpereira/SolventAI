@@ -40,7 +40,16 @@ function enumLabel(key: string, value: string, dict: Dict): string | undefined {
     amortizationType: { french: w.amortFrench, constant_amortization: w.amortConstant, interest_only: w.amortInterestOnly },
     type: { fixed: w.rateFixed, variable: w.rateVariable, mixed: w.rateMixed },
   };
-  return byKey[key]?.[value];
+  const direct = byKey[key]?.[value];
+  if (direct) return direct;
+  // Account "type" and loan "type"/"category" values share keys with other enums; fall back to
+  // the configured type names when the value is one of them.
+  if (key === "type" || key === "category") {
+    const accountNames = st.accountTypeNames as Record<string, string>;
+    const loanNames = st.loanTypeNames as Record<string, string>;
+    return accountNames[value] ?? loanNames[value];
+  }
+  return undefined;
 }
 
 const lastKey = (path: string) => path.replace(/\[[^\]]*\]$/, "").split(".").pop() ?? path;

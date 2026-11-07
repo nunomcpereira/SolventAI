@@ -439,6 +439,8 @@
     "trackingNote": "Changes are tracked from the moment each item was first saved with history enabled; earlier values are not available.",
     "eventBalanceOverride": "Balance override",
     "eventAccountTransfer": "Account transfer",
+    "showAllFields": "Show all fields",
+    "changed": "changed",
     "types": {
       "account": "Account",
       "income": "Income",

@@ -439,6 +439,8 @@
     "trackingNote": "Los cambios se registran desde que cada elemento se guardó con el historial activo; los valores anteriores no están disponibles.",
     "eventBalanceOverride": "Ajuste de saldo",
     "eventAccountTransfer": "Transferencia entre cuentas",
+    "showAllFields": "Ver todos los campos",
+    "changed": "modificado",
     "types": {
       "account": "Cuenta",
       "income": "Ingreso",
