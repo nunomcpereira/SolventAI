@@ -190,7 +190,7 @@ export default async function LoansPage({
           const fixedRatePeriodsInput = loan.rate.type === "mixed" ? String(loan.rate.fixedPeriodCount) : "12";
 
           return (
-            <div key={loan.id} className="bg-surface-container-lowest border border-outline-variant rounded-sm p-stack-lg shadow-sm flex flex-col">
+            <div key={loan.id} className="bg-surface-container-lowest border border-outline-variant rounded-sm p-4 md:p-stack-lg shadow-sm flex flex-col">
               <div className="flex justify-between items-start mb-stack-md border-b border-outline-variant pb-stack-md">
                 <div className="flex items-center gap-3">
                   <div>
@@ -595,13 +595,13 @@ export default async function LoansPage({
         />
       ) : null}
 
-      <div className="bg-surface-container-lowest border border-outline-variant rounded-sm p-6">
+      <div className="bg-surface-container-lowest border border-outline-variant rounded-sm p-4 md:p-6">
         <h2 className="text-headline-sm text-on-surface mb-stack-md">{dict.loans.recurringExpensesTitle}</h2>
         {expenses.length === 0 ? (
           <p className="text-body-md text-on-surface-variant">{dict.loans.noRecurringExpenses}</p>
         ) : (
           <div className="overflow-x-auto">
-            <table className="w-full text-left text-body-md">
+            <table className="stack-table w-full text-left text-body-md">
               <thead>
                 <tr className="text-label-sm text-on-surface-variant border-b border-outline-variant">
                   <th className="py-2 pr-4 font-normal">{dict.loans.account}</th>

@@ -553,6 +553,60 @@ body {
   }
 }
 
+/*
+ * Recurring income/expense tables on phones: each row becomes a compact card instead of a
+ * 7-column table scrolled sideways (where the edit/delete buttons ended up off-screen).
+ * Columns: account, amount, frequency, category, start, end, actions.
+ */
+@media (max-width: 767px) {
+  .stack-table thead {
+    display: none;
+  }
+  .stack-table,
+  .stack-table tbody {
+    display: block;
+  }
+  .stack-table tr {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    column-gap: 0.5rem;
+    padding: 0.75rem 0;
+  }
+  .stack-table td {
+    display: block;
+    padding: 0 !important;
+  }
+  .stack-table td:nth-child(1) {
+    flex: 1 1 55%;
+    font-weight: 500;
+  }
+  .stack-table td:nth-child(2) {
+    flex: 0 0 auto;
+    margin-left: auto;
+    font-family: var(--font-mono);
+  }
+  .stack-table td:nth-child(n + 3):nth-child(-n + 6) {
+    font-size: var(--text-label-sm);
+    color: var(--color-on-surface-variant);
+  }
+  .stack-table td:nth-child(3)::after,
+  .stack-table td:nth-child(4)::after {
+    content: " ·";
+  }
+  .stack-table td:nth-child(5)::after {
+    content: " →";
+  }
+  .stack-table td:nth-child(7) {
+    flex: 0 0 auto;
+    margin-left: auto;
+  }
+  /* Inline edit form row (single cell spanning all columns). */
+  .stack-table td[colspan] {
+    flex: 1 1 100%;
+  }
+}
+
 /* Shadows don't belong on paper. Flatten the ad-hoc ones used around the app. */
 :root:not([data-theme="original"]) .shadow-sm,
 :root:not([data-theme="original"]) .shadow,

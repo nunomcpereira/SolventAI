@@ -242,7 +242,7 @@ export function SimulationChartCard({
     <div
       className={
         isMaximized
-          ? "fixed inset-4 z-50 bg-surface-container-lowest border border-outline-variant rounded-sm p-6 overflow-auto shadow-2xl flex flex-col gap-gutter"
+          ? "fixed inset-4 z-50 bg-surface-container-lowest border border-outline-variant rounded-sm p-4 md:p-6 overflow-auto shadow-2xl flex flex-col gap-gutter"
           : "flex flex-col gap-gutter"
       }
     >

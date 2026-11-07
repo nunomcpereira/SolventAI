@@ -120,11 +120,11 @@ export default async function AccountsPage({ params }: { params: Promise<{ lang:
           const belowReserve = account.initialBalance.compare(account.minimumReserve) < 0;
           const displayAmounts = accountDisplayAmounts.get(account.id);
           return (
-            <div key={account.id} className="bg-surface-container-lowest border border-outline-variant rounded-sm p-6 flex flex-col justify-between">
-              <div className="flex justify-between items-start mb-stack-md">
-                <div className="flex items-center gap-3">
-                  <div>
-                    <div className="flex items-center gap-2">
+            <div key={account.id} className="bg-surface-container-lowest border border-outline-variant rounded-sm p-4 md:p-6 flex flex-col justify-between">
+              <div className="flex justify-between items-start gap-3 mb-stack-md">
+                <div className="flex items-center gap-3 min-w-0">
+                  <div className="min-w-0">
+                    <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
                       <InlineAccountNameEditor
                         accountId={account.id}
                         name={account.name}
@@ -143,7 +143,7 @@ export default async function AccountsPage({ params }: { params: Promise<{ lang:
                     </p>
                   </div>
                 </div>
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2 shrink-0">
                   {!account.isDefault ? (
                     <form action={boundSetDefault}>
                       <input type="hidden" name="accountId" value={account.id} />
@@ -297,13 +297,13 @@ export default async function AccountsPage({ params }: { params: Promise<{ lang:
 
       {accounts.length === 0 ? <p className="text-body-md text-on-surface-variant">{dict.accounts.empty}</p> : null}
 
-      <div className="bg-surface-container-lowest border border-outline-variant rounded-sm p-6">
+      <div className="bg-surface-container-lowest border border-outline-variant rounded-sm p-4 md:p-6">
         <h2 className="text-headline-sm text-on-surface mb-stack-md">{dict.accounts.recurringIncomesTitle}</h2>
         {incomes.length === 0 ? (
           <p className="text-body-md text-on-surface-variant">{dict.accounts.noRecurringIncomes}</p>
         ) : (
           <div className="overflow-x-auto">
-            <table className="w-full text-left text-body-md">
+            <table className="stack-table w-full text-left text-body-md">
               <thead>
                 <tr className="text-label-sm text-on-surface-variant border-b border-outline-variant">
                   <th className="py-2 pr-4 font-normal">{dict.accounts.account}</th>

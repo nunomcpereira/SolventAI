@@ -77,7 +77,7 @@ export function PrepaymentOptimizerCard({
   }, [loans, lumpSum, currency, strategy]);
 
   return (
-    <div className="bg-surface-container-lowest border border-outline-variant rounded-sm p-stack-lg shadow-sm">
+    <div className="bg-surface-container-lowest border border-outline-variant rounded-sm p-4 md:p-stack-lg shadow-sm">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-stack-md border-b border-outline-variant pb-stack-md">
         <div className="flex items-center gap-3">
           <div>

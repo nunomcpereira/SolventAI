@@ -339,8 +339,8 @@ export default async function SimulationPage({
       </div>
 
       {/* Liquidity projection */}
-      <div className="bg-surface-container-lowest border border-outline-variant rounded-sm p-6">
-        <div className="flex items-center gap-2 mb-6">
+      <div className="bg-surface-container-lowest border border-outline-variant rounded-sm p-4 md:p-6">
+        <div className="flex items-center gap-2 mb-4 md:mb-6">
           <h3 className="text-headline-sm text-on-surface">{dict.simulation.liquidityProjection}</h3>
         </div>
         <SimulationChartCard
@@ -413,7 +413,7 @@ export default async function SimulationPage({
 
         {/* Right: Scenario management + event form */}
         <div className="lg:col-span-7 flex flex-col gap-gutter">
-          <div className="bg-surface-container-lowest border border-outline-variant rounded-sm p-6">
+          <div className="bg-surface-container-lowest border border-outline-variant rounded-sm p-4 md:p-6">
             <h4 className="text-headline-sm text-on-surface mb-4">{dict.simulation.scenarios}</h4>
             {scenarios.length === 0 ? (
               <p className="text-body-md text-on-surface-variant mb-stack-md">{dict.simulation.noScenariosYet}</p>
@@ -456,7 +456,7 @@ export default async function SimulationPage({
           </div>
 
           {selected ? (
-            <div className="bg-surface-container-lowest border border-outline-variant rounded-sm p-6 flex flex-col">
+            <div className="bg-surface-container-lowest border border-outline-variant rounded-sm p-4 md:p-6 flex flex-col">
               <div className="flex items-center gap-2 mb-6 border-b border-outline-variant pb-4">
                 <h4 className="text-headline-sm text-on-surface">{dict.simulation.scenarioEvents}</h4>
               </div>
