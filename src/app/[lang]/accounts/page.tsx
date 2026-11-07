@@ -133,7 +133,12 @@ export default async function AccountsPage({ params }: { params: Promise<{ lang:
                 <div className="flex items-center gap-3">
                   <div>
                     <div className="flex items-center gap-2">
-                      <InlineAccountNameEditor accountId={account.id} name={account.name} renameAction={boundRename} />
+                      <InlineAccountNameEditor
+                        accountId={account.id}
+                        name={account.name}
+                        renameAction={boundRename}
+                        labels={{ edit: dict.accounts.renameAccount, save: dict.accounts.saveAccountName, cancel: dict.accounts.cancelRename }}
+                      />
                       {account.isDefault ? (
                         <span className="text-label-sm text-primary bg-surface-container rounded-sm px-2 py-0.5">
                           {dict.accounts.defaultAccount}
@@ -192,6 +197,7 @@ export default async function AccountsPage({ params }: { params: Promise<{ lang:
                       : {})}
                     warning={belowReserve}
                     updateAction={boundUpdate}
+                    labels={{ edit: dict.accounts.editBalance, save: dict.accounts.saveBalance, cancel: dict.accounts.cancelBalanceEdit }}
                   />
                   <p className="eyebrow">{dict.accounts.minimumReserve}</p>
                   <InlineAccountReserveEditor
@@ -204,6 +210,7 @@ export default async function AccountsPage({ params }: { params: Promise<{ lang:
                       ? { formattedReserveSecondary: displayAmounts.formattedReserveSecondary }
                       : {})}
                     updateAction={boundUpdate}
+                    labels={{ edit: dict.accounts.editMinimumReserve, save: dict.accounts.saveMinimumReserve, cancel: dict.accounts.cancelMinimumReserveEdit }}
                   />
                   <p className="eyebrow">{dict.accounts.status}</p>
                   <InlineAccountActiveEditor

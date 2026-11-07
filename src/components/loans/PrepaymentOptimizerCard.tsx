@@ -21,6 +21,7 @@ const CATEGORY_ICON: Record<string, string> = {
 
 export interface PrepaymentOptimizerLabels {
   title: string;
+  deterministic: string;
   subtitle: string;
   lumpSum: string;
   strategy: string;
@@ -82,7 +83,7 @@ export function PrepaymentOptimizerCard({
           <div>
             <h2 className="text-headline-sm text-on-surface flex items-center gap-2">
               {labels.title}
-              <Badge tone="healthy">Deterministic</Badge>
+              <Badge tone="healthy">{labels.deterministic}</Badge>
             </h2>
             <p className="text-body-md text-on-surface-variant mt-0.5">{labels.subtitle}</p>
           </div>

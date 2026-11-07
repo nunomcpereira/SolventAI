@@ -78,7 +78,15 @@
     "endDate": "End date",
     "ongoing": "Ongoing",
     "account": "Account",
-    "edit": "Edit"
+    "edit": "Edit",
+    "renameAccount": "Rename {name}",
+    "saveAccountName": "Save account name",
+    "cancelRename": "Cancel rename",
+    "saveBalance": "Save balance",
+    "cancelBalanceEdit": "Cancel balance edit",
+    "editMinimumReserve": "Edit minimum reserve",
+    "saveMinimumReserve": "Save minimum reserve",
+    "cancelMinimumReserveEdit": "Cancel minimum reserve edit"
   },
   "loans": {
     "title": "Loans and expenses",
@@ -96,7 +104,7 @@
     "chartPrincipal": "Principal",
     "subtitle": "Manage and track your active loans and recurring expenses.",
     "totalBalance": "Total Balance",
-    "avgInterestRate": "Avg Interest Rate (fixed-rate loans)",
+    "avgInterestRate": "Avg interest rate (current)",
     "totalMonthlyPayment": "Total Monthly Payment",
     "payoffProgress": "Payoff Progress",
     "fixed": "Fixed",
@@ -144,7 +152,9 @@
     "optimizerTermShortened": "Term shortened by",
     "optimizerMonths": "months",
     "optimizerSimulate": "Simulate in Scenarios",
-    "optimizerNoLoans": "Add loans to run prepayment optimization."
+    "optimizerNoLoans": "Add loans to run prepayment optimization.",
+    "totalLiabilities": "Total liabilities",
+    "deterministic": "Deterministic"
   },
   "upload": {
     "title": "Upload contract",
@@ -276,7 +286,40 @@
     "offlineModeDescription": "No financial data is sent to external servers.",
     "nonLocalEndpointWarning": "Non-local LLM endpoint configured",
     "nonLocalEndpointDescription": "Contract text may be sent outside this device. Review your AI settings above.",
-    "appVersion": "App Version"
+    "appVersion": "App Version",
+    "accountTypeLabels": "Account type labels",
+    "loanTypeLabels": "Loan type labels",
+    "incomeTypes": "Income types",
+    "roundingHalfUp": "Half-up",
+    "roundingHalfEven": "Half-even (banker's rounding)",
+    "roundingDown": "Down (truncate)",
+    "roundingUp": "Up",
+    "deleteCustomType": "Delete custom type",
+    "accountTypeNames": {
+      "checking": "Checking",
+      "savings": "Savings",
+      "emergency": "Emergency",
+      "investment": "Investment",
+      "other": "Other"
+    },
+    "loanTypeNames": {
+      "mortgage": "Mortgage",
+      "auto": "Auto",
+      "personal": "Personal",
+      "consumer": "Consumer",
+      "student": "Student",
+      "other": "Other"
+    },
+    "customLoanTypes": "Custom loan types",
+    "customLoanTypesHelp": "Add, edit, or remove custom loan types.",
+    "addLoanType": "Add loan type",
+    "noCustomLoanTypes": "No custom loan types yet.",
+    "loanTypePlaceholder": "e.g. Bridge loan",
+    "customIncomeTypes": "Custom income types",
+    "customIncomeTypesHelp": "Add, edit, or remove custom income types.",
+    "addIncomeType": "Add income type",
+    "noCustomIncomeTypes": "No custom income types yet.",
+    "incomeTypePlaceholder": "e.g. Rental income"
   },
   "common": {
     "loading": "Loading…",
@@ -367,6 +410,8 @@
     "checklistRate": "Interest rate",
     "checklistPending": "Not yet found",
     "checklistAnalyzing": "Analyzing {label} ({done}/{total})",
-    "ambiguousFieldWarning": "Low-confidence extraction — please verify"
+    "ambiguousFieldWarning": "Low-confidence extraction — please verify",
+    "stepN": "Step {n}",
+    "uploadContractStep": "Upload contract PDF"
   }
 }

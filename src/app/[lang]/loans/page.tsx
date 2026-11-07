@@ -1,4 +1,5 @@
 import { notFound } from "next/navigation";
+import { currentAnnualRate, weightedAverageRate } from "../../../engine/metrics/index.js";
 import { SUPPORTED_LANGUAGES, type Language } from "../../../lib/i18n/locales.js";
 import { getDictionary } from "../../../lib/i18n/getDictionary.js";
 import {
@@ -88,20 +89,15 @@ export default async function LoansPage({ params }: { params: Promise<{ lang: st
       ? sumMoney(currency, summaries.map((s) => s.monthlyPayment).filter((m) => m !== undefined))
       : undefined;
 
-  // Weighted average of fixed-rate loans only: sum(principal_i * rate_i) / sum(principal_i).
-  // Variable-rate loans are excluded from both numerator and denominator — mixing in a
-  // rate that isn't fixed would misrepresent this as a single blended APR.
-  const fixedRateLoans = summaries.filter((s): s is typeof s & { loan: { rate: { type: "fixed" } } } => s.loan.rate.type === "fixed");
-  let weightedAvgRatePercent: string | undefined;
-  if (fixedRateLoans.length > 0) {
-    const totalFixedPrincipal = fixedRateLoans.reduce((sum, s) => sum + s.loan.principal.minorUnits, 0n);
-    const numerator = fixedRateLoans.reduce(
-      (sum, s) => sum.add(Decimal.fromBigInt(s.loan.principal.minorUnits).mul(s.loan.rate.annualRate)),
-      Decimal.ZERO,
-    );
-    weightedAvgRatePercent =
-      totalFixedPrincipal > 0n ? numerator.div(Decimal.fromBigInt(totalFixedPrincipal)).mul(Decimal.fromBigInt(100n)).toString() : undefined;
-  }
+  // Balance-weighted average of the rate each loan charges today: fixed loans their fixed
+  // rate, mixed loans their fixed leg until it ends, variable legs index + spread.
+  const avgRate = weightedAverageRate(
+    summaries.map((s) => ({
+      balanceMinorUnits: s.outstandingPrincipal.minorUnits,
+      annualRate: currentAnnualRate(s.loan.rate, s.loan.numberOfPeriods - s.remainingPeriods),
+    })),
+  );
+  const weightedAvgRatePercent = avgRate?.mul(Decimal.fromBigInt(100n)).toString();
 
   return (
     <div className="flex flex-col gap-stack-lg">
@@ -116,7 +112,7 @@ export default async function LoansPage({ params }: { params: Promise<{ lang: st
       <div className="figure-band grid grid-cols-1 md:grid-cols-3 border-y border-outline-variant divide-y md:divide-y-0 md:divide-x divide-outline-variant">
         <div className="py-4 md:px-5 md:first:pl-0">
           <div className="flex justify-between items-start mb-2">
-            <h3 className="eyebrow">Total liabilities</h3>
+            <h3 className="eyebrow">{dict.loans.totalLiabilities}</h3>
           </div>
           <div className="figure text-[24px] leading-8 text-on-surface">
             {totalLiabilities ? `-${formatMoney(totalLiabilities, lang)}` : "—"}
@@ -277,7 +273,7 @@ export default async function LoansPage({ params }: { params: Promise<{ lang: st
                     />
                   </label>
                   <label className="flex flex-col gap-1 eyebrow">
-                    Currency
+                    {dict.wizards.currency}
                     <input
                       name="currency"
                       required
@@ -308,49 +304,49 @@ export default async function LoansPage({ params }: { params: Promise<{ lang: st
                     />
                   </label>
                   <label className="flex flex-col gap-1 eyebrow">
-                    Payment frequency
+                    {dict.wizards.paymentFrequency}
                     <select
                       name="paymentFrequency"
                       defaultValue={loan.paymentFrequency}
                       className="border border-outline-variant rounded-lg px-3 py-2 text-body-md focus:outline-none focus:border-primary"
                     >
-                      <option value="monthly">Monthly</option>
-                      <option value="quarterly">Quarterly</option>
-                      <option value="semiannual">Semiannual</option>
-                      <option value="annual">Annual</option>
-                      <option value="biweekly">Biweekly</option>
-                      <option value="weekly">Weekly</option>
-                      <option value="daily">Daily</option>
+                      <option value="monthly">{dict.wizards.freqMonthly}</option>
+                      <option value="quarterly">{dict.wizards.freqQuarterly}</option>
+                      <option value="semiannual">{dict.wizards.freqSemiannual}</option>
+                      <option value="annual">{dict.wizards.freqAnnual}</option>
+                      <option value="biweekly">{dict.wizards.freqBiweekly}</option>
+                      <option value="weekly">{dict.wizards.freqWeekly}</option>
+                      <option value="daily">{dict.wizards.freqDaily}</option>
                     </select>
                   </label>
                   <label className="flex flex-col gap-1 eyebrow">
-                    Amortization
+                    {dict.wizards.amortization}
                     <select
                       name="amortizationType"
                       defaultValue={loan.amortizationType}
                       className="border border-outline-variant rounded-lg px-3 py-2 text-body-md focus:outline-none focus:border-primary"
                     >
-                      <option value="french">French</option>
-                      <option value="constant_amortization">Constant amortization</option>
-                      <option value="interest_only">Interest only</option>
+                      <option value="french">{dict.wizards.amortFrench}</option>
+                      <option value="constant_amortization">{dict.wizards.amortConstant}</option>
+                      <option value="interest_only">{dict.wizards.amortInterestOnly}</option>
                     </select>
                   </label>
                   {loan.category === "mortgage" ? (
                     <>
                       <label className="flex flex-col gap-1 eyebrow">
-                        Mortgage rate type
+                        {dict.wizards.rateType}
                         <select
                           name="rateType"
                           defaultValue={rateTypeInput}
                           className="border border-outline-variant rounded-lg px-3 py-2 text-body-md focus:outline-none focus:border-primary"
                         >
-                          <option value="fixed">Fixed</option>
-                          <option value="variable">Variable</option>
-                          <option value="mixed">Mixed (fixed then variable)</option>
+                          <option value="fixed">{dict.wizards.rateFixed}</option>
+                          <option value="variable">{dict.wizards.rateVariable}</option>
+                          <option value="mixed">{dict.wizards.rateMixed}</option>
                         </select>
                       </label>
                       <label className="flex flex-col gap-1 eyebrow">
-                        Fixed rate (%)
+                        {dict.wizards.fixedRate}
                         <input
                           type="number"
                           step="0.01"
@@ -362,7 +358,7 @@ export default async function LoansPage({ params }: { params: Promise<{ lang: st
                         />
                       </label>
                       <label className="flex flex-col gap-1 eyebrow">
-                        Euribor rate (%)
+                        {dict.wizards.euriborRate}
                         <input
                           type="number"
                           step="0.01"
@@ -372,7 +368,7 @@ export default async function LoansPage({ params }: { params: Promise<{ lang: st
                         />
                       </label>
                       <label className="flex flex-col gap-1 eyebrow">
-                        Spread (%)
+                        {dict.wizards.spread}
                         <input
                           type="number"
                           step="0.01"
@@ -382,7 +378,7 @@ export default async function LoansPage({ params }: { params: Promise<{ lang: st
                         />
                       </label>
                       <label className="flex flex-col gap-1 eyebrow">
-                        Fixed-rate periods (mixed)
+                        {dict.wizards.fixedRatePeriods}
                         <input
                           type="number"
                           min={1}
@@ -496,6 +492,7 @@ export default async function LoansPage({ params }: { params: Promise<{ lang: st
               saveLoan: dict.loans.saveLoan,
               sourceAccount: dict.loans.sourceAccount,
             }}
+            text={dict.wizards}
             ambiguousWarningLabel={dict.wizards.ambiguousFieldWarning}
           />
         </details>
@@ -541,6 +538,7 @@ export default async function LoansPage({ params }: { params: Promise<{ lang: st
           lang={lang}
           labels={{
             title: dict.loans.optimizerTitle,
+            deterministic: dict.loans.deterministic,
             subtitle: dict.loans.optimizerSubtitle,
             lumpSum: dict.loans.optimizerLumpSum,
             strategy: dict.loans.optimizerStrategy,

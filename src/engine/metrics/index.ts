@@ -13,3 +13,4 @@ export {
 } from "./liquidity.js";
 export { computeInterestDrag } from "./interestDrag.js";
 export { type BalanceCheckpoint, type SavingsTrend, computeSavingsTrend } from "./savingsTrend.js";
+export { currentAnnualRate, weightedAverageRate } from "./averageRate.js";

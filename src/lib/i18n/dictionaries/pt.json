@@ -78,7 +78,15 @@
     "endDate": "Data de fim",
     "ongoing": "Contínuo",
     "account": "Conta",
-    "edit": "Editar"
+    "edit": "Editar",
+    "renameAccount": "Mudar o nome de {name}",
+    "saveAccountName": "Guardar nome da conta",
+    "cancelRename": "Cancelar mudança de nome",
+    "saveBalance": "Guardar saldo",
+    "cancelBalanceEdit": "Cancelar edição do saldo",
+    "editMinimumReserve": "Editar reserva mínima",
+    "saveMinimumReserve": "Guardar reserva mínima",
+    "cancelMinimumReserveEdit": "Cancelar edição da reserva mínima"
   },
   "loans": {
     "title": "Empréstimos e despesas",
@@ -96,7 +104,7 @@
     "chartPrincipal": "Capital",
     "subtitle": "Faça a gestão e acompanhe os seus empréstimos ativos.",
     "totalBalance": "Saldo Total",
-    "avgInterestRate": "Taxa de Juro Média (empréstimos de taxa fixa)",
+    "avgInterestRate": "Taxa de juro média (atual)",
     "totalMonthlyPayment": "Prestação Mensal Total",
     "payoffProgress": "Progresso de Amortização",
     "fixed": "Fixa",
@@ -144,7 +152,9 @@
     "optimizerTermShortened": "Prazo encurtado em",
     "optimizerMonths": "meses",
     "optimizerSimulate": "Simular nos Cenários",
-    "optimizerNoLoans": "Adicione empréstimos para calcular opções de amortização."
+    "optimizerNoLoans": "Adicione empréstimos para calcular opções de amortização.",
+    "totalLiabilities": "Passivo total",
+    "deterministic": "Determinístico"
   },
   "upload": {
     "title": "Carregar contrato",
@@ -276,7 +286,40 @@
     "offlineModeDescription": "Nenhum dado financeiro é enviado para servidores externos.",
     "nonLocalEndpointWarning": "Endpoint LLM não local configurado",
     "nonLocalEndpointDescription": "O texto do contrato pode ser enviado para fora deste dispositivo. Reveja as suas definições de IA acima.",
-    "appVersion": "Versão da Aplicação"
+    "appVersion": "Versão da Aplicação",
+    "accountTypeLabels": "Nomes dos tipos de conta",
+    "loanTypeLabels": "Nomes dos tipos de empréstimo",
+    "incomeTypes": "Tipos de rendimento",
+    "roundingHalfUp": "Metade para cima",
+    "roundingHalfEven": "Metade para par (arredondamento bancário)",
+    "roundingDown": "Para baixo (truncar)",
+    "roundingUp": "Para cima",
+    "deleteCustomType": "Eliminar tipo personalizado",
+    "accountTypeNames": {
+      "checking": "Conta à ordem",
+      "savings": "Poupança",
+      "emergency": "Fundo de emergência",
+      "investment": "Investimento",
+      "other": "Outra"
+    },
+    "loanTypeNames": {
+      "mortgage": "Crédito habitação",
+      "auto": "Crédito automóvel",
+      "personal": "Crédito pessoal",
+      "consumer": "Crédito ao consumo",
+      "student": "Crédito estudante",
+      "other": "Outro"
+    },
+    "customLoanTypes": "Tipos de empréstimo personalizados",
+    "customLoanTypesHelp": "Adicione, edite ou remova tipos de empréstimo personalizados.",
+    "addLoanType": "Adicionar tipo de empréstimo",
+    "noCustomLoanTypes": "Ainda sem tipos de empréstimo personalizados.",
+    "loanTypePlaceholder": "ex.: Crédito intercalar",
+    "customIncomeTypes": "Tipos de rendimento personalizados",
+    "customIncomeTypesHelp": "Adicione, edite ou remova tipos de rendimento personalizados.",
+    "addIncomeType": "Adicionar tipo de rendimento",
+    "noCustomIncomeTypes": "Ainda sem tipos de rendimento personalizados.",
+    "incomeTypePlaceholder": "ex.: Rendas"
   },
   "common": {
     "loading": "A carregar…",
@@ -367,6 +410,8 @@
     "checklistRate": "Taxa de juro",
     "checklistPending": "Ainda não encontrado",
     "checklistAnalyzing": "A analisar {label} ({done}/{total})",
-    "ambiguousFieldWarning": "Extração de baixa confiança — por favor verifique"
+    "ambiguousFieldWarning": "Extração de baixa confiança — por favor verifique",
+    "stepN": "Passo {n}",
+    "uploadContractStep": "Carregar PDF do contrato"
   }
 }

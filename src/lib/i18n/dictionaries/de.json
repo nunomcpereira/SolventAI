@@ -78,7 +78,15 @@
     "endDate": "Enddatum",
     "ongoing": "Laufend",
     "account": "Konto",
-    "edit": "Bearbeiten"
+    "edit": "Bearbeiten",
+    "renameAccount": "{name} umbenennen",
+    "saveAccountName": "Kontoname speichern",
+    "cancelRename": "Umbenennen abbrechen",
+    "saveBalance": "Saldo speichern",
+    "cancelBalanceEdit": "Saldobearbeitung abbrechen",
+    "editMinimumReserve": "Mindestreserve bearbeiten",
+    "saveMinimumReserve": "Mindestreserve speichern",
+    "cancelMinimumReserveEdit": "Bearbeitung der Mindestreserve abbrechen"
   },
   "loans": {
     "title": "Kredite und Ausgaben",
@@ -96,7 +104,7 @@
     "chartPrincipal": "Kapital",
     "subtitle": "Verwalten und verfolgen Sie Ihre aktiven Kredite.",
     "totalBalance": "Gesamtsaldo",
-    "avgInterestRate": "Durchschnittlicher Zinssatz (Festzinskredite)",
+    "avgInterestRate": "Durchschnittlicher Zinssatz (aktuell)",
     "totalMonthlyPayment": "Monatliche Gesamtrate",
     "payoffProgress": "Tilgungsfortschritt",
     "fixed": "Fest",
@@ -144,7 +152,9 @@
     "optimizerTermShortened": "Laufzeit verkürzt um",
     "optimizerMonths": "Monate",
     "optimizerSimulate": "Im Szenario simulieren",
-    "optimizerNoLoans": "Fügen Sie Kredite hinzu, um Sondertilgungen zu optimieren."
+    "optimizerNoLoans": "Fügen Sie Kredite hinzu, um Sondertilgungen zu optimieren.",
+    "totalLiabilities": "Gesamtverbindlichkeiten",
+    "deterministic": "Deterministisch"
   },
   "upload": {
     "title": "Vertrag hochladen",
@@ -276,7 +286,40 @@
     "offlineModeDescription": "Es werden keine Finanzdaten an externe Server gesendet.",
     "nonLocalEndpointWarning": "Nicht-lokaler LLM-Endpunkt konfiguriert",
     "nonLocalEndpointDescription": "Vertragstext könnte dieses Gerät verlassen. Überprüfen Sie oben Ihre KI-Einstellungen.",
-    "appVersion": "App-Version"
+    "appVersion": "App-Version",
+    "accountTypeLabels": "Bezeichnungen der Kontotypen",
+    "loanTypeLabels": "Bezeichnungen der Kreditarten",
+    "incomeTypes": "Einkommensarten",
+    "roundingHalfUp": "Kaufmännisch (half-up)",
+    "roundingHalfEven": "Mathematisch (Banker’s Rounding)",
+    "roundingDown": "Abrunden (abschneiden)",
+    "roundingUp": "Aufrunden",
+    "deleteCustomType": "Eigenen Typ löschen",
+    "accountTypeNames": {
+      "checking": "Girokonto",
+      "savings": "Sparkonto",
+      "emergency": "Notgroschen",
+      "investment": "Anlage",
+      "other": "Sonstiges"
+    },
+    "loanTypeNames": {
+      "mortgage": "Hypothek",
+      "auto": "Autokredit",
+      "personal": "Privatkredit",
+      "consumer": "Konsumkredit",
+      "student": "Studienkredit",
+      "other": "Sonstiges"
+    },
+    "customLoanTypes": "Eigene Kreditarten",
+    "customLoanTypesHelp": "Eigene Kreditarten hinzufügen, bearbeiten oder entfernen.",
+    "addLoanType": "Kreditart hinzufügen",
+    "noCustomLoanTypes": "Noch keine eigenen Kreditarten.",
+    "loanTypePlaceholder": "z. B. Überbrückungskredit",
+    "customIncomeTypes": "Eigene Einkommensarten",
+    "customIncomeTypesHelp": "Eigene Einkommensarten hinzufügen, bearbeiten oder entfernen.",
+    "addIncomeType": "Einkommensart hinzufügen",
+    "noCustomIncomeTypes": "Noch keine eigenen Einkommensarten.",
+    "incomeTypePlaceholder": "z. B. Mieteinnahmen"
   },
   "common": {
     "loading": "Lädt…",
@@ -367,6 +410,8 @@
     "checklistRate": "Zinssatz",
     "checklistPending": "Noch nicht gefunden",
     "checklistAnalyzing": "{label} wird analysiert ({done}/{total})",
-    "ambiguousFieldWarning": "Extraktion mit geringer Zuverlässigkeit — bitte prüfen"
+    "ambiguousFieldWarning": "Extraktion mit geringer Zuverlässigkeit — bitte prüfen",
+    "stepN": "Schritt {n}",
+    "uploadContractStep": "Vertrags-PDF hochladen"
   }
 }

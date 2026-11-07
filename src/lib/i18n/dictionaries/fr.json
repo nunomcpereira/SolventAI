@@ -78,7 +78,15 @@
     "endDate": "Date de fin",
     "ongoing": "Continu",
     "account": "Compte",
-    "edit": "Modifier"
+    "edit": "Modifier",
+    "renameAccount": "Renommer {name}",
+    "saveAccountName": "Enregistrer le nom du compte",
+    "cancelRename": "Annuler le renommage",
+    "saveBalance": "Enregistrer le solde",
+    "cancelBalanceEdit": "Annuler la modification du solde",
+    "editMinimumReserve": "Modifier la réserve minimale",
+    "saveMinimumReserve": "Enregistrer la réserve minimale",
+    "cancelMinimumReserveEdit": "Annuler la modification de la réserve minimale"
   },
   "loans": {
     "title": "Prêts et dépenses",
@@ -96,7 +104,7 @@
     "chartPrincipal": "Capital",
     "subtitle": "Gérez et suivez vos prêts actifs.",
     "totalBalance": "Solde Total",
-    "avgInterestRate": "Taux d'Intérêt Moyen (prêts à taux fixe)",
+    "avgInterestRate": "Taux d'intérêt moyen (actuel)",
     "totalMonthlyPayment": "Mensualité Totale",
     "payoffProgress": "Progression du Remboursement",
     "fixed": "Fixe",
@@ -144,7 +152,9 @@
     "optimizerTermShortened": "Durée réduite de",
     "optimizerMonths": "mois",
     "optimizerSimulate": "Simuler dans les Scénarios",
-    "optimizerNoLoans": "Ajoutez des prêts pour optimiser les remboursements."
+    "optimizerNoLoans": "Ajoutez des prêts pour optimiser les remboursements.",
+    "totalLiabilities": "Passif total",
+    "deterministic": "Déterministe"
   },
   "upload": {
     "title": "Importer un contrat",
@@ -276,7 +286,40 @@
     "offlineModeDescription": "Aucune donnée financière n'est envoyée à des serveurs externes.",
     "nonLocalEndpointWarning": "Endpoint LLM non local configuré",
     "nonLocalEndpointDescription": "Le texte du contrat peut être envoyé hors de cet appareil. Vérifiez vos paramètres d'IA ci-dessus.",
-    "appVersion": "Version de l'Application"
+    "appVersion": "Version de l'Application",
+    "accountTypeLabels": "Libellés des types de compte",
+    "loanTypeLabels": "Libellés des types de prêt",
+    "incomeTypes": "Types de revenu",
+    "roundingHalfUp": "Demi supérieur",
+    "roundingHalfEven": "Demi pair (arrondi bancaire)",
+    "roundingDown": "Inférieur (tronquer)",
+    "roundingUp": "Supérieur",
+    "deleteCustomType": "Supprimer le type personnalisé",
+    "accountTypeNames": {
+      "checking": "Compte courant",
+      "savings": "Épargne",
+      "emergency": "Fonds d’urgence",
+      "investment": "Investissement",
+      "other": "Autre"
+    },
+    "loanTypeNames": {
+      "mortgage": "Prêt immobilier",
+      "auto": "Prêt auto",
+      "personal": "Prêt personnel",
+      "consumer": "Crédit à la consommation",
+      "student": "Prêt étudiant",
+      "other": "Autre"
+    },
+    "customLoanTypes": "Types de prêt personnalisés",
+    "customLoanTypesHelp": "Ajoutez, modifiez ou supprimez des types de prêt personnalisés.",
+    "addLoanType": "Ajouter un type de prêt",
+    "noCustomLoanTypes": "Aucun type de prêt personnalisé pour l’instant.",
+    "loanTypePlaceholder": "ex. : Prêt relais",
+    "customIncomeTypes": "Types de revenu personnalisés",
+    "customIncomeTypesHelp": "Ajoutez, modifiez ou supprimez des types de revenu personnalisés.",
+    "addIncomeType": "Ajouter un type de revenu",
+    "noCustomIncomeTypes": "Aucun type de revenu personnalisé pour l’instant.",
+    "incomeTypePlaceholder": "ex. : Revenus locatifs"
   },
   "common": {
     "loading": "Chargement…",
@@ -367,6 +410,8 @@
     "checklistRate": "Taux d'intérêt",
     "checklistPending": "Pas encore trouvé",
     "checklistAnalyzing": "Analyse de {label} ({done}/{total})",
-    "ambiguousFieldWarning": "Extraction à faible confiance — veuillez vérifier"
+    "ambiguousFieldWarning": "Extraction à faible confiance — veuillez vérifier",
+    "stepN": "Étape {n}",
+    "uploadContractStep": "Téléverser le PDF du contrat"
   }
 }

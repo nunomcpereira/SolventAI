@@ -88,10 +88,10 @@ export default async function SettingsPage({ params }: { params: Promise<{ lang:
                   defaultValue={settings.roundingMode}
                   className="w-full px-3 py-2 border border-outline-variant rounded-lg text-body-md bg-surface-container-lowest focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all"
                 >
-                  <option value="half-up">Half-up</option>
-                  <option value="half-even">Half-even (banker&apos;s rounding)</option>
-                  <option value="down">Down (truncate)</option>
-                  <option value="up">Up</option>
+                  <option value="half-up">{dict.settings.roundingHalfUp}</option>
+                  <option value="half-even">{dict.settings.roundingHalfEven}</option>
+                  <option value="down">{dict.settings.roundingDown}</option>
+                  <option value="up">{dict.settings.roundingUp}</option>
                 </select>
               </FieldRow>
 
@@ -123,36 +123,36 @@ export default async function SettingsPage({ params }: { params: Promise<{ lang:
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-gutter">
                 <div className="flex flex-col gap-stack-sm">
-                  <p className="text-label-sm text-on-surface-variant">Account type labels</p>
-                  <FieldRow label="Checking label">
+                  <p className="text-label-sm text-on-surface-variant">{dict.settings.accountTypeLabels}</p>
+                  <FieldRow label={dict.settings.accountTypeNames.checking}>
                     <input
                       name="accountTypeLabel_checking"
                       defaultValue={settings.accountTypeLabels.checking}
                       className="w-full px-3 py-2 border border-outline-variant rounded-lg text-body-md bg-surface-container-lowest focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all"
                     />
                   </FieldRow>
-                  <FieldRow label="Savings label">
+                  <FieldRow label={dict.settings.accountTypeNames.savings}>
                     <input
                       name="accountTypeLabel_savings"
                       defaultValue={settings.accountTypeLabels.savings}
                       className="w-full px-3 py-2 border border-outline-variant rounded-lg text-body-md bg-surface-container-lowest focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all"
                     />
                   </FieldRow>
-                  <FieldRow label="Emergency label">
+                  <FieldRow label={dict.settings.accountTypeNames.emergency}>
                     <input
                       name="accountTypeLabel_emergency"
                       defaultValue={settings.accountTypeLabels.emergency}
                       className="w-full px-3 py-2 border border-outline-variant rounded-lg text-body-md bg-surface-container-lowest focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all"
                     />
                   </FieldRow>
-                  <FieldRow label="Investment label">
+                  <FieldRow label={dict.settings.accountTypeNames.investment}>
                     <input
                       name="accountTypeLabel_investment"
                       defaultValue={settings.accountTypeLabels.investment}
                       className="w-full px-3 py-2 border border-outline-variant rounded-lg text-body-md bg-surface-container-lowest focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all"
                     />
                   </FieldRow>
-                  <FieldRow label="Other account label">
+                  <FieldRow label={dict.settings.accountTypeNames.other}>
                     <input
                       name="accountTypeLabel_other"
                       defaultValue={settings.accountTypeLabels.other}
@@ -162,69 +162,71 @@ export default async function SettingsPage({ params }: { params: Promise<{ lang:
                 </div>
 
                 <div className="flex flex-col gap-stack-sm">
-                  <p className="text-label-sm text-on-surface-variant">Loan type labels</p>
-                  <FieldRow label="Mortgage label">
+                  <p className="text-label-sm text-on-surface-variant">{dict.settings.loanTypeLabels}</p>
+                  <FieldRow label={dict.settings.loanTypeNames.mortgage}>
                     <input
                       name="loanCategoryLabel_mortgage"
                       defaultValue={settings.loanCategoryLabels.mortgage}
                       className="w-full px-3 py-2 border border-outline-variant rounded-lg text-body-md bg-surface-container-lowest focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all"
                     />
                   </FieldRow>
-                  <FieldRow label="Auto label">
+                  <FieldRow label={dict.settings.loanTypeNames.auto}>
                     <input
                       name="loanCategoryLabel_auto"
                       defaultValue={settings.loanCategoryLabels.auto}
                       className="w-full px-3 py-2 border border-outline-variant rounded-lg text-body-md bg-surface-container-lowest focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all"
                     />
                   </FieldRow>
-                  <FieldRow label="Personal label">
+                  <FieldRow label={dict.settings.loanTypeNames.personal}>
                     <input
                       name="loanCategoryLabel_personal"
                       defaultValue={settings.loanCategoryLabels.personal}
                       className="w-full px-3 py-2 border border-outline-variant rounded-lg text-body-md bg-surface-container-lowest focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all"
                     />
                   </FieldRow>
-                  <FieldRow label="Consumer label">
+                  <FieldRow label={dict.settings.loanTypeNames.consumer}>
                     <input
                       name="loanCategoryLabel_consumer"
                       defaultValue={settings.loanCategoryLabels.consumer}
                       className="w-full px-3 py-2 border border-outline-variant rounded-lg text-body-md bg-surface-container-lowest focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all"
                     />
                   </FieldRow>
-                  <FieldRow label="Student label">
+                  <FieldRow label={dict.settings.loanTypeNames.student}>
                     <input
                       name="loanCategoryLabel_student"
                       defaultValue={settings.loanCategoryLabels.student}
                       className="w-full px-3 py-2 border border-outline-variant rounded-lg text-body-md bg-surface-container-lowest focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all"
                     />
                   </FieldRow>
-                  <FieldRow label="Other loan label">
+                  <FieldRow label={dict.settings.loanTypeNames.other}>
                     <input
                       name="loanCategoryLabel_other"
                       defaultValue={settings.loanCategoryLabels.other}
                       className="w-full px-3 py-2 border border-outline-variant rounded-lg text-body-md bg-surface-container-lowest focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all"
                     />
                   </FieldRow>
-                  <FieldRow label="Custom loan types" help="Add, edit, or remove custom loan types.">
+                  <FieldRow label={dict.settings.customLoanTypes} help={dict.settings.customLoanTypesHelp}>
                     <CustomTypeListEditor
                       name="customLoanCategories"
                       initialValues={settings.customLoanCategories}
-                      addLabel="Add loan type"
-                      emptyLabel="No custom loan types yet."
-                      placeholder="e.g. Bridge loan"
+                      addLabel={dict.settings.addLoanType}
+                      emptyLabel={dict.settings.noCustomLoanTypes}
+                      placeholder={dict.settings.loanTypePlaceholder}
+                      deleteLabel={dict.settings.deleteCustomType}
                     />
                   </FieldRow>
                 </div>
 
                 <div className="flex flex-col gap-stack-sm">
-                  <p className="text-label-sm text-on-surface-variant">Income types</p>
-                  <FieldRow label="Custom income types" help="Add, edit, or remove custom income types.">
+                  <p className="text-label-sm text-on-surface-variant">{dict.settings.incomeTypes}</p>
+                  <FieldRow label={dict.settings.customIncomeTypes} help={dict.settings.customIncomeTypesHelp}>
                     <CustomTypeListEditor
                       name="customIncomeCategories"
                       initialValues={settings.customIncomeCategories}
-                      addLabel="Add income type"
-                      emptyLabel="No custom income types yet."
-                      placeholder="e.g. Rental income"
+                      addLabel={dict.settings.addIncomeType}
+                      emptyLabel={dict.settings.noCustomIncomeTypes}
+                      placeholder={dict.settings.incomeTypePlaceholder}
+                      deleteLabel={dict.settings.deleteCustomType}
                     />
                   </FieldRow>
                 </div>

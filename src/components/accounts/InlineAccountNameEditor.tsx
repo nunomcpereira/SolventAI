@@ -7,9 +7,11 @@ interface InlineAccountNameEditorProps {
   accountId: string;
   name: string;
   renameAction: (formData: FormData) => Promise<void>;
+  /** `edit` may contain "{name}". */
+  labels: { edit: string; save: string; cancel: string };
 }
 
-export function InlineAccountNameEditor({ accountId, name, renameAction }: InlineAccountNameEditorProps) {
+export function InlineAccountNameEditor({ accountId, name, renameAction, labels }: InlineAccountNameEditorProps) {
   const [isEditing, setIsEditing] = useState(false);
   const [value, setValue] = useState(name);
 
@@ -21,7 +23,7 @@ export function InlineAccountNameEditor({ accountId, name, renameAction }: Inlin
     return (
       <div className="flex items-center gap-2">
         <h3 className="text-headline-sm text-on-surface">{name}</h3>
-        <InlineEditTrigger label={`Rename ${name}`} onClick={() => setIsEditing(true)} />
+        <InlineEditTrigger label={labels.edit.replace("{name}", name)} onClick={() => setIsEditing(true)} />
       </div>
     );
   }
@@ -29,8 +31,8 @@ export function InlineAccountNameEditor({ accountId, name, renameAction }: Inlin
   return (
     <InlineEditForm
       hiddenFields={{ accountId }}
-      saveLabel="Save account name"
-      cancelLabel="Cancel rename"
+      saveLabel={labels.save}
+      cancelLabel={labels.cancel}
       action={renameAction}
       onSaved={() => setIsEditing(false)}
       onCancel={() => {

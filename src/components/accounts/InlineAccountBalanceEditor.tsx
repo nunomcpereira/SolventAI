@@ -12,6 +12,7 @@ interface InlineAccountBalanceEditorProps {
   formattedBalanceSecondary?: string;
   warning: boolean;
   updateAction: (formData: FormData) => Promise<void>;
+  labels: { edit: string; save: string; cancel: string };
 }
 
 export function InlineAccountBalanceEditor({
@@ -23,6 +24,7 @@ export function InlineAccountBalanceEditor({
   formattedBalanceSecondary,
   warning,
   updateAction,
+  labels,
 }: InlineAccountBalanceEditorProps) {
   const [isEditing, setIsEditing] = useState(false);
   const [value, setValue] = useState(balance);
@@ -42,7 +44,7 @@ export function InlineAccountBalanceEditor({
             <p className="text-label-sm text-on-surface-variant">{formattedBalanceSecondary}</p>
           ) : null}
         </div>
-        <InlineEditTrigger label="Edit balance" onClick={() => setIsEditing(true)} />
+        <InlineEditTrigger label={labels.edit} onClick={() => setIsEditing(true)} />
       </div>
     );
   }
@@ -50,8 +52,8 @@ export function InlineAccountBalanceEditor({
   return (
     <InlineEditForm
       hiddenFields={{ accountId, minimumReserve, active: active ? "on" : "" }}
-      saveLabel="Save balance"
-      cancelLabel="Cancel balance edit"
+      saveLabel={labels.save}
+      cancelLabel={labels.cancel}
       action={updateAction}
       onSaved={() => setIsEditing(false)}
       onCancel={() => {

@@ -22,9 +22,17 @@ export function formatPercent(value: string, lang: string, fractionDigits = 1): 
   ) + "%";
 }
 
+/**
+ * Dates in this app are calendar dates ("YYYY-MM-DD"), which `new Date()` parses as UTC
+ * midnight. Formatting them in UTC keeps the printed day/month the same in every
+ * timezone — in local time, anywhere west of UTC would show the previous day (and the
+ * 1st of a month would show the previous month on chart ticks).
+ */
+const CALENDAR_DATE = { timeZone: "UTC" } as const;
+
 export function formatDate(isoDateString: string, lang: string): string {
   const locale = LOCALE_BY_LANG[lang] ?? "en-US";
-  return new Intl.DateTimeFormat(locale, { year: "numeric", month: "short", day: "2-digit" }).format(
+  return new Intl.DateTimeFormat(locale, { ...CALENDAR_DATE, year: "numeric", month: "short", day: "2-digit" }).format(
     new Date(isoDateString),
   );
 }
@@ -32,11 +40,33 @@ export function formatDate(isoDateString: string, lang: string): string {
 /** "MMM YYYY" form used by timeline navigation range labels (e.g. "Aug 2026"). */
 export function formatMonthYear(isoDateString: string, lang: string): string {
   const locale = LOCALE_BY_LANG[lang] ?? "en-US";
-  return new Intl.DateTimeFormat(locale, { year: "numeric", month: "short" }).format(new Date(isoDateString));
+  return new Intl.DateTimeFormat(locale, { ...CALENDAR_DATE, year: "numeric", month: "short" }).format(new Date(isoDateString));
 }
 
 /** Compact "MMM YY" form used by chart X-axis ticks, where space is tight. */
 export function formatMonthTick(isoDateString: string, lang: string): string {
   const locale = LOCALE_BY_LANG[lang] ?? "en-US";
-  return new Intl.DateTimeFormat(locale, { year: "2-digit", month: "short" }).format(new Date(isoDateString));
+  return new Intl.DateTimeFormat(locale, { ...CALENDAR_DATE, year: "2-digit", month: "short" }).format(new Date(isoDateString));
+}
+
+/** First day of every month in [startIso, endIso], as "YYYY-MM-01" — one axis tick per month. */
+export function monthStartsBetween(startIso: string, endIso: string): string[] {
+  const start = new Date(startIso);
+  const end = new Date(endIso);
+  if (Number.isNaN(start.getTime()) || Number.isNaN(end.getTime()) || end < start) return [];
+  const ticks: string[] = [];
+  let year = start.getUTCFullYear();
+  let month = start.getUTCMonth();
+  if (start.getUTCDate() !== 1) month += 1;
+  for (;;) {
+    const tick = new Date(Date.UTC(year, month, 1));
+    if (tick > end) break;
+    ticks.push(tick.toISOString().slice(0, 10));
+    month += 1;
+    if (month > 11) {
+      month = 0;
+      year += 1;
+    }
+  }
+  return ticks;
 }

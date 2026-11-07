@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { type LoanContractDraftState } from "../../lib/forms/loanForm.js";
 import { useLoanDraftWizard } from "./useLoanDraftWizard.js";
+import type { Dictionary } from "../../lib/i18n/getDictionary.js";
 
 type Frequency = "daily" | "weekly" | "biweekly" | "monthly" | "quarterly" | "semiannual" | "annual";
 type AmortizationType = "french" | "constant_amortization" | "interest_only";
@@ -38,6 +39,7 @@ export function NewLoanWizard({
   defaultCurrency,
   loanCategoryOptions,
   labels,
+  text,
   ambiguousWarningLabel,
 }: {
   createAction: (formData: FormData) => Promise<void>;
@@ -46,16 +48,13 @@ export function NewLoanWizard({
   defaultCurrency: string;
   loanCategoryOptions: LoanCategoryOption[];
   labels: LoanLabels;
+  /** Wizard strings (dict.wizards) for step titles, select options and field labels. */
+  text: Dictionary["wizards"];
   ambiguousWarningLabel: string;
 }) {
   const [currentStep, setCurrentStep] = useState<1 | 2>(1);
 
-  const extractionSteps = [
-    "Reading PDF pages...",
-    "Identifying loan type and terms...",
-    "Extracting fields with the local LLM...",
-    "Validating extracted values...",
-  ] as const;
+  const extractionSteps = [text.extractionStep1, text.extractionStep2, text.extractionStep3, text.extractionStep4] as const;
 
   const {
     name, setName,
@@ -90,17 +89,17 @@ export function NewLoanWizard({
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-stack-sm mt-stack-md text-left w-full">
       <div className="md:col-span-2 text-label-sm text-on-surface-variant flex items-center gap-2">
-        <span className={currentStep === 1 ? "text-primary font-medium" : ""}>Step 1</span>
+        <span className={currentStep === 1 ? "text-primary font-medium" : ""}>{text.stepN.replace("{n}", "1")}</span>
         <span>•</span>
-        <span className={currentStep === 2 ? "text-primary font-medium" : ""}>Step 2</span>
+        <span className={currentStep === 2 ? "text-primary font-medium" : ""}>{text.stepN.replace("{n}", "2")}</span>
       </div>
 
       {currentStep === 1 ? (
         <>
           <form action={extractFormAction} className="md:col-span-2 rounded-lg border border-outline-variant bg-surface p-4 flex flex-col gap-2">
-            <p className="text-label-md text-on-surface font-semibold">Step 1: Upload contract PDF</p>
+            <p className="text-label-md text-on-surface font-semibold">{`${text.stepN.replace("{n}", "1")}: ${text.uploadContractStep}`}</p>
             <p className="text-label-sm text-on-surface-variant">
-              We identify loan type and terms, then pre-fill the loan form for review.
+              {text.uploadDesc}
             </p>
             <div className="flex flex-col md:flex-row gap-2 md:items-center">
               <input
@@ -115,7 +114,7 @@ export function NewLoanWizard({
                 className="bg-primary text-on-primary px-4 py-2 rounded-lg text-label-md whitespace-nowrap disabled:opacity-60"
                 disabled={isExtracting}
               >
-                {isExtracting ? "Extracting..." : "Upload and extract"}
+                {isExtracting ? text.extracting : text.uploadAndExtract}
               </button>
             </div>
             {isExtracting ? (
@@ -137,7 +136,7 @@ export function NewLoanWizard({
               onClick={() => setCurrentStep(2)}
               className="bg-primary text-on-primary py-2 px-4 rounded-lg text-label-md"
             >
-              Next
+              {text.next}
             </button>
           </div>
         </>
@@ -191,7 +190,7 @@ export function NewLoanWizard({
               />
             </label>
             <label className="flex flex-col gap-1 text-label-sm text-on-surface-variant">
-              Currency
+              {text.currency}
               <input
                 name="currency"
                 required
@@ -227,7 +226,7 @@ export function NewLoanWizard({
               />
             </label>
             <label className="flex flex-col gap-1 text-label-sm text-on-surface-variant">
-              Payment frequency
+              {text.paymentFrequency}
               {ambiguousWarning("paymentFrequency")}
               <select
                 name="paymentFrequency"
@@ -235,17 +234,17 @@ export function NewLoanWizard({
                 onChange={(e) => setPaymentFrequency(e.target.value as Frequency)}
                 className="border border-outline-variant rounded-lg px-3 py-2 text-body-md focus:outline-none focus:border-primary"
               >
-                <option value="monthly">Monthly</option>
-                <option value="quarterly">Quarterly</option>
-                <option value="semiannual">Semiannual</option>
-                <option value="annual">Annual</option>
-                <option value="biweekly">Biweekly</option>
-                <option value="weekly">Weekly</option>
-                <option value="daily">Daily</option>
+                <option value="monthly">{text.freqMonthly}</option>
+                <option value="quarterly">{text.freqQuarterly}</option>
+                <option value="semiannual">{text.freqSemiannual}</option>
+                <option value="annual">{text.freqAnnual}</option>
+                <option value="biweekly">{text.freqBiweekly}</option>
+                <option value="weekly">{text.freqWeekly}</option>
+                <option value="daily">{text.freqDaily}</option>
               </select>
             </label>
             <label className="flex flex-col gap-1 text-label-sm text-on-surface-variant">
-              Amortization
+              {text.amortization}
               {ambiguousWarning("amortizationType")}
               <select
                 name="amortizationType"
@@ -253,29 +252,29 @@ export function NewLoanWizard({
                 onChange={(e) => setAmortizationType(e.target.value as AmortizationType)}
                 className="border border-outline-variant rounded-lg px-3 py-2 text-body-md focus:outline-none focus:border-primary"
               >
-                <option value="french">French</option>
-                <option value="constant_amortization">Constant amortization</option>
-                <option value="interest_only">Interest only</option>
+                <option value="french">{text.amortFrench}</option>
+                <option value="constant_amortization">{text.amortConstant}</option>
+                <option value="interest_only">{text.amortInterestOnly}</option>
               </select>
             </label>
             {category === "mortgage" ? (
               <>
                 <label className="flex flex-col gap-1 text-label-sm text-on-surface-variant">
-                  Rate type
+                  {text.rateType}
                   {ambiguousWarning("rateType")}
                   <select
                     value={rateType}
                     onChange={(e) => setRateType(e.target.value as MortgageRateType)}
                     className="border border-outline-variant rounded-lg px-3 py-2 text-body-md focus:outline-none focus:border-primary"
                   >
-                    <option value="fixed">Fixed</option>
-                    <option value="variable">Variable</option>
-                    <option value="mixed">Mixed (fixed then variable)</option>
+                    <option value="fixed">{text.rateFixed}</option>
+                    <option value="variable">{text.rateVariable}</option>
+                    <option value="mixed">{text.rateMixed}</option>
                   </select>
                 </label>
                 {(rateType === "fixed" || rateType === "mixed") ? (
                   <label className="flex flex-col gap-1 text-label-sm text-on-surface-variant">
-                    Fixed rate (%)
+                    {text.fixedRate}
                     {ambiguousWarning("fixedRate")}
                     <input
                       type="number"
@@ -291,7 +290,7 @@ export function NewLoanWizard({
                 {(rateType === "variable" || rateType === "mixed") ? (
                   <>
                     <label className="flex flex-col gap-1 text-label-sm text-on-surface-variant">
-                      Euribor rate (%)
+                      {text.euriborRate}
                       {ambiguousWarning("euriborRate")}
                       <input
                         type="number"
@@ -302,7 +301,7 @@ export function NewLoanWizard({
                       />
                     </label>
                     <label className="flex flex-col gap-1 text-label-sm text-on-surface-variant">
-                      Spread (%)
+                      {text.spread}
                       {ambiguousWarning("spread")}
                       <input
                         type="number"
@@ -316,7 +315,7 @@ export function NewLoanWizard({
                 ) : null}
                 {rateType === "mixed" ? (
                   <label className="flex flex-col gap-1 text-label-sm text-on-surface-variant">
-                    Fixed-rate periods
+                    {text.fixedRatePeriods}
                     {ambiguousWarning("fixedRatePeriods")}
                     <input
                       type="number"
@@ -379,7 +378,7 @@ export function NewLoanWizard({
                 onClick={() => setCurrentStep(1)}
                 className="border border-outline-variant text-on-surface py-2 px-4 rounded-lg text-label-md"
               >
-                Previous
+                {text.back}
               </button>
               <button
                 type="submit"

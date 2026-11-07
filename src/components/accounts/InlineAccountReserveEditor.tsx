@@ -11,6 +11,7 @@ interface InlineAccountReserveEditorProps {
   formattedReserve: string;
   formattedReserveSecondary?: string;
   updateAction: (formData: FormData) => Promise<void>;
+  labels: { edit: string; save: string; cancel: string };
 }
 
 export function InlineAccountReserveEditor({
@@ -21,6 +22,7 @@ export function InlineAccountReserveEditor({
   formattedReserve,
   formattedReserveSecondary,
   updateAction,
+  labels,
 }: InlineAccountReserveEditorProps) {
   const [isEditing, setIsEditing] = useState(false);
   const [value, setValue] = useState(minimumReserve);
@@ -38,7 +40,7 @@ export function InlineAccountReserveEditor({
             <p className="text-label-sm text-on-surface-variant">{formattedReserveSecondary}</p>
           ) : null}
         </div>
-        <InlineEditTrigger label="Edit minimum reserve" onClick={() => setIsEditing(true)} />
+        <InlineEditTrigger label={labels.edit} onClick={() => setIsEditing(true)} />
       </div>
     );
   }
@@ -46,8 +48,8 @@ export function InlineAccountReserveEditor({
   return (
     <InlineEditForm
       hiddenFields={{ accountId, balance, active: active ? "on" : "" }}
-      saveLabel="Save minimum reserve"
-      cancelLabel="Cancel minimum reserve edit"
+      saveLabel={labels.save}
+      cancelLabel={labels.cancel}
       action={updateAction}
       onSaved={() => setIsEditing(false)}
       onCancel={() => {
