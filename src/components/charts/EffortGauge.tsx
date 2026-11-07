@@ -1,4 +1,5 @@
 import { CHART } from "./chartTheme.js";
+import { OriginalEffortGauge } from "../original/OriginalEffortGauge.js";
 
 const TONE_COLOR: Record<"healthy" | "warning" | "danger", string> = {
   healthy: CHART.healthy,
@@ -18,17 +19,29 @@ const THRESHOLDS = [30, 45];
 export function EffortGauge({
   percent,
   tone,
+  sizePx,
 }: {
   percent: number;
   tone: "healthy" | "warning" | "danger";
-  /** Kept for call-site compatibility; the meter is fluid-width. */
+  /** Size of the original theme's ring gauge; the meter itself is fluid-width. */
   sizePx?: number;
 }) {
   const clamped = Math.max(0, Math.min(100, percent));
   const color = TONE_COLOR[tone];
 
   return (
-    <div className="w-full self-stretch h-[68px] flex flex-col justify-end gap-2" role="meter" aria-valuemin={0} aria-valuemax={100} aria-valuenow={Math.round(clamped)}>
+    <>
+      <div className="only-original">
+        <OriginalEffortGauge percent={percent} tone={tone} {...(sizePx !== undefined ? { sizePx } : {})} />
+      </div>
+      <MeterGauge clamped={clamped} color={color} />
+    </>
+  );
+}
+
+function MeterGauge({ clamped, color }: { clamped: number; color: string }) {
+  return (
+    <div className="not-original w-full self-stretch h-[68px] flex flex-col justify-end gap-2" role="meter" aria-valuemin={0} aria-valuemax={100} aria-valuenow={Math.round(clamped)}>
       <div className="figure text-[34px] leading-none text-on-surface">
         {Math.round(clamped)}
         <span className="text-[18px] text-on-surface-variant ml-0.5">%</span>

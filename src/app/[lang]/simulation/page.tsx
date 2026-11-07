@@ -324,7 +324,7 @@ export default async function SimulationPage({
   return (
     <div className="flex flex-col gap-stack-lg">
       <LiveRefresh scope="accounts" />
-      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 border-b border-on-surface pb-5">
+      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 page-head border-b border-on-surface pb-5">
         <div>
           <h2 className="text-display-lg-mobile md:text-display-lg text-on-surface">{dict.simulation.title}</h2>
           <p className="text-body-lg text-on-surface-variant mt-2">{dict.simulation.subtitle}</p>

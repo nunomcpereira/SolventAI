@@ -287,7 +287,8 @@
     "close": "Schließen",
     "theme": "Design",
     "themeClassic": "Klassisch",
-    "themeLedger": "Kassenbuch"
+    "themeLedger": "Kassenbuch",
+    "themeOriginal": "Original"
   },
   "wizards": {
     "suggestionsTitle": "Vorschläge",

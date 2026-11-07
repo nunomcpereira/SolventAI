@@ -35,6 +35,7 @@ export function DashboardSuggestionWizards({
   accounts,
   defaultCurrency,
   labels,
+  variant = "default",
 }: {
   actions: WizardActions;
   accountTypeOptions: TypeOption[];
@@ -42,45 +43,67 @@ export function DashboardSuggestionWizards({
   accounts: AccountOption[];
   defaultCurrency: string;
   labels: WizardLabels;
+  /** "original" reproduces the pre-redesign card (original theme). */
+  variant?: "default" | "original";
 }) {
   const [activeWizard, setActiveWizard] = useState<"account" | "loan" | "scenario" | null>(null);
 
+  const original = variant === "original";
+  const suggestions = [
+    { key: "account" as const, title: labels.createAccountTitle, desc: labels.createAccountDesc },
+    { key: "loan" as const, title: labels.createLoanTitle, desc: labels.createLoanDesc },
+    { key: "scenario" as const, title: labels.createScenarioTitle, desc: labels.createScenarioDesc },
+  ];
+
   return (
-    <section>
-      <div className="border-b border-on-surface pb-2">
-        <h3 className="text-headline-sm text-on-surface">{labels.suggestionsTitle}</h3>
-      </div>
-
-      <p className="text-body-sm text-on-surface-variant mt-3 mb-4">{labels.suggestionsSubtitle}</p>
-
-      <div className="grid grid-cols-1 md:grid-cols-3 border-y border-outline-variant divide-y md:divide-y-0 md:divide-x divide-outline-variant mb-5">
-        <button
-          type="button"
-          onClick={() => setActiveWizard("account")}
-          className="group text-left py-4 md:px-5 md:first:pl-0 hover:bg-surface-container-low transition-colors"
-        >
-          <p className="text-label-md text-on-surface font-medium flex items-baseline gap-2"><span className="font-mono text-[11px] text-primary">→</span><span className="group-hover:underline underline-offset-4 decoration-1">{labels.createAccountTitle}</span></p>
-          <p className="text-label-sm text-on-surface-variant mt-1 pl-5">{labels.createAccountDesc}</p>
-        </button>
-
-        <button
-          type="button"
-          onClick={() => setActiveWizard("loan")}
-          className="group text-left py-4 md:px-5 md:first:pl-0 hover:bg-surface-container-low transition-colors"
-        >
-          <p className="text-label-md text-on-surface font-medium flex items-baseline gap-2"><span className="font-mono text-[11px] text-primary">→</span><span className="group-hover:underline underline-offset-4 decoration-1">{labels.createLoanTitle}</span></p>
-          <p className="text-label-sm text-on-surface-variant mt-1 pl-5">{labels.createLoanDesc}</p>
-        </button>
-
-        <button
-          type="button"
-          onClick={() => setActiveWizard("scenario")}
-          className="group text-left py-4 md:px-5 md:first:pl-0 hover:bg-surface-container-low transition-colors"
-        >
-          <p className="text-label-md text-on-surface font-medium flex items-baseline gap-2"><span className="font-mono text-[11px] text-primary">→</span><span className="group-hover:underline underline-offset-4 decoration-1">{labels.createScenarioTitle}</span></p>
-          <p className="text-label-sm text-on-surface-variant mt-1 pl-5">{labels.createScenarioDesc}</p>
-        </button>
-      </div>
+    <section className={original ? "bg-surface-container-lowest border border-outline-variant rounded-xl p-6" : undefined}>
+      {original ? (
+        <>
+          <div className="flex items-center gap-2 mb-4">
+            <span className="material-symbols-outlined text-primary" style={{ fontVariationSettings: "'FILL' 1" }}>
+              auto_awesome
+            </span>
+            <h3 className="text-headline-sm text-on-surface">{labels.suggestionsTitle}</h3>
+          </div>
+          <p className="text-body-md text-on-surface-variant mb-5">{labels.suggestionsSubtitle}</p>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-5">
+            {suggestions.map((item) => (
+              <button
+                key={item.key}
+                type="button"
+                onClick={() => setActiveWizard(item.key)}
+                className="text-left p-4 rounded-lg border border-outline-variant bg-surface hover:border-primary transition-colors"
+              >
+                <p className="text-label-md text-on-surface font-semibold">{item.title}</p>
+                <p className="text-label-sm text-on-surface-variant mt-1">{item.desc}</p>
+              </button>
+            ))}
+          </div>
+        </>
+      ) : (
+        <>
+          <div className="border-b border-on-surface pb-2">
+            <h3 className="text-headline-sm text-on-surface">{labels.suggestionsTitle}</h3>
+          </div>
+          <p className="text-body-sm text-on-surface-variant mt-3 mb-4">{labels.suggestionsSubtitle}</p>
+          <div className="grid grid-cols-1 md:grid-cols-3 border-y border-outline-variant divide-y md:divide-y-0 md:divide-x divide-outline-variant mb-5">
+            {suggestions.map((item) => (
+              <button
+                key={item.key}
+                type="button"
+                onClick={() => setActiveWizard(item.key)}
+                className="group text-left py-4 md:px-5 md:first:pl-0 hover:bg-surface-container-low transition-colors"
+              >
+                <p className="text-label-md text-on-surface font-medium flex items-baseline gap-2">
+                  <span className="font-mono text-[11px] text-primary">→</span>
+                  <span className="group-hover:underline underline-offset-4 decoration-1">{item.title}</span>
+                </p>
+                <p className="text-label-sm text-on-surface-variant mt-1 pl-5">{item.desc}</p>
+              </button>
+            ))}
+          </div>
+        </>
+      )}
 
       {activeWizard === "account" ? (
         <AccountWizard

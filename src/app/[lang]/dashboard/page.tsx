@@ -13,6 +13,8 @@ import { EffortGauge } from "../../../components/charts/EffortGauge.js";
 import { DashboardSuggestionWizards } from "../../../components/dashboard/DashboardSuggestionWizards.js";
 import { LiveRefresh } from "../../../components/ui/LiveRefresh.js";
 import { MonthKeyboardNav } from "../../../components/ui/MonthKeyboardNav.js";
+import { OriginalDashboard } from "../../../components/original/OriginalDashboard.js";
+import { getTheme } from "../../../lib/themeServer.js";
 import {
   createDashboardAccountAction,
   createDashboardLoanAction,
@@ -101,6 +103,9 @@ export default async function DashboardPage({
   params: Promise<{ lang: string }>;
   searchParams: Promise<{ monthOffset?: string }>;
 }) {
+  if ((await getTheme()) === "original") {
+    return <OriginalDashboard params={params} searchParams={searchParams} />;
+  }
   const { lang } = await params;
   if (!isSupportedLanguage(lang)) notFound();
   const dict = getDictionary(lang);
@@ -163,7 +168,7 @@ export default async function DashboardPage({
         atEnd={atEnd}
       />
 
-      <header className="flex flex-col gap-2 md:flex-row md:items-end md:justify-between border-b border-on-surface pb-5">
+      <header className="flex flex-col gap-2 md:flex-row md:items-end md:justify-between page-head border-b border-on-surface pb-5">
         <div>
           <h2 className="text-display-lg-mobile lg:text-display-lg text-on-background">{dict.dashboard.title}</h2>
           <p className="text-body-lg text-on-surface-variant mt-1 max-w-xl">{dict.dashboard.subtitle}</p>

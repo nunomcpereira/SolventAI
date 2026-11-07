@@ -71,7 +71,7 @@ export default async function UploadPage({ params }: { params: Promise<{ lang: s
     <div className="flex flex-col w-full">
       <LiveRefresh scope="upload" />
       <div className="w-full max-w-3xl">
-        <div className="mb-stack-lg border-b border-on-surface pb-5">
+        <div className="mb-stack-lg page-head border-b border-on-surface pb-5">
           <h2 className="text-display-lg-mobile lg:text-display-lg text-on-background">{dict.upload.title}</h2>
           <p className="text-body-lg text-on-surface-variant mt-1 max-w-2xl">{dict.upload.description}</p>
         </div>

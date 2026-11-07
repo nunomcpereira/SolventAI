@@ -287,7 +287,8 @@
     "close": "Fermer",
     "theme": "Thème",
     "themeClassic": "Classique",
-    "themeLedger": "Registre"
+    "themeLedger": "Registre",
+    "themeOriginal": "Original"
   },
   "wizards": {
     "suggestionsTitle": "Suggestions",

@@ -74,6 +74,7 @@ export async function AppShell({
             options={[
               { value: "classic", label: dict.common.themeClassic },
               { value: "ledger", label: dict.common.themeLedger },
+              { value: "original", label: dict.common.themeOriginal },
             ]}
           />
         </div>

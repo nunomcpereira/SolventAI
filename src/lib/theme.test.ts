@@ -5,6 +5,7 @@ describe("parseTheme", () => {
   it("accepts known themes", () => {
     expect(parseTheme("classic")).toBe("classic");
     expect(parseTheme("ledger")).toBe("ledger");
+    expect(parseTheme("original")).toBe("original");
   });
 
   it("falls back to the default for missing or unknown values", () => {

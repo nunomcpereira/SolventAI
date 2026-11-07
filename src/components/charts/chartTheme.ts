@@ -28,7 +28,7 @@ export const AXIS_PROPS = {
   axisLine: false,
   fontSize: 11,
   stroke: CHART.axis,
-  fontFamily: "var(--font-plex-mono), ui-monospace, monospace",
+  fontFamily: "var(--font-mono)",
 } as const;
 
 export const TOOLTIP_PROPS = {
@@ -37,7 +37,7 @@ export const TOOLTIP_PROPS = {
     border: "1px solid var(--chart-tooltip-border)",
     borderRadius: 2,
     fontSize: 12,
-    fontFamily: "var(--font-plex-mono), ui-monospace, monospace",
+    fontFamily: "var(--font-mono)",
     boxShadow: "none",
   },
   labelStyle: { color: "var(--chart-tooltip-label)", marginBottom: 4 },

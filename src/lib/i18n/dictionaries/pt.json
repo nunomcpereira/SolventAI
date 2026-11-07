@@ -287,7 +287,8 @@
     "close": "Fechar",
     "theme": "Tema",
     "themeClassic": "Clássico",
-    "themeLedger": "Livro-razão"
+    "themeLedger": "Livro-razão",
+    "themeOriginal": "Original"
   },
   "wizards": {
     "suggestionsTitle": "Sugestões",

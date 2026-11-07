@@ -30,7 +30,7 @@ export default async function SettingsPage({ params }: { params: Promise<{ lang:
 
   return (
     <div className="flex flex-col gap-stack-lg">
-      <div className="border-b border-on-surface pb-5">
+      <div className="page-head border-b border-on-surface pb-5">
         <h1 className="text-display-lg-mobile md:text-display-lg text-on-background">{dict.settings.title}</h1>
         <p className="text-body-lg text-on-surface-variant mt-2">{dict.settings.subtitle}</p>
       </div>
@@ -273,6 +273,7 @@ export default async function SettingsPage({ params }: { params: Promise<{ lang:
               options={[
                 { value: "classic", label: dict.common.themeClassic },
                 { value: "ledger", label: dict.common.themeLedger },
+                { value: "original", label: dict.common.themeOriginal },
               ]}
               className="max-w-xs"
             />

@@ -96,7 +96,7 @@ export default async function AccountsPage({ params }: { params: Promise<{ lang:
   return (
     <div className="flex flex-col gap-stack-lg w-full">
       <LiveRefresh scope="accounts" />
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-4 border-b border-on-surface pb-5">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-4 page-head border-b border-on-surface pb-5">
         <div>
           <h1 className="text-display-lg-mobile md:text-display-lg text-on-surface">{dict.accounts.title}</h1>
           <p className="text-body-lg text-on-surface-variant mt-stack-sm">{dict.accounts.subtitle}</p>
@@ -113,7 +113,7 @@ export default async function AccountsPage({ params }: { params: Promise<{ lang:
       </div>
 
       {totalLiquidity ? (
-        <div className="border-b border-outline-variant pb-5 -mt-2">
+        <div className="figure-card border-b border-outline-variant pb-5 -mt-2">
           <h2 className="eyebrow !font-sans">
             {dict.accounts.totalAvailableLiquidity}
           </h2>

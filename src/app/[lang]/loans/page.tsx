@@ -106,14 +106,14 @@ export default async function LoansPage({ params }: { params: Promise<{ lang: st
   return (
     <div className="flex flex-col gap-stack-lg">
       <LiveRefresh scope="loans" />
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-stack-md border-b border-on-surface pb-5">
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-stack-md page-head border-b border-on-surface pb-5">
         <div>
           <h1 className="text-display-lg-mobile md:text-display-lg text-on-surface">{dict.loans.title}</h1>
           <p className="text-body-lg text-on-surface-variant mt-1">{dict.loans.subtitle}</p>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 border-y border-outline-variant divide-y md:divide-y-0 md:divide-x divide-outline-variant">
+      <div className="figure-band grid grid-cols-1 md:grid-cols-3 border-y border-outline-variant divide-y md:divide-y-0 md:divide-x divide-outline-variant">
         <div className="py-4 md:px-5 md:first:pl-0">
           <div className="flex justify-between items-start mb-2">
             <h3 className="eyebrow">Total liabilities</h3>

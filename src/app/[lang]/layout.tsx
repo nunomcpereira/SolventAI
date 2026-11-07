@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { SUPPORTED_LANGUAGES, type Language } from "../../lib/i18n/locales.js";
 import { getDictionary } from "../../lib/i18n/getDictionary.js";
 import { AppShell } from "../../components/shell/AppShell.js";
+import { OriginalAppShell } from "../../components/original/OriginalAppShell.js";
 import { LanguagePreferenceSync } from "../../components/i18n/LanguagePreferenceSync.js";
 import { getTheme } from "../../lib/themeServer.js";
 
@@ -27,11 +28,12 @@ export default async function LangLayout({
   }
   const dict = getDictionary(lang);
   const theme = await getTheme();
+  const Shell = theme === "original" ? OriginalAppShell : AppShell;
 
   return (
-    <AppShell lang={lang} dict={dict} theme={theme}>
+    <Shell lang={lang} dict={dict} theme={theme}>
       <LanguagePreferenceSync lang={lang} />
       {children}
-    </AppShell>
+    </Shell>
   );
 }
