@@ -6,6 +6,7 @@ import { llmContractExtractionSchema, mapToExtractedFieldInput, type LlmContract
 import { DomainValidationError } from "../../../domain/shared/errors.js";
 import { logLlmExchange } from "./extractionLogger.js";
 import { chunkContractPages, type ContractChunk, type ContractPage } from "./chunking.js";
+import { flagInconsistentFields, sameRawValue } from "./plausibility.js";
 
 export class ExtractionParseError extends Error {
   constructor(public readonly rawText: string, cause: unknown) {
@@ -60,12 +61,20 @@ const STRUCTURAL_FORMAT_HINTS: Partial<Record<keyof LlmContractExtraction, strin
  * truth, no hand-copied enum lists to drift out of sync) and spelled out per field so
  * the model is told exactly what's allowed instead of discovering it via a rejection.
  */
+/** Extra guidance for enum fields models commonly misclassify. */
+const ENUM_HINTS: Partial<Record<keyof LlmContractExtraction, string>> = {
+  rateType:
+    'a fixed period followed by a variable period is "mixed", never "variable" — e.g. "Tipo de taxa: Mista", ' +
+    '"taxa mista", "tasa mixta", "taux mixte", "Mischzins"',
+};
+
 function describeField(key: keyof LlmContractExtraction): string {
   const fieldSchema = llmContractExtractionSchema.shape[key];
   const valueSchema = fieldSchema.shape.value;
   const unwrapped = valueSchema instanceof z.ZodNullable ? valueSchema.unwrap() : valueSchema;
   if (unwrapped instanceof z.ZodEnum) {
-    return `${key}: MUST be exactly one of: ${unwrapped.options.join(", ")} (classify/translate the source text into one of these; never output the source-language wording or a raw code)`;
+    const hint = ENUM_HINTS[key];
+    return `${key}: MUST be exactly one of: ${unwrapped.options.join(", ")} (classify/translate the source text into one of these; never output the source-language wording or a raw code)${hint ? `; ${hint}` : ""}`;
   }
   const structuralHint = STRUCTURAL_FORMAT_HINTS[key];
   return structuralHint ? `${key}: ${structuralHint}` : key;
@@ -232,6 +241,8 @@ export async function extractContractFields(params: {
       : [{ index: 0, total: 1, label: "Full document", text: params.contractText }];
 
   const merged: Partial<Record<keyof LlmContractExtraction, RawFieldEntry>> = {};
+  /** Fields for which two chunks returned different non-null values — neither can be trusted blindly. */
+  const conflicting = new Set<keyof LlmContractExtraction>();
   let lastError: unknown;
   let successCount = 0;
 
@@ -241,7 +252,17 @@ export async function extractContractFields(params: {
       const raw = await extractChunkRaw(chunk, params.llm, documentId, extractionId);
       successCount += 1;
       for (const [key, field] of Object.entries(raw) as [keyof LlmContractExtraction, RawFieldEntry][]) {
-        merged[key] = preferField(merged[key], field);
+        const existing = merged[key];
+        if (
+          existing?.value !== null &&
+          existing?.value !== undefined &&
+          field.value !== null &&
+          field.value !== undefined &&
+          !sameRawValue(existing.value, field.value)
+        ) {
+          conflicting.add(key);
+        }
+        merged[key] = preferField(existing, field);
       }
       await params.onProgress?.({ chunkIndex: chunk.index, chunksTotal: chunk.total, label: chunk.label, fields: { ...merged } });
     } catch (error) {
@@ -253,6 +274,7 @@ export async function extractContractFields(params: {
   if (successCount === 0) throw lastError;
 
   flagImplausibleRates(merged);
+  flagInconsistentFields(merged, conflicting);
 
   const mappedFields = Object.fromEntries(
     (Object.keys(llmContractExtractionSchema.shape) as (keyof LlmContractExtraction)[]).map((key) => [

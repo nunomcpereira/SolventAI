@@ -167,6 +167,8 @@
     "statusAmbiguous": "Prüfung nötig",
     "confirmAdd": "Bestätigen & zum Portfolio hinzufügen",
     "confirmAddHelp": "Erstellt einen aktiven Kredit, der mit diesem Vertrag verknüpft ist.",
+    "retry": "Extraktion wiederholen",
+    "deleteDocument": "Dokument löschen",
     "status": {
       "uploaded": "Hochgeladen",
       "extracting": "Wird extrahiert…",

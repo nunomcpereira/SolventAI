@@ -10,7 +10,7 @@ import { LiveRefresh } from "../../../components/ui/LiveRefresh.js";
 import { moneyFromSerialized } from "../../../domain/shared/codecs.js";
 import { formatMoney, formatDate } from "../../../lib/format.js";
 import { isReadyForLoanCreation, type ContractExtraction } from "../../../domain/contracts/contract.js";
-import { uploadContractAction } from "./actions.js";
+import { deleteContractAction, retryContractAction, uploadContractAction } from "./actions.js";
 import { createLoanFromContractAction } from "../loans/actions.js";
 
 function isSupportedLanguage(value: string): value is Language {
@@ -62,6 +62,8 @@ export default async function UploadPage({ params }: { params: Promise<{ lang: s
   ]);
   const boundAction = uploadContractAction.bind(null, lang);
   const boundCreateLoanFromContract = createLoanFromContractAction.bind(null, lang);
+  const boundRetry = retryContractAction.bind(null, lang);
+  const boundDelete = deleteContractAction.bind(null, lang);
 
   // Most recently uploaded document (list is ordered by uploaded_at ascending).
   const mostRecent = documents[documents.length - 1];
@@ -282,11 +284,44 @@ export default async function UploadPage({ params }: { params: Promise<{ lang: s
                             .replace("{total}", String(doc.chunkTotal))}
                         </p>
                       ) : null}
+                      {(doc.status === "failed" || doc.status === "uploaded") && doc.error ? (
+                        <p className="text-label-sm text-on-surface-variant mt-1 max-w-xl">{doc.error}</p>
+                      ) : null}
                     </div>
                   </div>
-                  <Badge tone={DOCUMENT_STATUS_TONE[doc.status] ?? "neutral"}>
-                    {dict.upload.status[doc.status as keyof typeof dict.upload.status] ?? doc.status}
-                  </Badge>
+                  <div className="flex items-center gap-2 shrink-0">
+                    <Badge tone={DOCUMENT_STATUS_TONE[doc.status] ?? "neutral"}>
+                      {dict.upload.status[doc.status as keyof typeof dict.upload.status] ?? doc.status}
+                    </Badge>
+                    {doc.status === "failed" || doc.status === "uploaded" ? (
+                      <form action={boundRetry}>
+                        <input type="hidden" name="documentId" value={doc.id} />
+                        <button
+                          type="submit"
+                          title={dict.upload.retry}
+                          aria-label={`${dict.upload.retry}: ${doc.fileName}`}
+                          className="w-8 h-8 rounded-sm border border-outline-variant text-on-surface-variant hover:text-primary hover:border-primary transition-colors flex items-center justify-center"
+                        >
+                          <span className="material-symbols-outlined" style={{ fontSize: "18px" }}>
+                            refresh
+                          </span>
+                        </button>
+                      </form>
+                    ) : null}
+                    <form action={boundDelete}>
+                      <input type="hidden" name="documentId" value={doc.id} />
+                      <button
+                        type="submit"
+                        title={dict.upload.deleteDocument}
+                        aria-label={`${dict.upload.deleteDocument}: ${doc.fileName}`}
+                        className="w-8 h-8 rounded-sm border border-outline-variant text-on-surface-variant hover:text-status-danger hover:border-status-danger transition-colors flex items-center justify-center"
+                      >
+                        <span className="material-symbols-outlined" style={{ fontSize: "18px" }}>
+                          delete
+                        </span>
+                      </button>
+                    </form>
+                  </div>
                 </div>
               ))}
             </div>

@@ -167,6 +167,8 @@
     "statusAmbiguous": "Requiere revisión",
     "confirmAdd": "Confirmar y Añadir a la Cartera",
     "confirmAddHelp": "Crea un préstamo activo vinculado a este contrato.",
+    "retry": "Reintentar extracción",
+    "deleteDocument": "Eliminar documento",
     "status": {
       "uploaded": "Subido",
       "extracting": "Extrayendo…",

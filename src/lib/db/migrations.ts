@@ -177,5 +177,16 @@ export const MIGRATIONS: Migration[] = [
       CREATE INDEX idx_entity_history_lookup ON entity_history(entity_type, entity_id, recorded_at);
     `,
   },
+  {
+    id: "0011_contract_source_and_progress",
+    sql: `
+      ALTER TABLE contract_documents ADD COLUMN progress_at TEXT;
+      ALTER TABLE contract_documents ADD COLUMN content_hash TEXT;
+      ALTER TABLE contract_documents ADD COLUMN source_text TEXT;
+      ALTER TABLE contract_documents ADD COLUMN source_pages_json TEXT;
+
+      CREATE INDEX idx_contract_documents_hash ON contract_documents(content_hash);
+    `,
+  },
 ];
 

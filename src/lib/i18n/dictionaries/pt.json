@@ -167,6 +167,8 @@
     "statusAmbiguous": "Requer revisão",
     "confirmAdd": "Confirmar e Adicionar ao Portefólio",
     "confirmAddHelp": "Cria um empréstimo ativo associado a este contrato.",
+    "retry": "Repetir extração",
+    "deleteDocument": "Eliminar documento",
     "status": {
       "uploaded": "Carregado",
       "extracting": "A extrair…",

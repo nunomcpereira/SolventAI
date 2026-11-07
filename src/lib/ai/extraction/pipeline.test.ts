@@ -161,6 +161,23 @@ describe("extractContractFields — chunked (multi-page) extraction", () => {
     expect(extraction.rateType.value).toBe("fixed");
   });
 
+  it("marks a field 'ambiguous' when two chunks returned different values for it", async () => {
+    let call = 0;
+    const llm = {
+      complete: async () => {
+        call += 1;
+        return call === 1
+          ? JSON.stringify(fieldsWith({ term: field(360), loanType: field("mortgage") }))
+          : JSON.stringify(fieldsWith({ term: field(300, 0.99), loanType: field("mortgage") }));
+      },
+    };
+
+    const extraction = await extractContractFields({ contractText: "x", pages: fourPages, llm, ...baseParams });
+    expect(extraction.term.status).toBe("ambiguous");
+    expect(extraction.term.value).toBe(300); // higher-confidence candidate kept for the reviewer
+    expect(extraction.loanType.status).toBe("extracted"); // agreement is not a conflict
+  });
+
   it("skips a chunk that fails and still returns a result merged from the chunks that succeeded", async () => {
     let call = 0;
     const llm = {

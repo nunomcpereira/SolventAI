@@ -24,6 +24,8 @@ interface ContractDocumentRow {
   chunk_label: string | null;
   partial_fields_json: string | null;
   error: string | null;
+  progress_at: string | null;
+  content_hash: string | null;
 }
 
 function rowToDocument(row: ContractDocumentRow): ContractDocument {
@@ -39,6 +41,8 @@ function rowToDocument(row: ContractDocumentRow): ContractDocument {
     ...(row.chunk_label !== null ? { chunkLabel: row.chunk_label } : {}),
     ...(row.partial_fields_json !== null ? { partialFields: JSON.parse(row.partial_fields_json) } : {}),
     ...(row.error !== null ? { error: row.error } : {}),
+    ...(row.progress_at !== null ? { progressAt: row.progress_at } : {}),
+    ...(row.content_hash !== null ? { contentHash: row.content_hash } : {}),
   };
   return parseContractDocument(serialized);
 }
@@ -60,8 +64,8 @@ export function createSqliteContractDocumentRepository(db: Database): ContractDo
     async save(doc: ContractDocument): Promise<void> {
       const s = serializeContractDocument(doc);
       db.prepare(
-        `INSERT INTO contract_documents (id, file_name, uploaded_at, source_type, page_count, status, chunk_total, chunk_done, chunk_label, partial_fields_json, error)
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        `INSERT INTO contract_documents (id, file_name, uploaded_at, source_type, page_count, status, chunk_total, chunk_done, chunk_label, partial_fields_json, error, progress_at, content_hash)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
          ON CONFLICT(id) DO UPDATE SET
            file_name = excluded.file_name,
            uploaded_at = excluded.uploaded_at,
@@ -72,7 +76,9 @@ export function createSqliteContractDocumentRepository(db: Database): ContractDo
            chunk_done = excluded.chunk_done,
            chunk_label = excluded.chunk_label,
            partial_fields_json = excluded.partial_fields_json,
-           error = excluded.error`,
+           error = excluded.error,
+           progress_at = excluded.progress_at,
+           content_hash = excluded.content_hash`,
       ).run(
         s.id,
         s.fileName,
@@ -85,6 +91,8 @@ export function createSqliteContractDocumentRepository(db: Database): ContractDo
         s.chunkLabel ?? null,
         s.partialFields !== undefined ? JSON.stringify(s.partialFields) : null,
         s.error ?? null,
+        s.progressAt ?? null,
+        s.contentHash ?? null,
       );
     },
 
@@ -92,6 +100,45 @@ export function createSqliteContractDocumentRepository(db: Database): ContractDo
       db.prepare("DELETE FROM contract_documents WHERE id = ?").run(id);
     },
   };
+}
+
+/** Parsed contract text kept next to the document so an interrupted or failed extraction can
+ * be retried without the user uploading the PDF again. Stored outside ContractDocument on
+ * purpose: it is large, and nothing but the extraction pipeline needs it. */
+export interface ContractSource {
+  text: string;
+  pages: { pageNumber: number; text: string }[];
+}
+
+export function saveContractSource(db: Database, documentId: string, source: ContractSource): void {
+  db.prepare("UPDATE contract_documents SET source_text = ?, source_pages_json = ? WHERE id = ?").run(
+    source.text,
+    JSON.stringify(source.pages),
+    documentId,
+  );
+}
+
+export function getContractSource(db: Database, documentId: string): ContractSource | undefined {
+  const row = db
+    .prepare("SELECT source_text, source_pages_json FROM contract_documents WHERE id = ?")
+    .get(documentId) as { source_text: string | null; source_pages_json: string | null } | undefined;
+  if (!row || row.source_text === null) return undefined;
+  return {
+    text: row.source_text,
+    pages: row.source_pages_json !== null ? (JSON.parse(row.source_pages_json) as ContractSource["pages"]) : [],
+  };
+}
+
+/** Most recently uploaded document with this content hash, if any. */
+export function findContractDocumentByHash(db: Database, contentHash: string): ContractDocument | undefined {
+  const row = db
+    .prepare("SELECT * FROM contract_documents WHERE content_hash = ? ORDER BY uploaded_at DESC, rowid DESC LIMIT 1")
+    .get(contentHash) as ContractDocumentRow | undefined;
+  return row ? rowToDocument(row) : undefined;
+}
+
+export function deleteContractExtractionsForDocument(db: Database, documentId: string): void {
+  db.prepare("DELETE FROM contract_extractions WHERE document_id = ?").run(documentId);
 }
 
 interface ContractExtractionRow {

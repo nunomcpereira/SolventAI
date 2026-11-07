@@ -167,6 +167,8 @@
     "statusAmbiguous": "Needs review",
     "confirmAdd": "Confirm & Add to Portfolio",
     "confirmAddHelp": "Create an active loan linked to this contract document.",
+    "retry": "Retry extraction",
+    "deleteDocument": "Delete document",
     "status": {
       "uploaded": "Uploaded",
       "extracting": "Extracting…",

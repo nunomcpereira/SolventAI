@@ -167,6 +167,8 @@
     "statusAmbiguous": "À vérifier",
     "confirmAdd": "Confirmer et Ajouter au Portefeuille",
     "confirmAddHelp": "Crée un prêt actif associé à ce contrat.",
+    "retry": "Relancer l’extraction",
+    "deleteDocument": "Supprimer le document",
     "status": {
       "uploaded": "Téléversé",
       "extracting": "Extraction…",

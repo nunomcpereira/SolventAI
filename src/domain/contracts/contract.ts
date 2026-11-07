@@ -37,6 +37,35 @@ export interface ContractDocument {
   partialFields?: Record<string, { value: unknown; confidence?: number | null }>;
   /** Human-readable failure reason, set only while status is "failed" or "uploaded" (AI disabled/no text). */
   error?: string;
+  /** ISO datetime of the last extraction heartbeat (start or chunk completed). Used to detect
+   * runs that died with the process — see isExtractionStale. */
+  progressAt?: string;
+  /** SHA-256 of the uploaded PDF bytes, used to recognise re-uploads of the same file. */
+  contentHash?: string;
+}
+
+/** An extraction that has made no progress for this long is considered dead. One chunk is a
+ * single local-LLM call, so ten minutes without a heartbeat means the run is gone. */
+export const EXTRACTION_STALE_AFTER_MS = 10 * 60 * 1000;
+
+export const INTERRUPTED_EXTRACTION_ERROR =
+  "Extraction was interrupted (the app restarted or the AI server stopped responding). Retry to run it again.";
+
+/**
+ * True when a document claims to be "extracting" but its run can no longer be alive:
+ * no heartbeat at all (rows written before heartbeats existed) or none within `staleAfterMs`.
+ * Background extraction is an in-process promise, so a restart silently kills it.
+ */
+export function isExtractionStale(
+  doc: Pick<ContractDocument, "status" | "progressAt">,
+  now: Date,
+  staleAfterMs: number = EXTRACTION_STALE_AFTER_MS,
+): boolean {
+  if (doc.status !== "extracting") return false;
+  if (doc.progressAt === undefined) return true;
+  const last = Date.parse(doc.progressAt);
+  if (Number.isNaN(last)) return true;
+  return now.getTime() - last > staleAfterMs;
 }
 
 export interface ContractDocumentRepository extends Repository<ContractDocument> {}
@@ -60,6 +89,8 @@ export const contractDocumentInputSchema = z.object({
    * fights exactOptionalPropertyTypes). Cast to the real shape in parseContractDocument. */
   partialFields: z.record(z.string(), z.unknown()).optional(),
   error: z.string().optional(),
+  progressAt: z.string().datetime().optional(),
+  contentHash: z.string().regex(/^[0-9a-f]{64}$/).optional(),
 });
 export type ContractDocumentInput = z.infer<typeof contractDocumentInputSchema>;
 
@@ -75,6 +106,8 @@ export interface SerializedContractDocument {
   chunkLabel?: string;
   partialFields?: Record<string, { value: unknown; confidence?: number | null }>;
   error?: string;
+  progressAt?: string;
+  contentHash?: string;
 }
 
 export function parseContractDocument(raw: unknown): ContractDocument {
@@ -95,6 +128,8 @@ export function parseContractDocument(raw: unknown): ContractDocument {
       ? { partialFields: input.partialFields as Record<string, { value: unknown; confidence?: number | null }> }
       : {}),
     ...(input.error !== undefined ? { error: input.error } : {}),
+    ...(input.progressAt !== undefined ? { progressAt: input.progressAt } : {}),
+    ...(input.contentHash !== undefined ? { contentHash: input.contentHash } : {}),
   };
 }
 
@@ -111,6 +146,8 @@ export function serializeContractDocument(doc: ContractDocument): SerializedCont
     ...(doc.chunkLabel !== undefined ? { chunkLabel: doc.chunkLabel } : {}),
     ...(doc.partialFields !== undefined ? { partialFields: doc.partialFields } : {}),
     ...(doc.error !== undefined ? { error: doc.error } : {}),
+    ...(doc.progressAt !== undefined ? { progressAt: doc.progressAt } : {}),
+    ...(doc.contentHash !== undefined ? { contentHash: doc.contentHash } : {}),
   };
 }
 
