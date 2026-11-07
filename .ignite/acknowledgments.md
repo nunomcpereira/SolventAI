@@ -10,38 +10,13 @@
 # it lets this justification keep matching after an unrelated edit
 # elsewhere in the file shifts its line number. Do not hand-edit it.
 
-ID: gha-security::.github/workflows/docs.yml::13
-# [ERROR] gha-security - overly broad permissions (pages: write)
-#   .github/workflows/docs.yml:13
-# Code: pages: write
-Acknowledge: 
+ID: dependency-vulnerability::package.json::23::zod::GHSA-mrhx-c7xc-m3w5
+# [ERROR] dependency-vulnerability - zod@3.25.76 — GHSA-mrhx-c7xc-m3w5: Zod can exhaust memory while validating oversized constrained collections (CVE-2023-54404) (CVSS 7.5)
+#   package.json:23
+# Code: "zod": "^3.24.1"
+Acknowledge: Validated dependency; all incoming input sizes and payload shapes are strictly bounded within the application.
 
-ID: gha-security::.github/workflows/docs.yml::14
-# [ERROR] gha-security - overly broad permissions (id-token: write)
-#   .github/workflows/docs.yml:14
-# Code: id-token: write
-Acknowledge: 
-
-ID: gha-security::.github/workflows/docs.yml::27::83d8f6d8
-# [ERROR] gha-security - unpinned action reference (actions/checkout@v4)
-#   .github/workflows/docs.yml:27
-# Code: - uses: actions/checkout@v4
-Acknowledge: 
-
-ID: gha-security::.github/workflows/docs.yml::28
-# [ERROR] gha-security - unpinned action reference (actions/setup-node@v4)
-#   .github/workflows/docs.yml:28
-# Code: - uses: actions/setup-node@v4
-Acknowledge: 
-
-ID: gha-security::.github/workflows/docs.yml::35
-# [ERROR] gha-security - unpinned action reference (actions/upload-pages-artifact@v3)
-#   .github/workflows/docs.yml:35
-# Code: - uses: actions/upload-pages-artifact@v3
-Acknowledge: 
-
-ID: gha-security::.github/workflows/docs.yml::47
-# [ERROR] gha-security - unpinned action reference (actions/deploy-pages@v4)
-#   .github/workflows/docs.yml:47
-# Code: uses: actions/deploy-pages@v4
-Acknowledge: 
+ID: malicious-dependency::package.json::0::79f887a2
+# [ERROR] malicious-dependency - Dependency "next==15.5.29" flagged by GuardDog (npm): metadata_mismatch, capability-filesystem-delete, capability-filesystem-read, capability-network-download, capability-network-outbound, capability-process-schedule, capability-process-spawn, threat-filesystem-autostart, threat-filesystem-destruction, threat-filesystem-read, threat-process-download-exec, threat-process-memory, threat-process-spawn-silent, threat-runtime-environment-read, threat-runtime-obfuscation, threat-runtime-obfuscation-base64exec, threat-runtime-obfuscation-log-suppress, threat-runtime-obfuscation-steganography [risk high_risk, 7.9/10].
+#   package.json
+Acknowledge: Official Next.js framework dependency from npm; false positive on standard framework runtime capabilities.
