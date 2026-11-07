@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { createLoan, updateLoan, deleteLoan } from "../../../lib/services/loansPageService.js";
 import { uploadContract } from "../../../lib/services/contractsService.js";
+import { applyCurrentEuriborToLoans } from "../../../lib/services/marketRatesService.js";
 import { type LoanCategory } from "../../../domain/loans/loan.js";
 import { type ExpenseCategory } from "../../../domain/expenses/expense.js";
 import { type Frequency } from "../../../engine/dates/frequency.js";
@@ -173,4 +174,24 @@ export async function deleteRecurringExpenseAction(lang: string, formData: FormD
   emitChange("loans");
   revalidatePath(`/${lang}/dashboard`);
   revalidatePath(`/${lang}/simulation`);
+}
+
+/**
+ * User-initiated only: fetches the published Euribor fixings and applies them to Euribor-linked
+ * loans. The outcome travels back in the query string so the page can show one status line.
+ */
+export async function updateEuriborRatesAction(lang: string): Promise<void> {
+  const query = new URLSearchParams();
+  try {
+    const result = await applyCurrentEuriborToLoans();
+    query.set("euribor", "ok");
+    query.set("asOf", result.asOf);
+    query.set("updated", String(result.updated.length));
+    if (result.unmatched.length > 0) query.set("unmatched", result.unmatched.map((u) => u.loanName).join(", "));
+  } catch (error) {
+    query.set("euribor", "error");
+    query.set("reason", (error as Error).message.slice(0, 160));
+  }
+  revalidatePath(`/${lang}/loans`);
+  redirect(`/${lang}/loans?${query.toString()}`);
 }

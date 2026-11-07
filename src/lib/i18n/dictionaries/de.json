@@ -154,7 +154,13 @@
     "optimizerSimulate": "Im Szenario simulieren",
     "optimizerNoLoans": "Fügen Sie Kredite hinzu, um Sondertilgungen zu optimieren.",
     "totalLiabilities": "Gesamtverbindlichkeiten",
-    "deterministic": "Deterministisch"
+    "deterministic": "Deterministisch",
+    "updateEuribor": "Euribor aktualisieren",
+    "updateEuriborHelp": "Holt die zuletzt veröffentlichten Sätze von euribor-rates.eu. Es werden keine Daten von Ihnen gesendet.",
+    "euriborUpdated": "Euribor vom {date} auf {count} Kredit(e) angewendet.",
+    "euriborUpToDate": "Euribor vom {date}: alle Kredite waren bereits aktuell.",
+    "euriborUnmatched": "Nicht aktualisiert, Laufzeit nicht veröffentlicht: {loans}.",
+    "euriborFailed": "Euribor konnte nicht abgerufen werden ({reason}). Ihre Kredite wurden nicht geändert."
   },
   "upload": {
     "title": "Vertrag hochladen",

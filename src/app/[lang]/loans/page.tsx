@@ -31,13 +31,20 @@ import {
   createRecurringExpenseAction,
   updateRecurringExpenseAction,
   deleteRecurringExpenseAction,
+  updateEuriborRatesAction,
 } from "./actions.js";
 
 function isSupportedLanguage(value: string): value is Language {
   return (SUPPORTED_LANGUAGES as readonly string[]).includes(value);
 }
 
-export default async function LoansPage({ params }: { params: Promise<{ lang: string }> }) {
+export default async function LoansPage({
+  params,
+  searchParams,
+}: {
+  params: Promise<{ lang: string }>;
+  searchParams: Promise<{ euribor?: string; asOf?: string; updated?: string; unmatched?: string; reason?: string }>;
+}) {
   const { lang } = await params;
   if (!isSupportedLanguage(lang)) notFound();
   const dict = getDictionary(lang);
@@ -66,6 +73,7 @@ export default async function LoansPage({ params }: { params: Promise<{ lang: st
   const boundExtractDraft = extractLoanDraftFromContractAction.bind(null, lang);
   const boundUpdate = updateLoanAction.bind(null, lang);
   const boundDelete = deleteLoanAction.bind(null, lang);
+  const boundUpdateEuribor = updateEuriborRatesAction.bind(null, lang);
   const boundUploadContract = uploadLoanContractAction.bind(null, lang);
   const boundCreateExpense = createRecurringExpenseAction.bind(null, lang);
   const boundUpdateExpense = updateRecurringExpenseAction.bind(null, lang);
@@ -90,6 +98,22 @@ export default async function LoansPage({ params }: { params: Promise<{ lang: st
   );
   const weightedAvgRatePercent = avgRate?.mul(Decimal.fromBigInt(100n)).toString();
 
+  const query = await searchParams;
+  const hasIndexLinkedLoan = summaries.some((s) => s.loan.rate.type !== "fixed");
+  const euriborStatus =
+    query.euribor === "ok" && query.asOf
+      ? [
+          Number(query.updated ?? "0") > 0
+            ? dict.loans.euriborUpdated.replace("{date}", formatDate(query.asOf, lang)).replace("{count}", query.updated ?? "0")
+            : dict.loans.euriborUpToDate.replace("{date}", formatDate(query.asOf, lang)),
+          query.unmatched ? dict.loans.euriborUnmatched.replace("{loans}", query.unmatched) : "",
+        ]
+          .filter(Boolean)
+          .join(" ")
+      : query.euribor === "error"
+        ? dict.loans.euriborFailed.replace("{reason}", query.reason ?? "")
+        : undefined;
+
   return (
     <div className="flex flex-col gap-stack-lg">
       <LiveRefresh scope="loans" />
@@ -98,7 +122,29 @@ export default async function LoansPage({ params }: { params: Promise<{ lang: st
           <h1 className="text-display-lg-mobile md:text-display-lg text-on-surface">{dict.loans.title}</h1>
           <p className="text-body-lg text-on-surface-variant mt-1">{dict.loans.subtitle}</p>
         </div>
+        {hasIndexLinkedLoan ? (
+          <form action={boundUpdateEuribor} className="flex flex-col md:items-end gap-1 max-w-xs">
+            <button
+              type="submit"
+              className="inline-flex items-center gap-2 border border-outline-variant rounded-sm px-3 py-1.5 text-label-md text-on-surface hover:border-primary hover:text-primary transition-colors"
+            >
+              <span className="material-symbols-outlined" style={{ fontSize: "18px" }}>
+                sync
+              </span>
+              {dict.loans.updateEuribor}
+            </button>
+            <span className="text-label-sm text-on-surface-variant md:text-right">{dict.loans.updateEuriborHelp}</span>
+          </form>
+        ) : null}
       </div>
+      {euriborStatus ? (
+        <p
+          role="status"
+          className={`text-body-sm -mt-2 ${query.euribor === "error" ? "text-status-danger" : "text-on-surface-variant"}`}
+        >
+          {euriborStatus}
+        </p>
+      ) : null}
 
       <div className="figure-band grid grid-cols-1 md:grid-cols-3 border-y border-outline-variant divide-y md:divide-y-0 md:divide-x divide-outline-variant">
         <div className="py-4 md:px-5 md:first:pl-0">

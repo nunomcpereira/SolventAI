@@ -13,6 +13,12 @@ title: Loans and expenses
 - **Average interest rate (current):** the rate each loan charges today, weighted by what is still owed. A mixed-rate loan counts at its fixed rate until the fixed period ends, then at index + spread
 - **Total monthly payment:** the sum of today's payments
 
+## Updating Euribor
+
+Variable and mixed-rate loans keep a **current index rate** that feeds every projection. When you have at least one such loan, **Update Euribor rates** (top right) fetches the latest published fixings from [euribor-rates.eu](https://www.euribor-rates.eu/en/current-euribor-rates/) and applies the matching tenor (1 week, 1, 3, 6 or 12 months) to each Euribor-linked loan. Only the index value changes: spread, caps and the fixed period stay as they are, and each change is recorded in the loan's history.
+
+This is the app's only outbound request apart from the LLM endpoint you configure. It runs only when you press the button, and it is a plain read of a public page: nothing about you or your loans is sent. If the page can't be read, your loans are left untouched.
+
 ## Loan cards
 
 Each loan shows its principal, today's **monthly payment**, **outstanding balance**, rate, **total interest** over its life, start date, associated contract and **payoff progress**.

@@ -154,7 +154,13 @@
     "optimizerSimulate": "Simular nos Cenários",
     "optimizerNoLoans": "Adicione empréstimos para calcular opções de amortização.",
     "totalLiabilities": "Passivo total",
-    "deterministic": "Determinístico"
+    "deterministic": "Determinístico",
+    "updateEuribor": "Atualizar Euribor",
+    "updateEuriborHelp": "Obtém as últimas taxas publicadas em euribor-rates.eu. Nenhum dado seu é enviado.",
+    "euriborUpdated": "Euribor de {date} aplicada a {count} empréstimo(s).",
+    "euriborUpToDate": "Euribor de {date}: todos os empréstimos já estavam atualizados.",
+    "euriborUnmatched": "Não atualizados, prazo não publicado: {loans}.",
+    "euriborFailed": "Não foi possível obter a Euribor ({reason}). Os empréstimos não foram alterados."
   },
   "upload": {
     "title": "Carregar contrato",

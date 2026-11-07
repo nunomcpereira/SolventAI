@@ -154,7 +154,13 @@
     "optimizerSimulate": "Simuler dans les Scénarios",
     "optimizerNoLoans": "Ajoutez des prêts pour optimiser les remboursements.",
     "totalLiabilities": "Passif total",
-    "deterministic": "Déterministe"
+    "deterministic": "Déterministe",
+    "updateEuribor": "Mettre à jour l'Euribor",
+    "updateEuriborHelp": "Récupère les derniers taux publiés sur euribor-rates.eu. Aucune donnée vous concernant n'est envoyée.",
+    "euriborUpdated": "Euribor du {date} appliqué à {count} prêt(s).",
+    "euriborUpToDate": "Euribor du {date} : tous les prêts étaient déjà à jour.",
+    "euriborUnmatched": "Non mis à jour, échéance non publiée : {loans}.",
+    "euriborFailed": "Impossible de récupérer l'Euribor ({reason}). Vos prêts n'ont pas été modifiés."
   },
   "upload": {
     "title": "Importer un contrat",

@@ -154,7 +154,13 @@
     "optimizerSimulate": "Simulate in Scenarios",
     "optimizerNoLoans": "Add loans to run prepayment optimization.",
     "totalLiabilities": "Total liabilities",
-    "deterministic": "Deterministic"
+    "deterministic": "Deterministic",
+    "updateEuribor": "Update Euribor rates",
+    "updateEuriborHelp": "Fetches the latest published rates from euribor-rates.eu. Nothing about you is sent.",
+    "euriborUpdated": "Euribor of {date} applied to {count} loan(s).",
+    "euriborUpToDate": "Euribor of {date}: all loans were already up to date.",
+    "euriborUnmatched": "Not updated, tenor not published: {loans}.",
+    "euriborFailed": "Couldn't fetch Euribor rates ({reason}). Your loans were not changed."
   },
   "upload": {
     "title": "Upload contract",
