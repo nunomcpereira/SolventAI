@@ -72,7 +72,7 @@ export class Decimal {
       throw new Error("Decimal.pow: exponent must be a non-negative integer");
     }
     let result = Decimal.ONE;
-    let base: Decimal = this;
+    let base = Decimal.fromScaledBigInt(this.scaled);
     let n = exponent;
     while (n > 0) {
       if (n & 1) result = result.mul(base);

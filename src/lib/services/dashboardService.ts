@@ -6,7 +6,6 @@ import { Money, sumMoney } from "../../engine/money/money.js";
 import { runSimulation, type SimulationDebtPayment } from "../../engine/simulation/simulate.js";
 import {
   totalLiquidity,
-  availableLiquidity,
   minimumLiquidity,
   liquidityRunway,
   findLiquidityBreaches,

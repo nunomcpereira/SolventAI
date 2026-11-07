@@ -31,14 +31,6 @@ function isSupportedLanguage(value: string): value is Language {
   return (SUPPORTED_LANGUAGES as readonly string[]).includes(value);
 }
 
-const ACCOUNT_TYPE_ICON: Record<string, string> = {
-  checking: "account_balance",
-  savings: "savings",
-  emergency: "security",
-  investment: "trending_up",
-  other: "account_balance_wallet",
-};
-
 export default async function AccountsPage({ params }: { params: Promise<{ lang: string }> }) {
   const { lang } = await params;
   if (!isSupportedLanguage(lang)) notFound();

@@ -5,7 +5,7 @@ import { ensureSeeded } from "./seed.js";
 import { createSqliteScenarioRepository } from "../db/repositories/index.js";
 import { getLoanSchedule, computeLoanPrepayment, MissingRateDataError, type IndexRateOverride } from "./loanService.js";
 import { IsoDate } from "../../engine/dates/isoDate.js";
-import { Money, sumMoney } from "../../engine/money/money.js";
+import { Money } from "../../engine/money/money.js";
 import { Decimal } from "../../engine/money/decimal.js";
 import { runSimulation, type SimulationDebtPayment } from "../../engine/simulation/simulate.js";
 import { type Scenario, type SimulationEvent, parseScenario } from "../../domain/scenarios/scenario.js";

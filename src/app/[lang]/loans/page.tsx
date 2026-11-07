@@ -37,15 +37,6 @@ function isSupportedLanguage(value: string): value is Language {
   return (SUPPORTED_LANGUAGES as readonly string[]).includes(value);
 }
 
-const CATEGORY_ICON: Record<string, string> = {
-  mortgage: "home",
-  auto: "directions_car",
-  personal: "person",
-  consumer: "shopping_cart",
-  student: "school",
-  other: "account_balance_wallet",
-};
-
 export default async function LoansPage({ params }: { params: Promise<{ lang: string }> }) {
   const { lang } = await params;
   if (!isSupportedLanguage(lang)) notFound();
