@@ -39,8 +39,22 @@ function openTenantDb(path: string): Database {
  * 26), cached per tenant for the life of the process. */
 const baselined = new Map<string, Promise<unknown>>();
 
+/** Filesystem path of the currently-selected tenant's database. */
+export async function currentDbPath(): Promise<string> {
+  return process.env["SOLVENT_DB_PATH"] ?? tenantDbPath(await currentTenantId());
+}
+
+/** Closes and forgets the cached connection for `path`, so the next `getDb()` reopens
+ * (and re-migrates) whatever file is at that path — used after a backup restore. */
+export function closeDb(path: string): void {
+  const db = connections.get(path);
+  connections.delete(path);
+  baselined.delete(path);
+  db?.close();
+}
+
 export async function getDb(): Promise<Database> {
-  const path = process.env["SOLVENT_DB_PATH"] ?? tenantDbPath(await currentTenantId());
+  const path = await currentDbPath();
   const db = openTenantDb(path);
   // Once per connection: give pre-existing data a history starting point (see historyBaseline.ts).
   let pending = baselined.get(path);

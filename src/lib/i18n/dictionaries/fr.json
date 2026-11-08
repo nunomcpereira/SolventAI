@@ -503,5 +503,26 @@
       "llmEnabled": "Extraction IA locale",
       "allowCloudLlmFallback": "Repli LLM cloud"
     }
+  },
+  "backup": {
+    "title": "Sauvegarde et restauration",
+    "subtitle": "Vos données n'existent que sur cet ordinateur. Téléchargez régulièrement une copie et conservez-la en lieu sûr.",
+    "download": "Télécharger la sauvegarde",
+    "downloadHelp": "Un seul fichier .db contenant tout le profil actuel : comptes, prêts, contrats, scénarios, paramètres et journal d'audit.",
+    "restoreTitle": "Restaurer une sauvegarde",
+    "restoreHelp": "Remplace toutes les données du profil actuel par le fichier de sauvegarde. Les données actuelles sont conservées comme copie de sécurité dans le dossier de données.",
+    "chooseFile": "Fichier de sauvegarde (.db)",
+    "confirm": "Je comprends que cela remplace toutes les données actuelles de ce profil.",
+    "restore": "Restaurer la sauvegarde",
+    "restoring": "Restauration…",
+    "success": "Sauvegarde restaurée.",
+    "safetyCopy": "Données précédentes enregistrées sous {file}.",
+    "errTooLarge": "Le fichier est trop volumineux pour être une sauvegarde SolventAI.",
+    "errNotSqlite": "Ce fichier n'est pas une base de données.",
+    "errCorrupt": "Le fichier de sauvegarde est endommagé et ne peut pas être restauré.",
+    "errNotSolvent": "Cette base de données n'est pas une sauvegarde SolventAI.",
+    "errNewerVersion": "Cette sauvegarde provient d'une version plus récente de SolventAI. Mettez d'abord l'application à jour.",
+    "errForbidden": "Restauration refusée : la requête ne provient pas de cette application.",
+    "errUnknown": "La restauration a échoué. Vos données actuelles n'ont pas été modifiées."
   }
 }

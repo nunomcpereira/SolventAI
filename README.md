@@ -24,6 +24,7 @@ Solvent AI helps individuals and households model their complete financial reali
   - All data is stored in local SQLite databases on your machine—never sent to an external cloud.
   - Multi-profile support with built-in isolated demo accounts to experiment safely.
   - History replay and audit log tracking changes to accounts, loans, and recurring entries.
+  - One-click backup and restore in Settings: download the profile as a single `.db` file, restore it later (validated, with a safety copy of the replaced data).
 
 - **Contract PDF Import with Local AI**:
   - Ingest loan contracts (PDF) via local client-side text extraction with an OCR fallback.

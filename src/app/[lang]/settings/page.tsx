@@ -12,6 +12,7 @@ import { getTheme } from "../../../lib/themeServer.js";
 import Link from "next/link";
 import { getAuditLog } from "../../../lib/services/auditService.js";
 import { AuditLogList } from "../../../components/audit/AuditLogList.js";
+import { BackupPanel } from "../../../components/settings/BackupPanel.js";
 
 const REGISTERED_CURRENCIES = ["EUR", "USD", "GBP", "CHF", "JPY", "KWD"] as const;
 const APP_VERSION = "0.1.0";
@@ -57,6 +58,11 @@ export default async function SettingsPage({ params }: { params: Promise<{ lang:
               <li>
                 <a className="block py-1.5 text-on-surface-variant hover:text-on-surface hover:underline underline-offset-4 decoration-1 text-label-md" href="#appearance">
                   {dict.common.theme}
+                </a>
+              </li>
+              <li>
+                <a className="block py-1.5 text-on-surface-variant hover:text-on-surface hover:underline underline-offset-4 decoration-1 text-label-md" href="#backup">
+                  {dict.backup.title}
                 </a>
               </li>
               <li>
@@ -283,6 +289,33 @@ export default async function SettingsPage({ params }: { params: Promise<{ lang:
               label={dict.common.theme}
               options={themeOptions(dict.common)}
               className="max-w-xs"
+            />
+          </Section>
+
+          <Section id="backup" title={dict.backup.title}>
+            <p className="text-body-sm text-on-surface-variant -mt-1">{dict.backup.subtitle}</p>
+            <BackupPanel
+              labels={{
+                download: dict.backup.download,
+                downloadHelp: dict.backup.downloadHelp,
+                restoreTitle: dict.backup.restoreTitle,
+                restoreHelp: dict.backup.restoreHelp,
+                chooseFile: dict.backup.chooseFile,
+                confirm: dict.backup.confirm,
+                restore: dict.backup.restore,
+                restoring: dict.backup.restoring,
+                success: dict.backup.success,
+                safetyCopy: dict.backup.safetyCopy,
+                errors: {
+                  "too-large": dict.backup.errTooLarge,
+                  "not-sqlite": dict.backup.errNotSqlite,
+                  corrupt: dict.backup.errCorrupt,
+                  "not-solvent": dict.backup.errNotSolvent,
+                  "newer-version": dict.backup.errNewerVersion,
+                  forbidden: dict.backup.errForbidden,
+                  unknown: dict.backup.errUnknown,
+                },
+              }}
             />
           </Section>
 

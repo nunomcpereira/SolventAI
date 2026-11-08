@@ -503,5 +503,26 @@
       "llmEnabled": "Lokale KI-Extraktion",
       "allowCloudLlmFallback": "Cloud-LLM-Fallback"
     }
+  },
+  "backup": {
+    "title": "Sicherung & Wiederherstellung",
+    "subtitle": "Ihre Daten liegen nur auf diesem Rechner. Laden Sie regelmäßig eine Kopie herunter und bewahren Sie sie sicher auf.",
+    "download": "Sicherung herunterladen",
+    "downloadHelp": "Eine einzige .db-Datei mit allem aus dem aktuellen Profil: Konten, Kredite, Verträge, Szenarien, Einstellungen und Änderungsprotokoll.",
+    "restoreTitle": "Aus Sicherung wiederherstellen",
+    "restoreHelp": "Ersetzt alle Daten des aktuellen Profils durch die Sicherungsdatei. Die aktuellen Daten bleiben als Sicherheitskopie im Datenordner erhalten.",
+    "chooseFile": "Sicherungsdatei (.db)",
+    "confirm": "Mir ist klar, dass dies alle aktuellen Daten dieses Profils ersetzt.",
+    "restore": "Sicherung wiederherstellen",
+    "restoring": "Wird wiederhergestellt…",
+    "success": "Sicherung wiederhergestellt.",
+    "safetyCopy": "Bisherige Daten gespeichert als {file}.",
+    "errTooLarge": "Die Datei ist zu groß für eine SolventAI-Sicherung.",
+    "errNotSqlite": "Diese Datei ist keine Datenbank.",
+    "errCorrupt": "Die Sicherungsdatei ist beschädigt und kann nicht wiederhergestellt werden.",
+    "errNotSolvent": "Diese Datenbank ist keine SolventAI-Sicherung.",
+    "errNewerVersion": "Diese Sicherung stammt von einer neueren SolventAI-Version. Aktualisieren Sie zuerst die App.",
+    "errForbidden": "Wiederherstellung abgelehnt: Die Anfrage kam nicht von dieser App.",
+    "errUnknown": "Wiederherstellung fehlgeschlagen. Ihre aktuellen Daten wurden nicht geändert."
   }
 }

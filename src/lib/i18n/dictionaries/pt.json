@@ -503,5 +503,26 @@
       "llmEnabled": "Extração com IA local",
       "allowCloudLlmFallback": "Recurso a LLM na nuvem"
     }
+  },
+  "backup": {
+    "title": "Cópia de segurança e restauro",
+    "subtitle": "Os seus dados existem apenas neste computador. Descarregue uma cópia regularmente e guarde-a num local seguro.",
+    "download": "Descarregar cópia",
+    "downloadHelp": "Um único ficheiro .db com tudo do perfil atual: contas, empréstimos, contratos, cenários, definições e registo de auditoria.",
+    "restoreTitle": "Restaurar a partir de cópia",
+    "restoreHelp": "Substitui todos os dados do perfil atual pelo ficheiro de cópia. Os dados atuais ficam guardados como cópia de segurança na pasta de dados.",
+    "chooseFile": "Ficheiro de cópia (.db)",
+    "confirm": "Compreendo que isto substitui todos os dados atuais deste perfil.",
+    "restore": "Restaurar cópia",
+    "restoring": "A restaurar…",
+    "success": "Cópia restaurada.",
+    "safetyCopy": "Dados anteriores guardados como {file}.",
+    "errTooLarge": "O ficheiro é demasiado grande para ser uma cópia do SolventAI.",
+    "errNotSqlite": "Este ficheiro não é uma base de dados.",
+    "errCorrupt": "O ficheiro de cópia está danificado e não pode ser restaurado.",
+    "errNotSolvent": "Esta base de dados não é uma cópia do SolventAI.",
+    "errNewerVersion": "Esta cópia foi criada por uma versão mais recente do SolventAI. Atualize a aplicação primeiro.",
+    "errForbidden": "Restauro recusado: o pedido não veio desta aplicação.",
+    "errUnknown": "O restauro falhou. Os dados atuais não foram alterados."
   }
 }

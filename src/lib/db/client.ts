@@ -23,8 +23,7 @@ function loadSqliteModule(): SqliteModule {
  * `path` may be a filesystem path or ":memory:" (used by all repository tests).
  */
 export function openDatabase(path: string): Database {
-  const { DatabaseSync } = loadSqliteModule();
-  const db = new DatabaseSync(path);
+  const db = openRawDatabase(path);
   db.exec("PRAGMA foreign_keys = ON;");
   if (path !== ":memory:") {
     db.exec("PRAGMA journal_mode = WAL;");
@@ -32,6 +31,13 @@ export function openDatabase(path: string): Database {
   }
   runMigrations(db);
   return db;
+}
+
+/** Opens a SQLite file as-is: no pragmas, no migrations. Only for backup/restore
+ * (see backup.ts), which must inspect or copy a file without changing it. */
+export function openRawDatabase(path: string, options: { readOnly?: boolean } = {}): Database {
+  const { DatabaseSync } = loadSqliteModule();
+  return new DatabaseSync(path, { readOnly: options.readOnly ?? false });
 }
 
 function runMigrations(db: Database): void {

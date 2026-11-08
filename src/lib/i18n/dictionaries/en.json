@@ -503,5 +503,26 @@
       "llmEnabled": "Local AI extraction",
       "allowCloudLlmFallback": "Cloud LLM fallback"
     }
+  },
+  "backup": {
+    "title": "Backup & restore",
+    "subtitle": "Your data lives only on this machine. Download a copy regularly and keep it somewhere safe.",
+    "download": "Download backup",
+    "downloadHelp": "A single .db file with everything in the current profile: accounts, loans, contracts, scenarios, settings and audit log.",
+    "restoreTitle": "Restore from backup",
+    "restoreHelp": "Replaces all data in the current profile with the backup file. The current data is kept as a safety copy in the data folder.",
+    "chooseFile": "Backup file (.db)",
+    "confirm": "I understand this replaces all current data in this profile.",
+    "restore": "Restore backup",
+    "restoring": "Restoring…",
+    "success": "Backup restored.",
+    "safetyCopy": "Previous data saved as {file}.",
+    "errTooLarge": "The file is too large to be a SolventAI backup.",
+    "errNotSqlite": "This isn't a database file.",
+    "errCorrupt": "The backup file is damaged and can't be restored.",
+    "errNotSolvent": "This database isn't a SolventAI backup.",
+    "errNewerVersion": "This backup was made by a newer version of SolventAI. Update the app first.",
+    "errForbidden": "Restore was refused: the request didn't come from this app.",
+    "errUnknown": "Restore failed. Your current data was not changed."
   }
 }
