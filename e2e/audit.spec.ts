@@ -18,7 +18,7 @@ test.describe("Audit log", () => {
     await page.goto("/en/settings#audit");
     const section = page.locator("#audit");
     await expect(section.getByRole("heading", { name: "Audit log" })).toBeVisible();
-    await expect(section.getByText(scenarioName)).toBeVisible();
+    await expect(section.getByText(scenarioName).first()).toBeVisible();
     await expect(section.getByText("Rounding").first()).toBeVisible();
 
     await section.getByRole("link", { name: /View full audit log/ }).click();
@@ -27,7 +27,7 @@ test.describe("Audit log", () => {
 
     await page.getByRole("link", { name: "Scenario", exact: true }).click();
     await expect(page).toHaveURL(/type=scenario/);
-    await expect(page.getByText(scenarioName)).toBeVisible();
+    await expect(page.getByText(scenarioName).first()).toBeVisible();
     await expect(page.getByText("Rounding")).toHaveCount(0);
   });
 });
