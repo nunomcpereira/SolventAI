@@ -4,6 +4,7 @@ import { useEffect } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { BEFORE_PARAM, parseBefore } from "../../lib/history/versionParam.js";
 import { formatDayHeading, formatTime } from "../../lib/format.js";
+import { PastVersionPicker } from "./PastVersionPicker.js";
 
 /**
  * Shown while a page is rendered as a past version (`?before=`): says which moment it is,
@@ -16,7 +17,7 @@ export function PastVersionBanner({
   labels,
 }: {
   lang: string;
-  labels: { viewing: string; readOnly: string; backToCurrent: string };
+  labels: { viewing: string; readOnly: string; backToCurrent: string; pickLabel: string; pickGo: string };
 }) {
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -25,7 +26,9 @@ export function PastVersionBanner({
 
   useEffect(() => {
     if (!before) return;
-    const block = (event: Event) => event.preventDefault();
+    const block = (event: Event) => {
+      if (!(event.target instanceof HTMLFormElement && event.target.hasAttribute("data-past-version-picker"))) event.preventDefault();
+    };
     // Capture on document runs before React's own (root) listeners, so Next's <Link>
     // never navigates without the param.
     const keepBefore = (event: MouseEvent) => {
@@ -67,6 +70,13 @@ export function PastVersionBanner({
         </span>
         {labels.viewing.replace("{date}", when)} <span className="text-on-surface-variant">{labels.readOnly}</span>
       </p>
+      <PastVersionPicker
+        key={before}
+        path={pathname}
+        query={current.toString()}
+        initial={new Date(Date.parse(before) - 60_000).toISOString()}
+        labels={{ label: labels.pickLabel, go: labels.pickGo }}
+      />
       {/* A full load, not client navigation: forms on the page keep uncontrolled values otherwise. */}
       <a href={currentHref} data-leave-past-version className="text-label-md text-primary hover:underline">
         {labels.backToCurrent}

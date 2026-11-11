@@ -6,6 +6,7 @@ import { getAuditLog, parseAuditType } from "../../../../lib/services/auditServi
 import { AuditLogList } from "../../../../components/audit/AuditLogList.js";
 import { ENTITY_TYPES } from "../../../../domain/history/entityHistory.js";
 import { restoreAuditVersionAction } from "./actions.js";
+import { PastVersionPicker } from "../../../../components/history/PastVersionPicker.js";
 
 const PAGE_SIZE = 100;
 
@@ -49,6 +50,10 @@ export default async function AuditLogPage({
         </Link>
         <h1 className="text-display-lg-mobile md:text-display-lg text-on-surface mt-2">{dict.audit.title}</h1>
         <p className="text-body-lg text-on-surface-variant mt-1">{dict.audit.subtitle}</p>
+        <div className="mt-4 flex flex-col gap-1">
+          <p className="text-body-sm text-on-surface-variant">{dict.audit.pickMomentHelp}</p>
+          <PastVersionPicker path={`/${lang}/dashboard`} labels={{ label: dict.audit.pickMomentLabel, go: dict.audit.pickMomentGo }} />
+        </div>
       </div>
 
       <nav aria-label={dict.audit.title} className="flex flex-wrap gap-2">

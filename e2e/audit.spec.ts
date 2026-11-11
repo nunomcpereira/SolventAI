@@ -105,4 +105,13 @@ test.describe("Audit log", () => {
     await expect(impact.getByText("Total liquidity")).toBeVisible({ timeout: 15_000 });
     await expect(impact.getByText("+€1,234.00").first()).toBeVisible();
   });
+
+  test("picking a moment opens the app as it was then", async ({ page }) => {
+    await page.goto("/en/settings/audit");
+    const picker = page.locator("form[data-past-version-picker]");
+    await picker.locator('input[type="datetime-local"]').fill("2026-01-01T12:00");
+    await picker.getByRole("button", { name: "Go" }).click();
+    await expect(page).toHaveURL(/\/en\/dashboard\?before=2026-01-01T/);
+    await expect(page.getByTestId("past-version-banner")).toBeVisible();
+  });
 });

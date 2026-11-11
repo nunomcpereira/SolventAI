@@ -37,7 +37,7 @@ export default async function LangLayout({
       <Suspense fallback={null}>
         <PastVersionBanner
           lang={lang}
-          labels={{ viewing: dict.audit.pastVersionViewing, readOnly: dict.audit.pastVersionReadOnly, backToCurrent: dict.audit.pastVersionBack }}
+          labels={{ viewing: dict.audit.pastVersionViewing, readOnly: dict.audit.pastVersionReadOnly, backToCurrent: dict.audit.pastVersionBack, pickLabel: dict.audit.pickMomentLabel, pickGo: dict.audit.pickMomentGo }}
         />
       </Suspense>
       {children}
