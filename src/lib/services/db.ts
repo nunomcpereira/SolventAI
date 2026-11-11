@@ -57,7 +57,7 @@ export function closeDb(path: string): void {
   db?.close();
 }
 
-/** Read-only past versions (see asOfDatabase.ts), by "<db path>|<before>"; a few at most. */
+/** Read-only past versions (see asOfDatabase.ts), by "<db path>|<before>|<live change count>"; a few at most. */
 const asOfConnections = new Map<string, Promise<Database>>();
 const MAX_AS_OF_CONNECTIONS = 4;
 
@@ -71,7 +71,10 @@ export async function requestedBefore(): Promise<string | undefined> {
 }
 
 function getAsOfDb(path: string, live: Database, before: string): Promise<Database> {
-  const key = `${path}|${before}`;
+  // Every write in this process goes through `live`, so its change counter moving means a
+  // cached copy may hold stale untracked data (contracts, FX rates…) — rebuild then.
+  const changes = (live.prepare("SELECT total_changes() AS n").get() as { n: number }).n;
+  const key = `${path}|${before}|${changes}`;
   let pending = asOfConnections.get(key);
   if (pending === undefined) {
     // Make sure WAL frames are visible to the separate connection that ATTACH opens.
