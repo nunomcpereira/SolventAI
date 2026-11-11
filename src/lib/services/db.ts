@@ -1,9 +1,11 @@
 import "server-only";
 import { mkdirSync } from "node:fs";
 import { dirname, join } from "node:path";
-import { cookies } from "next/headers";
+import { cookies, headers } from "next/headers";
 import { openDatabase, type Database } from "../db/client.js";
 import { ensureHistoryBaselines } from "../db/historyBaseline.js";
+import { buildAsOfDatabase } from "../db/asOfDatabase.js";
+import { BEFORE_HEADER, parseBefore } from "../history/versionParam.js";
 
 export const DATA_DIR = process.env["SOLVENT_DATA_DIR"] ?? "./data";
 export const DEFAULT_TENANT_ID = "solvent";
@@ -50,9 +52,52 @@ export function closeDb(path: string): void {
   const db = connections.get(path);
   connections.delete(path);
   baselined.delete(path);
+  closeAsOfDbs(path);
   db?.close();
 }
 
+/** Read-only past versions (see asOfDatabase.ts), by "<db path>|<before>"; a few at most. */
+const asOfConnections = new Map<string, Promise<Database>>();
+const MAX_AS_OF_CONNECTIONS = 4;
+
+/** The `?before=` timestamp of the current request, if any (forwarded by middleware.ts). */
+export async function requestedBefore(): Promise<string | undefined> {
+  try {
+    return parseBefore((await headers()).get(BEFORE_HEADER));
+  } catch {
+    return undefined; // outside a request (scripts, tests)
+  }
+}
+
+function getAsOfDb(path: string, live: Database, before: string): Promise<Database> {
+  const key = `${path}|${before}`;
+  let pending = asOfConnections.get(key);
+  if (pending === undefined) {
+    // Make sure WAL frames are visible to the separate connection that ATTACH opens.
+    if (path !== ":memory:") live.exec("PRAGMA wal_checkpoint(PASSIVE);");
+    pending = buildAsOfDatabase(path, before);
+    pending.catch(() => asOfConnections.delete(key));
+    asOfConnections.set(key, pending);
+    while (asOfConnections.size > MAX_AS_OF_CONNECTIONS) {
+      const [oldestKey, oldest] = asOfConnections.entries().next().value!;
+      asOfConnections.delete(oldestKey);
+      void oldest.then((d) => d.close(), () => undefined);
+    }
+  }
+  return pending;
+}
+
+/** Drops every cached past version of `path` (its data changed, e.g. after a restore). */
+function closeAsOfDbs(path: string): void {
+  for (const [key, pending] of asOfConnections) {
+    if (!key.startsWith(`${path}|`)) continue;
+    asOfConnections.delete(key);
+    void pending.then((d) => d.close(), () => undefined);
+  }
+}
+
+/** Connection for the current request: the tenant's live database, or — when the URL
+ * carries `?before=` — a read-only copy of it as it was just before that instant. */
 export async function getDb(): Promise<Database> {
   const path = await currentDbPath();
   const db = openTenantDb(path);
@@ -63,6 +108,8 @@ export async function getDb(): Promise<Database> {
     baselined.set(path, pending);
   }
   await pending;
+  const before = await requestedBefore();
+  if (before && path !== ":memory:") return getAsOfDb(path, db, before);
   return db;
 }
 

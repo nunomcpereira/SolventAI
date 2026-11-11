@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { allFields, buildAuditEvents, diffSnapshots } from "./auditLog.js";
+import { allFields, buildAuditEvents, diffSnapshots, pageBeforeHref } from "./auditLog.js";
 import { type EntityHistoryEntry } from "../../domain/history/entityHistory.js";
 
 let seq = 0;
@@ -106,5 +106,20 @@ describe("allFields", () => {
       { path: "name", before: "A", after: "A", changed: false },
       { path: "endDate", before: "2027-01-01", after: undefined, changed: true },
     ]);
+  });
+});
+
+describe("pageBeforeHref", () => {
+  const at = "2026-11-07T10:00:01.000Z";
+  it("links each entity type to its page, as of just before the change", () => {
+    expect(pageBeforeHref({ entityType: "loan", entityId: "l1", recordedAt: at }, "pt")).toBe(`/pt/loans?before=${encodeURIComponent(at)}`);
+    expect(pageBeforeHref({ entityType: "income", entityId: "i1", recordedAt: at }, "en")).toBe(`/en/accounts?before=${encodeURIComponent(at)}`);
+    expect(pageBeforeHref({ entityType: "expense", entityId: "x1", recordedAt: at }, "en")).toMatch(/^\/en\/loans\?/);
+    expect(pageBeforeHref({ entityType: "settings", entityId: "settings", recordedAt: at }, "en")).toMatch(/^\/en\/settings\?/);
+  });
+  it("opens a scenario on itself", () => {
+    expect(pageBeforeHref({ entityType: "scenario", entityId: "s1", recordedAt: at }, "en")).toBe(
+      `/en/simulation?scenarioId=s1&before=${encodeURIComponent(at)}`,
+    );
   });
 });

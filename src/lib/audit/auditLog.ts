@@ -141,3 +141,24 @@ function base(entry: EntityHistoryEntry) {
     snapshot: entry.snapshot,
   };
 }
+
+/** The page each entity type is edited on (scenarios open on themselves). */
+const ENTITY_PAGES: Record<EntityType, string> = {
+  account: "accounts",
+  income: "accounts",
+  expense: "loans",
+  loan: "loans",
+  scenario: "simulation",
+  settings: "settings",
+};
+
+/**
+ * Link to the page where `event`'s entity lives, rendered as it was just before the
+ * change (`?before=` — see lib/history/versionParam.ts).
+ */
+export function pageBeforeHref(event: Pick<AuditEvent, "entityType" | "entityId" | "recordedAt">, lang: string): string {
+  const qs = new URLSearchParams();
+  if (event.entityType === "scenario") qs.set("scenarioId", event.entityId);
+  qs.set("before", event.recordedAt);
+  return `/${lang}/${ENTITY_PAGES[event.entityType]}?${qs.toString()}`;
+}

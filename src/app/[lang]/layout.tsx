@@ -1,4 +1,4 @@
-import type { ReactNode } from "react";
+import { Suspense, type ReactNode } from "react";
 import { notFound } from "next/navigation";
 import { SUPPORTED_LANGUAGES, type Language } from "../../lib/i18n/locales.js";
 import { getDictionary } from "../../lib/i18n/getDictionary.js";
@@ -6,6 +6,7 @@ import { AppShell } from "../../components/shell/AppShell.js";
 import { OriginalAppShell } from "../../components/original/OriginalAppShell.js";
 import { LanguagePreferenceSync } from "../../components/i18n/LanguagePreferenceSync.js";
 import { getTheme } from "../../lib/themeServer.js";
+import { PastVersionBanner } from "../../components/history/PastVersionBanner.js";
 
 export function generateStaticParams() {
   return SUPPORTED_LANGUAGES.map((lang) => ({ lang }));
@@ -33,6 +34,12 @@ export default async function LangLayout({
   return (
     <Shell lang={lang} dict={dict} theme={theme}>
       <LanguagePreferenceSync lang={lang} />
+      <Suspense fallback={null}>
+        <PastVersionBanner
+          lang={lang}
+          labels={{ viewing: dict.audit.pastVersionViewing, readOnly: dict.audit.pastVersionReadOnly, backToCurrent: dict.audit.pastVersionBack }}
+        />
+      </Suspense>
       {children}
     </Shell>
   );

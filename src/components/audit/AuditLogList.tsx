@@ -1,5 +1,5 @@
 import type { Dictionary } from "../../lib/i18n/getDictionary.js";
-import { allFields, type AuditEvent } from "../../lib/audit/auditLog.js";
+import { allFields, pageBeforeHref, type AuditEvent } from "../../lib/audit/auditLog.js";
 import { entityName, fieldLabel, formatAuditValue, type AuditNames } from "../../lib/audit/formatAudit.js";
 import { formatDayHeading, formatTime, localDayKey } from "../../lib/format.js";
 
@@ -49,6 +49,16 @@ export function AuditLogList({
                     </span>
                     <span className="font-medium break-words">{entityName(event, dict, names)}</span>
                     <span className={`text-label-md ${ACTION_TONE[event.action]}`}>{dict.audit.actions[event.action]}</span>
+                    {/* Full load: the target may be this same page, whose forms keep stale values on client navigation. */}
+                    <a
+                      href={pageBeforeHref(event, lang)}
+                      className="ml-auto inline-flex items-center gap-1 text-label-sm text-primary hover:underline whitespace-nowrap"
+                    >
+                      <span className="material-symbols-outlined" style={{ fontSize: "16px" }} aria-hidden>
+                        history
+                      </span>
+                      {dict.audit.viewPageBefore}
+                    </a>
                   </p>
                   {event.changes.length > 0 ? (
                     <ul className="mt-1.5 flex flex-col gap-1">

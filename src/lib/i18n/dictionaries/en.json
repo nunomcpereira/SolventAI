@@ -441,6 +441,10 @@
     "eventAccountTransfer": "Account transfer",
     "showAllFields": "Show all fields",
     "changed": "changed",
+    "viewPageBefore": "View page before this change",
+    "pastVersionViewing": "Viewing this page as it was before {date}.",
+    "pastVersionReadOnly": "Read-only — figures and calculations use that data.",
+    "pastVersionBack": "Back to current version",
     "types": {
       "account": "Account",
       "income": "Income",

@@ -441,6 +441,10 @@
     "eventAccountTransfer": "Kontoübertrag",
     "showAllFields": "Alle Felder anzeigen",
     "changed": "geändert",
+    "viewPageBefore": "Seite vor dieser Änderung anzeigen",
+    "pastVersionViewing": "Diese Seite, wie sie vor {date} war.",
+    "pastVersionReadOnly": "Nur lesen — Werte und Berechnungen basieren auf diesen Daten.",
+    "pastVersionBack": "Zur aktuellen Version",
     "types": {
       "account": "Konto",
       "income": "Einnahme",

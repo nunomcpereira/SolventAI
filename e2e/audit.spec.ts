@@ -30,4 +30,35 @@ test.describe("Audit log", () => {
     await expect(page.getByText(scenarioName).first()).toBeVisible();
     await expect(page.getByText("Rounding")).toHaveCount(0);
   });
+
+  test("an entry links to its page as it was before the change, read-only", async ({ page }) => {
+    await page.goto("/en/settings");
+    const rounding = page.locator('select[name="roundingMode"]');
+    const previous = await rounding.inputValue();
+    const next = previous === "half-up" ? "half-even" : "half-up";
+    await rounding.selectOption(next);
+    await page.getByRole("button", { name: "Save settings" }).click();
+    await page.waitForLoadState("networkidle");
+    await page.reload();
+    await expect(page.locator('select[name="roundingMode"]')).toHaveValue(next);
+
+    await page.goto("/en/settings/audit?type=settings");
+    await page.getByRole("link", { name: "View page before this change" }).first().click();
+    await expect(page).toHaveURL(/\/en\/settings\?before=/);
+    await expect(page.getByTestId("past-version-banner")).toBeVisible();
+    await expect(page.locator('select[name="roundingMode"]')).toHaveValue(previous);
+
+    await page.getByRole("link", { name: "Back to current version" }).click();
+    await expect(page.getByTestId("past-version-banner")).toHaveCount(0);
+    await expect(page.locator('select[name="roundingMode"]')).toHaveValue(next);
+  });
+
+  test("every page renders as a past version", async ({ page }) => {
+    const before = encodeURIComponent(new Date(Date.now() - 60_000).toISOString());
+    for (const path of ["dashboard", "accounts", "loans", "simulation", "settings", "upload"]) {
+      const response = await page.goto(`/en/${path}?before=${before}`);
+      expect(response?.status(), path).toBe(200);
+      await expect(page.getByTestId("past-version-banner"), path).toBeVisible();
+    }
+  });
 });
