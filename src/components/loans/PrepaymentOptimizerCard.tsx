@@ -8,6 +8,7 @@ import { type CurrencyCode } from "../../engine/money/currency.js";
 import { type PrepaymentStrategy } from "../../engine/prepayment/prepayment.js";
 import { optimizePrepaymentsAcrossLoans } from "../../lib/services/prepaymentOptimizationService.js";
 import { formatMoney } from "../../lib/format.js";
+import { IsoDate } from "../../engine/dates/isoDate.js";
 import { Badge } from "../ui/Badge.js";
 
 const CATEGORY_ICON: Record<string, string> = {
@@ -40,6 +41,8 @@ export interface PrepaymentOptimizerLabels {
 }
 
 export interface PrepaymentOptimizerCardProps {
+  /** "Today" for the ranking, "YYYY-MM-DD" — the app clock, which differs from the browser's while viewing a past version. */
+  today: string;
   serializedLoans: SerializedLoan[];
   currency: string;
   lang: string;
@@ -51,6 +54,7 @@ export function PrepaymentOptimizerCard({
   currency,
   lang,
   labels,
+  today,
 }: PrepaymentOptimizerCardProps) {
   const [lumpSum, setLumpSum] = useState<string>("5000");
   const [strategy, setStrategy] = useState<PrepaymentStrategy>("reduce_payment");
@@ -70,11 +74,12 @@ export function PrepaymentOptimizerCard({
         loans,
         lumpSum: money,
         strategy,
+        asOfDate: IsoDate.fromString(today),
       });
     } catch {
       return [];
     }
-  }, [loans, lumpSum, currency, strategy]);
+  }, [loans, lumpSum, currency, strategy, today]);
 
   return (
     <div className="bg-surface-container-lowest border border-outline-variant rounded-sm p-4 md:p-stack-lg shadow-sm">

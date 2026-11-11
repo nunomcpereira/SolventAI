@@ -1,6 +1,6 @@
 import "server-only";
 import { randomUUID } from "node:crypto";
-import { getDb } from "./db.js";
+import { appTodayIso, getDb } from "./db.js";
 import { ensureSeeded } from "./seed.js";
 import { createSqliteScenarioRepository } from "../db/repositories/index.js";
 import { getLoanSchedule, computeLoanPrepayment, MissingRateDataError, type IndexRateOverride } from "./loanService.js";
@@ -37,8 +37,8 @@ export const MAX_TIMELINE_MONTH_OFFSET = 99 * HORIZON_MONTHS;
  * balance that already includes it — double-counting months of salary/rent that
  * already happened.
  */
-function horizonStartToday(): string {
-  return new Date().toISOString().slice(0, 10);
+function horizonStartToday(): Promise<string> {
+  return appTodayIso();
 }
 
 /**
@@ -47,8 +47,8 @@ function horizonStartToday(): string {
  * clamps to 0 (simulation period 1), since periods before the simulation starts don't
  * exist on this timeline.
  */
-function simulationPeriodsElapsedBefore(date: IsoDate): number {
-  return Math.max(IsoDate.fromString(horizonStartToday()).monthsUntil(date), 0);
+function simulationPeriodsElapsedBefore(horizonStart: IsoDate, date: IsoDate): number {
+  return Math.max(horizonStart.monthsUntil(date), 0);
 }
 
 /**
@@ -62,8 +62,8 @@ function simulationPeriodsElapsedBefore(date: IsoDate): number {
  * over to variable, because periods 1..N of a fresh getLoanSchedule() were mistaken
  * for the loan's CURRENT periods instead of its very first ones).
  */
-function loanPeriodOffsetAtHorizonStart(loan: { startDate: IsoDate }): number {
-  return loan.startDate.monthsUntil(IsoDate.fromString(horizonStartToday()));
+function loanPeriodOffsetAtHorizonStart(horizonStart: IsoDate, loan: { startDate: IsoDate }): number {
+  return loan.startDate.monthsUntil(horizonStart);
 }
 
 export async function listScenarios(): Promise<Scenario[]> {
@@ -336,6 +336,7 @@ export async function runScenarioAgainstBase(
   monthOffset = 0,
 ): Promise<ScenarioRunResult> {
   const historical = await computeHistoricalProjection();
+  const horizonStart = IsoDate.fromString(await horizonStartToday());
   const minMonthOffset = historical.projected.length > 0 ? -historical.projected.length : 0;
   const clampedMonthOffset = Math.min(Math.max(Math.trunc(monthOffset), minMonthOffset), MAX_TIMELINE_MONTH_OFFSET);
   const totalMonths = Math.max(clampedMonthOffset, 0) + HORIZON_MONTHS;
@@ -370,7 +371,7 @@ export async function runScenarioAgainstBase(
     for (const loan of loans) {
       if (!activeAccountIds.has(loan.sourceAccountId)) continue;
       try {
-        const loanPeriodOffset = loanPeriodOffsetAtHorizonStart(loan);
+        const loanPeriodOffset = loanPeriodOffsetAtHorizonStart(horizonStart, loan);
         const prepaymentEvent = rawEvents.find(
           (e) => e.payload.type === "prepayment" && e.payload.loanId === loan.id,
         );
@@ -381,14 +382,14 @@ export async function runScenarioAgainstBase(
           rateChangeEvent && rateChangeEvent.payload.type === "rate_change"
             ? {
                 index: rateChangeEvent.payload.index,
-                fromPeriod: loanPeriodOffset + simulationPeriodsElapsedBefore(rateChangeEvent.date) + 1,
+                fromPeriod: loanPeriodOffset + simulationPeriodsElapsedBefore(horizonStart, rateChangeEvent.date) + 1,
                 newAnnualValue: rateChangeEvent.payload.newAnnualValue,
               }
             : undefined;
         const fullLoanSchedule =
           prepaymentEvent && prepaymentEvent.payload.type === "prepayment"
             ? computeLoanPrepayment(loan, {
-                periodsElapsed: loanPeriodOffset + simulationPeriodsElapsedBefore(prepaymentEvent.date),
+                periodsElapsed: loanPeriodOffset + simulationPeriodsElapsedBefore(horizonStart, prepaymentEvent.date),
                 prepaymentAmount: prepaymentEvent.payload.amount,
                 strategy: prepaymentEvent.payload.strategy,
                 ...(indexRateOverride ? { indexRateOverride } : {}),
@@ -462,7 +463,7 @@ export async function runScenarioAgainstBase(
           return { ...event, payload: { ...payload, amount: await convertMoneyToCurrency(payload.amount, currency) } };
         }
         const { totalCashOutflow } = computeLoanPrepayment(loan, {
-          periodsElapsed: loanPeriodOffsetAtHorizonStart(loan) + simulationPeriodsElapsedBefore(event.date),
+          periodsElapsed: loanPeriodOffsetAtHorizonStart(horizonStart, loan) + simulationPeriodsElapsedBefore(horizonStart, event.date),
           prepaymentAmount: payload.amount,
           strategy: payload.strategy,
         });
@@ -522,7 +523,7 @@ export async function runScenarioAgainstBase(
       expenseItems,
       debtPayments: debtPaymentsForRun.payments,
       events: events.filter(isValidEvent),
-      horizonStart: IsoDate.fromString(horizonStartToday()),
+      horizonStart,
       periodFrequency: "monthly",
       numberOfPeriods: totalMonths,
     });
@@ -595,8 +596,8 @@ export async function runScenarioAgainstBase(
   const activeProjection = scenarioProjection.length > 0 ? scenarioProjection : baseProjection;
   const effortRatePercent = activeProjection[0]?.effortRatePercent;
 
-  const windowStartDate = baseProjection[0]?.date ?? IsoDate.fromString(horizonStartToday()).toString();
-  const windowEndDate = baseProjection[baseProjection.length - 1]?.date ?? IsoDate.fromString(horizonStartToday()).toString();
+  const windowStartDate = baseProjection[0]?.date ?? horizonStart.toString();
+  const windowEndDate = baseProjection[baseProjection.length - 1]?.date ?? horizonStart.toString();
   const actualLiquidity = historical.actual.filter((a) => a.date >= windowStartDate && a.date <= windowEndDate);
 
   return {

@@ -48,6 +48,13 @@ test.describe("Audit log", () => {
     await expect(page.getByTestId("past-version-banner")).toBeVisible();
     await expect(page.locator('select[name="roundingMode"]')).toHaveValue(previous);
 
+    // Navigating elsewhere stays in the past version.
+    await page.getByRole("link", { name: /Loans and expenses/ }).first().click();
+    await expect(page).toHaveURL(/\/en\/loans\?before=/);
+    await expect(page.getByTestId("past-version-banner")).toBeVisible();
+    await page.getByRole("link", { name: /^(\d+\s*)?Settings$/ }).first().click();
+    await expect(page).toHaveURL(/\/en\/settings\?before=/);
+
     await page.getByRole("link", { name: "Back to current version" }).click();
     await expect(page.getByTestId("past-version-banner")).toHaveCount(0);
     await expect(page.locator('select[name="roundingMode"]')).toHaveValue(next);

@@ -84,7 +84,9 @@ export async function getAuditImpact(eventId: string): Promise<{ before: ImpactM
   if (!event) return undefined;
   const justAfter = new Date(Date.parse(event.recordedAt) + 1).toISOString();
   const [beforeDb, afterDb] = await Promise.all([getDbBefore(event.recordedAt), getDbBefore(justAfter)]);
-  const before = await withDb(beforeDb, currentMetrics);
-  const after = await withDb(afterDb, currentMetrics);
+  // Both as of the moment of the change, so only the change itself differs.
+  const at = new Date(event.recordedAt);
+  const before = await withDb(beforeDb, at, currentMetrics);
+  const after = await withDb(afterDb, at, currentMetrics);
   return { before, after };
 }

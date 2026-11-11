@@ -97,12 +97,30 @@ function closeAsOfDbs(path: string): void {
   }
 }
 
-const dbOverride = new AsyncLocalStorage<Database>();
+const dbOverride = new AsyncLocalStorage<{ db: Database; now: Date }>();
 
-/** Runs `fn` with every getDb() inside it returning `db` — e.g. to compute the dashboard
- * against a past version (see getDbBefore) without the services knowing about it. */
-export function withDb<T>(db: Database, fn: () => Promise<T>): Promise<T> {
-  return dbOverride.run(db, fn);
+/** Runs `fn` with every getDb() inside it returning `db` and appNow() returning `now` —
+ * e.g. to compute the dashboard against a past version (see getDbBefore) as of that
+ * moment, without the services knowing about it. */
+export function withDb<T>(db: Database, now: Date, fn: () => Promise<T>): Promise<T> {
+  return dbOverride.run({ db, now }, fn);
+}
+
+/**
+ * The app's "now": the real clock, except while viewing a past version (`?before=`, or
+ * inside withDb), when it is that moment — so "today"-based figures (loan progress,
+ * the simulation's first month, FX rates) match the data being shown.
+ */
+export async function appNow(): Promise<Date> {
+  const override = dbOverride.getStore();
+  if (override) return override.now;
+  const before = await requestedBefore();
+  return before ? new Date(before) : new Date();
+}
+
+/** appNow() as a calendar date, "YYYY-MM-DD" (UTC, as the rest of the app does). */
+export async function appTodayIso(): Promise<string> {
+  return (await appNow()).toISOString().slice(0, 10);
 }
 
 /** Read-only copy of the current tenant's database as it was just before `before`. */
@@ -115,7 +133,7 @@ export async function getDbBefore(before: string): Promise<Database> {
  * carries `?before=` — a read-only copy of it as it was just before that instant. */
 export async function getDb(): Promise<Database> {
   const override = dbOverride.getStore();
-  if (override) return override;
+  if (override) return override.db;
   const path = await currentDbPath();
   const db = openTenantDb(path);
   // Once per connection: give pre-existing data a history starting point (see historyBaseline.ts).

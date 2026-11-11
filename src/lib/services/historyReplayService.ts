@@ -1,5 +1,5 @@
 import "server-only";
-import { getDb } from "./db.js";
+import { appNow, getDb } from "./db.js";
 import { createSqliteEntityHistoryRepository } from "../db/repositories/index.js";
 import { parseAccount, type Account } from "../../domain/accounts/account.js";
 import { parseIncome, type Income } from "../../domain/income/income.js";
@@ -60,7 +60,7 @@ export async function computeBalanceTrajectory(accountId: string): Promise<Balan
     .map((r) => ({ date: r.recordedAt.slice(0, 10), balance: parseAccount(r.snapshot).initialBalance }));
 
   const accountCreatedAt = accountRows[0]!.recordedAt;
-  const nowIso = new Date().toISOString();
+  const nowIso = (await appNow()).toISOString();
 
   const currentIncomes = reconstructAsOf(allIncomeRows, nowIso, parseIncome);
   const currentExpenses = reconstructAsOf(allExpenseRows, nowIso, parseExpense);
@@ -183,7 +183,7 @@ export async function computeHistoricalProjection(): Promise<HistoricalProjectio
   }
   if (creationByAccount.size === 0) return { projected: [], actual: [], earliestDate: undefined };
   const earliestCreatedAt = [...creationByAccount.values()].sort()[0]!;
-  const nowIso = new Date().toISOString();
+  const nowIso = (await appNow()).toISOString();
 
   const currentIncomes = reconstructAsOf(allIncomeRows, nowIso, parseIncome);
   const currentExpenses = reconstructAsOf(allExpenseRows, nowIso, parseExpense);

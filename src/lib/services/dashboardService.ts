@@ -22,6 +22,7 @@ import {
   toLiquiditySnapshots,
 } from "./simulationBuilders.js";
 import { computeBalanceTrajectory, computeHistoricalProjection } from "./historyReplayService.js";
+import { appTodayIso } from "./db.js";
 
 const HORIZON_MONTHS = 12;
 /** Timeline navigation caps at ~99 years out, matching the simulation page. */
@@ -95,7 +96,7 @@ export async function getDashboardData(monthOffset = 0): Promise<DashboardData> 
   const loanWarnings: DashboardLoanWarning[] = [];
   let monthlyDebtObligations = Money.zero(currency);
   let debtOutstanding = Money.zero(currency);
-  const today = IsoDate.fromString(new Date().toISOString().slice(0, 10));
+  const today = IsoDate.fromString(await appTodayIso());
 
   for (const loan of loans) {
     try {
@@ -157,7 +158,7 @@ export async function getDashboardData(monthOffset = 0): Promise<DashboardData> 
 
   // Always the actual current month, so "projected minimum liquidity" reflects the next 12
   // months from today rather than a fixed calendar year.
-  const horizonStart = IsoDate.fromString(new Date().toISOString().slice(0, 10));
+  const horizonStart = IsoDate.fromString(await appTodayIso());
 
   const simulationAccounts = await buildSimulationAccounts(activeAccounts, currency);
   const currentTotalLiquidity = sumMoney(

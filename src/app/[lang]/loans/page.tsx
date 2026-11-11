@@ -8,6 +8,7 @@ import {
   getAvailableContractDocumentsForSelect,
 } from "../../../lib/services/loansPageService.js";
 import { getSettings } from "../../../lib/services/settingsService.js";
+import { appTodayIso } from "../../../lib/services/db.js";
 import { getLoanCategoryOptions } from "../../../lib/settings/typeOptions.js";
 import { formatDate, formatMoney } from "../../../lib/format.js";
 import { Badge } from "../../../components/ui/Badge.js";
@@ -48,7 +49,8 @@ export default async function LoansPage({
   const { lang } = await params;
   if (!isSupportedLanguage(lang)) notFound();
   const dict = getDictionary(lang);
-  const [summaries, accounts, contractDocuments, settings, expenses] = await Promise.all([
+  const [today, summaries, accounts, contractDocuments, settings, expenses] = await Promise.all([
+    appTodayIso(),
     listLoanSummaries(),
     getAvailableAccountsForLoanSelect(),
     getAvailableContractDocumentsForSelect(),
@@ -570,6 +572,7 @@ export default async function LoansPage({
 
       {summaries.length > 0 ? (
         <PrepaymentOptimizerCard
+          today={today}
           serializedLoans={serializedLoans}
           currency={currency}
           lang={lang}
