@@ -1,6 +1,7 @@
 import type { Dictionary } from "../../lib/i18n/getDictionary.js";
 import { allFields, pageBeforeHref, restorableSnapshot, type AuditEvent } from "../../lib/audit/auditLog.js";
 import { entityName, fieldLabel, formatAuditValue, type AuditNames } from "../../lib/audit/formatAudit.js";
+import { AuditImpact } from "./AuditImpact.js";
 import { formatDayHeading, formatTime, localDayKey } from "../../lib/format.js";
 
 const ACTION_TONE: Record<AuditEvent["action"], string> = {
@@ -27,6 +28,23 @@ export function AuditLogList({
   /** Where to come back after a restore. */
   returnTo?: string;
 }) {
+  const impactLabels = {
+    title: dict.audit.impactTitle,
+    loading: dict.audit.impactLoading,
+    failed: dict.audit.impactFailed,
+    unchanged: dict.audit.impactUnchanged,
+    metrics: {
+      totalLiquidity: dict.dashboard.totalLiquidity,
+      availableLiquidity: dict.dashboard.availableLiquidity,
+      monthlyDebtObligations: dict.dashboard.monthlyDebtObligations,
+      netMonthlyIncome: dict.dashboard.netMonthlyIncome,
+      effortRatePercent: dict.dashboard.effortRate,
+      projectedMinimumLiquidity: dict.dashboard.projectedMinimumLiquidity,
+      debtOutstanding: dict.dashboard.debtOutstanding,
+      liquidityRunwayMonths: dict.audit.impactRunway,
+    },
+  };
+
   if (events.length === 0) return <p className="text-body-md text-on-surface-variant py-4">{dict.audit.empty}</p>;
 
   const days: { key: string; heading: string; events: AuditEvent[] }[] = [];
@@ -80,6 +98,7 @@ export function AuditLogList({
                       ))}
                     </ul>
                   ) : null}
+                  <AuditImpact eventId={event.id} lang={lang} labels={impactLabels} />
                   {restoreAction && restorableSnapshot(event) !== undefined ? (
                     <details className="mt-1.5" data-testid="audit-restore">
                       <summary className="cursor-pointer select-none text-label-sm text-primary w-fit">

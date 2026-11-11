@@ -451,6 +451,13 @@
     "restoreConfirm": "Confirm restore",
     "restoreDone": "Version restored.",
     "restoreFailed": "Couldn't restore that version.",
+    "impactTitle": "Impact on key figures",
+    "impactLoading": "Calculating…",
+    "impactFailed": "Couldn't calculate the impact.",
+    "impactUnchanged": "No effect on the key figures.",
+    "impactMonths": "{count} months",
+    "impactNoRunwayLimit": "no shortfall",
+    "impactRunway": "Months until liquidity runs short",
     "types": {
       "account": "Account",
       "income": "Income",

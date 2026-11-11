@@ -80,4 +80,22 @@ test.describe("Audit log", () => {
     await page.goto("/en/settings");
     await expect(page.locator('select[name="roundingMode"]')).toHaveValue(previous);
   });
+
+  test("an entry shows its impact on the key figures, loaded on demand", async ({ page }) => {
+    const name = `Impact e2e ${Date.now()}`;
+    await page.goto("/en/accounts");
+    await page.getByText("Add account").click();
+    const form = page.locator("form").filter({ has: page.locator('input[name="currency"]') });
+    await form.locator('input[name="name"]').fill(name);
+    await form.locator('input[name="balance"]').fill("1234");
+    await form.getByRole("button", { name: "Save" }).click();
+    await expect(page.getByText(name).first()).toBeVisible();
+
+    await page.goto("/en/settings/audit?type=account");
+    const entry = page.getByRole("listitem").filter({ hasText: name }).first();
+    await entry.getByText("Impact on key figures").click();
+    const impact = entry.getByTestId("audit-impact");
+    await expect(impact.getByText("Total liquidity")).toBeVisible({ timeout: 15_000 });
+    await expect(impact.getByText("+€1,234.00").first()).toBeVisible();
+  });
 });

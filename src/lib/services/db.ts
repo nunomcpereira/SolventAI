@@ -1,4 +1,5 @@
 import "server-only";
+import { AsyncLocalStorage } from "node:async_hooks";
 import { mkdirSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { cookies, headers } from "next/headers";
@@ -96,9 +97,25 @@ function closeAsOfDbs(path: string): void {
   }
 }
 
+const dbOverride = new AsyncLocalStorage<Database>();
+
+/** Runs `fn` with every getDb() inside it returning `db` — e.g. to compute the dashboard
+ * against a past version (see getDbBefore) without the services knowing about it. */
+export function withDb<T>(db: Database, fn: () => Promise<T>): Promise<T> {
+  return dbOverride.run(db, fn);
+}
+
+/** Read-only copy of the current tenant's database as it was just before `before`. */
+export async function getDbBefore(before: string): Promise<Database> {
+  const path = await currentDbPath();
+  return getAsOfDb(path, openTenantDb(path), before);
+}
+
 /** Connection for the current request: the tenant's live database, or — when the URL
  * carries `?before=` — a read-only copy of it as it was just before that instant. */
 export async function getDb(): Promise<Database> {
+  const override = dbOverride.getStore();
+  if (override) return override;
   const path = await currentDbPath();
   const db = openTenantDb(path);
   // Once per connection: give pre-existing data a history starting point (see historyBaseline.ts).

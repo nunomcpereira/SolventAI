@@ -1,5 +1,7 @@
 import "server-only";
-import { getDb } from "./db.js";
+import { getDb, getDbBefore, withDb } from "./db.js";
+import { getDashboardData } from "./dashboardService.js";
+import { type ImpactMetrics } from "../audit/impact.js";
 import { ensureSeeded } from "./seed.js";
 import { createSqliteEntityHistoryRepository } from "../db/repositories/index.js";
 import { buildAuditEvents, restorableSnapshot, type AuditEvent } from "../audit/auditLog.js";
@@ -53,4 +55,36 @@ export async function restoreAuditVersion(eventId: string): Promise<EntityType |
   if (!event || snapshot === undefined) return undefined;
   await restoreSnapshot(db, event.entityType, snapshot);
   return event.entityType;
+}
+
+/** The dashboard's headline figures, computed against whatever getDb() returns. */
+async function currentMetrics(): Promise<ImpactMetrics> {
+  const d = await getDashboardData();
+  return {
+    totalLiquidity: d.totalLiquidity,
+    availableLiquidity: d.availableLiquidity,
+    monthlyDebtObligations: d.monthlyDebtObligations,
+    netMonthlyIncome: d.netMonthlyIncome,
+    effortRatePercent: d.effortRatePercent,
+    projectedMinimumLiquidity: d.projectedMinimumLiquidity,
+    debtOutstanding: d.debtOutstanding,
+    liquidityRunwayMonths: d.liquidityRunwayMonths,
+  };
+}
+
+/**
+ * What one change did to the headline figures: the dashboard computed (as of today) on the
+ * data just before the change and on the data just after it — so later changes don't blur
+ * this one's effect. Undefined if the event doesn't exist.
+ */
+export async function getAuditImpact(eventId: string): Promise<{ before: ImpactMetrics; after: ImpactMetrics } | undefined> {
+  const db = await getDb();
+  const rows = await createSqliteEntityHistoryRepository(db).listAll();
+  const event = buildAuditEvents(rows).find((e) => e.id === eventId);
+  if (!event) return undefined;
+  const justAfter = new Date(Date.parse(event.recordedAt) + 1).toISOString();
+  const [beforeDb, afterDb] = await Promise.all([getDbBefore(event.recordedAt), getDbBefore(justAfter)]);
+  const before = await withDb(beforeDb, currentMetrics);
+  const after = await withDb(afterDb, currentMetrics);
+  return { before, after };
 }

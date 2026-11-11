@@ -451,6 +451,13 @@
     "restoreConfirm": "Wiederherstellen bestätigen",
     "restoreDone": "Version wiederhergestellt.",
     "restoreFailed": "Diese Version konnte nicht wiederhergestellt werden.",
+    "impactTitle": "Auswirkung auf Kennzahlen",
+    "impactLoading": "Wird berechnet…",
+    "impactFailed": "Auswirkung konnte nicht berechnet werden.",
+    "impactUnchanged": "Keine Auswirkung auf die Kennzahlen.",
+    "impactMonths": "{count} Monate",
+    "impactNoRunwayLimit": "kein Engpass",
+    "impactRunway": "Monate bis Liquiditätsengpass",
     "types": {
       "account": "Konto",
       "income": "Einnahme",

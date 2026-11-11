@@ -451,6 +451,13 @@
     "restoreConfirm": "Confirmar restauración",
     "restoreDone": "Versión restaurada.",
     "restoreFailed": "No se pudo restaurar esa versión.",
+    "impactTitle": "Impacto en los indicadores",
+    "impactLoading": "Calculando…",
+    "impactFailed": "No se pudo calcular el impacto.",
+    "impactUnchanged": "Sin efecto en los indicadores.",
+    "impactMonths": "{count} meses",
+    "impactNoRunwayLimit": "sin déficit",
+    "impactRunway": "Meses hasta falta de liquidez",
     "types": {
       "account": "Cuenta",
       "income": "Ingreso",
