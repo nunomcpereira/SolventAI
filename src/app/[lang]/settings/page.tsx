@@ -12,6 +12,7 @@ import { getTheme } from "../../../lib/themeServer.js";
 import Link from "next/link";
 import { getAuditLog } from "../../../lib/services/auditService.js";
 import { AuditLogList } from "../../../components/audit/AuditLogList.js";
+import { restoreAuditVersionAction } from "./audit/actions.js";
 import { BackupPanel } from "../../../components/settings/BackupPanel.js";
 
 const REGISTERED_CURRENCIES = ["EUR", "USD", "GBP", "CHF", "JPY", "KWD"] as const;
@@ -21,10 +22,17 @@ function isSupportedLanguage(value: string): value is Language {
   return (SUPPORTED_LANGUAGES as readonly string[]).includes(value);
 }
 
-export default async function SettingsPage({ params }: { params: Promise<{ lang: string }> }) {
+export default async function SettingsPage({
+  params,
+  searchParams,
+}: {
+  params: Promise<{ lang: string }>;
+  searchParams: Promise<{ restored?: string }>;
+}) {
   const { lang } = await params;
   if (!isSupportedLanguage(lang)) notFound();
   const dict = getDictionary(lang);
+  const { restored } = await searchParams;
   const [settings, theme, audit] = await Promise.all([getSettings(), getTheme(), getAuditLog({ limit: 8 })]);
   const boundAction = saveSettingsAction.bind(null, lang);
 
@@ -81,7 +89,7 @@ export default async function SettingsPage({ params }: { params: Promise<{ lang:
 
         {/* Settings content */}
         <div className="lg:col-span-3 flex flex-col gap-10">
-          <form action={boundAction} className="flex flex-col gap-stack-lg">
+          <form key={JSON.stringify(settings)} action={boundAction} className="flex flex-col gap-stack-lg">
             <Section id="financial" icon="account_balance" title={dict.settings.financialEngine}>
               <FieldRow label={dict.settings.baseCurrency} help={dict.settings.baseCurrencyHelp}>
                 <select
@@ -322,7 +330,19 @@ export default async function SettingsPage({ params }: { params: Promise<{ lang:
           <Section id="audit" title={dict.audit.title}>
             <p className="text-body-sm text-on-surface-variant -mt-1">{dict.audit.subtitle}</p>
             <h3 className="sr-only">{dict.audit.recent}</h3>
-            <AuditLogList events={audit.events} names={audit.names} dict={dict} lang={lang} />
+            {restored ? (
+              <p role="status" className={`text-body-md ${restored === "ok" ? "text-status-healthy" : "text-status-danger"}`}>
+                {restored === "ok" ? dict.audit.restoreDone : dict.audit.restoreFailed}
+              </p>
+            ) : null}
+            <AuditLogList
+              events={audit.events}
+              names={audit.names}
+              dict={dict}
+              lang={lang}
+              restoreAction={restoreAuditVersionAction.bind(null, lang)}
+              returnTo={`/${lang}/settings#audit`}
+            />
             <Link
               href={`/${lang}/settings/audit`}
               className="self-start inline-flex items-center gap-1 text-label-md text-primary border-b border-primary/40 hover:border-primary pb-0.5"

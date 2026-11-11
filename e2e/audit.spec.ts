@@ -61,4 +61,23 @@ test.describe("Audit log", () => {
       await expect(page.getByTestId("past-version-banner"), path).toBeVisible();
     }
   });
+
+  test("restoring the version before a change writes it back and logs the restore", async ({ page }) => {
+    await page.goto("/en/settings");
+    const rounding = page.locator('select[name="roundingMode"]');
+    const previous = await rounding.inputValue();
+    const next = previous === "half-up" ? "half-even" : "half-up";
+    await rounding.selectOption(next);
+    await page.getByRole("button", { name: "Save settings" }).click();
+    await page.waitForLoadState("networkidle");
+
+    await page.goto("/en/settings/audit?type=settings");
+    const entry = page.getByRole("listitem").filter({ has: page.getByTestId("audit-restore") }).first();
+    await entry.getByText("Restore previous version").click();
+    await entry.getByRole("button", { name: "Confirm restore" }).click();
+    await expect(page.getByRole("status").filter({ hasText: "Version restored." })).toBeVisible();
+
+    await page.goto("/en/settings");
+    await expect(page.locator('select[name="roundingMode"]')).toHaveValue(previous);
+  });
 });

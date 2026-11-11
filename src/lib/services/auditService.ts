@@ -2,7 +2,8 @@ import "server-only";
 import { getDb } from "./db.js";
 import { ensureSeeded } from "./seed.js";
 import { createSqliteEntityHistoryRepository } from "../db/repositories/index.js";
-import { buildAuditEvents, type AuditEvent } from "../audit/auditLog.js";
+import { buildAuditEvents, restorableSnapshot, type AuditEvent } from "../audit/auditLog.js";
+import { restoreSnapshot } from "../db/restoreSnapshot.js";
 import { type AuditNames } from "../audit/formatAudit.js";
 import { ENTITY_TYPES, type EntityType } from "../../domain/history/entityHistory.js";
 
@@ -37,4 +38,19 @@ export async function getAuditLog(params: { type?: EntityType; limit: number }):
 
   const all = buildAuditEvents(rows).filter((e) => !params.type || e.entityType === params.type);
   return { events: all.slice(0, params.limit), total: all.length, names: { accounts, loans } };
+}
+
+/**
+ * Restores the version of an entity from just before audit event `eventId` (an update's
+ * previous state, or a deleted item's last state). Returns the restored entity's type, or
+ * undefined when the event doesn't exist or can't be restored (a creation).
+ */
+export async function restoreAuditVersion(eventId: string): Promise<EntityType | undefined> {
+  const db = await getDb();
+  const rows = await createSqliteEntityHistoryRepository(db).listAll();
+  const event = buildAuditEvents(rows).find((e) => e.id === eventId);
+  const snapshot = event ? restorableSnapshot(event) : undefined;
+  if (!event || snapshot === undefined) return undefined;
+  await restoreSnapshot(db, event.entityType, snapshot);
+  return event.entityType;
 }

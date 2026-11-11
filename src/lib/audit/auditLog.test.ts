@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { allFields, buildAuditEvents, diffSnapshots, pageBeforeHref } from "./auditLog.js";
+import { allFields, buildAuditEvents, diffSnapshots, pageBeforeHref, restorableSnapshot } from "./auditLog.js";
 import { type EntityHistoryEntry } from "../../domain/history/entityHistory.js";
 
 let seq = 0;
@@ -121,5 +121,13 @@ describe("pageBeforeHref", () => {
     expect(pageBeforeHref({ entityType: "scenario", entityId: "s1", recordedAt: at }, "en")).toBe(
       `/en/simulation?scenarioId=s1&before=${encodeURIComponent(at)}`,
     );
+  });
+});
+
+describe("restorableSnapshot", () => {
+  it("restores an update's previous state and a deletion's last state, not a creation", () => {
+    expect(restorableSnapshot({ action: "updated", snapshot: { v: 2 }, previousSnapshot: { v: 1 } })).toEqual({ v: 1 });
+    expect(restorableSnapshot({ action: "deleted", snapshot: { v: 3 } })).toEqual({ v: 3 });
+    expect(restorableSnapshot({ action: "created", snapshot: { v: 1 } })).toBeUndefined();
   });
 });

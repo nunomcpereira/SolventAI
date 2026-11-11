@@ -162,3 +162,14 @@ export function pageBeforeHref(event: Pick<AuditEvent, "entityType" | "entityId"
   qs.set("before", event.recordedAt);
   return `/${lang}/${ENTITY_PAGES[event.entityType]}?${qs.toString()}`;
 }
+
+/**
+ * What "restore the version before this change" writes back: the previous state for an
+ * update, the last state for a deletion (recreating it). Undefined for a creation — the
+ * version before it is "didn't exist", which is a delete done from the item's own page.
+ */
+export function restorableSnapshot(event: Pick<AuditEvent, "action" | "snapshot" | "previousSnapshot">): unknown {
+  if (event.action === "updated") return event.previousSnapshot;
+  if (event.action === "deleted") return event.snapshot;
+  return undefined;
+}

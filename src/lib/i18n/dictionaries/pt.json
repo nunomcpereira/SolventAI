@@ -445,6 +445,12 @@
     "pastVersionViewing": "A ver esta página como estava antes de {date}.",
     "pastVersionReadOnly": "Só leitura — os valores e cálculos usam esses dados.",
     "pastVersionBack": "Voltar à versão atual",
+    "restoreVersion": "Repor versão anterior",
+    "restoreDeleted": "Repor este item",
+    "restoreHelp": "Volta a gravar o item como estava antes desta alteração. A reposição fica no registo e pode ser anulada da mesma forma.",
+    "restoreConfirm": "Confirmar reposição",
+    "restoreDone": "Versão reposta.",
+    "restoreFailed": "Não foi possível repor essa versão.",
     "types": {
       "account": "Conta",
       "income": "Rendimento",

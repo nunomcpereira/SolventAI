@@ -445,6 +445,12 @@
     "pastVersionViewing": "Viewing this page as it was before {date}.",
     "pastVersionReadOnly": "Read-only — figures and calculations use that data.",
     "pastVersionBack": "Back to current version",
+    "restoreVersion": "Restore previous version",
+    "restoreDeleted": "Restore this item",
+    "restoreHelp": "Saves the item back as it was before this change. The restore is itself logged and can be undone the same way.",
+    "restoreConfirm": "Confirm restore",
+    "restoreDone": "Version restored.",
+    "restoreFailed": "Couldn't restore that version.",
     "types": {
       "account": "Account",
       "income": "Income",

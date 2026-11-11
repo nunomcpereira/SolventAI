@@ -1,5 +1,5 @@
 import type { Dictionary } from "../../lib/i18n/getDictionary.js";
-import { allFields, pageBeforeHref, type AuditEvent } from "../../lib/audit/auditLog.js";
+import { allFields, pageBeforeHref, restorableSnapshot, type AuditEvent } from "../../lib/audit/auditLog.js";
 import { entityName, fieldLabel, formatAuditValue, type AuditNames } from "../../lib/audit/formatAudit.js";
 import { formatDayHeading, formatTime, localDayKey } from "../../lib/format.js";
 
@@ -15,11 +15,17 @@ export function AuditLogList({
   names,
   dict,
   lang,
+  restoreAction,
+  returnTo,
 }: {
   events: AuditEvent[];
   names: AuditNames;
   dict: Dictionary;
   lang: string;
+  /** Server action that restores the version before an event (form field `eventId`). */
+  restoreAction?: (formData: FormData) => Promise<void>;
+  /** Where to come back after a restore. */
+  returnTo?: string;
 }) {
   if (events.length === 0) return <p className="text-body-md text-on-surface-variant py-4">{dict.audit.empty}</p>;
 
@@ -73,6 +79,24 @@ export function AuditLogList({
                         </li>
                       ))}
                     </ul>
+                  ) : null}
+                  {restoreAction && restorableSnapshot(event) !== undefined ? (
+                    <details className="mt-1.5" data-testid="audit-restore">
+                      <summary className="cursor-pointer select-none text-label-sm text-primary w-fit">
+                        {event.action === "deleted" ? dict.audit.restoreDeleted : dict.audit.restoreVersion}
+                      </summary>
+                      <form action={restoreAction} className="mt-2 flex flex-wrap items-center gap-3 border-l border-outline-variant pl-3">
+                        <input type="hidden" name="eventId" value={event.id} />
+                        {returnTo ? <input type="hidden" name="returnTo" value={returnTo} /> : null}
+                        <span className="text-body-sm text-on-surface-variant">{dict.audit.restoreHelp}</span>
+                        <button
+                          type="submit"
+                          className="text-label-md border border-primary text-primary rounded-sm px-2.5 py-1 hover:bg-primary hover:text-surface transition-colors"
+                        >
+                          {dict.audit.restoreConfirm}
+                        </button>
+                      </form>
+                    </details>
                   ) : null}
                   <details className="mt-1.5 group">
                     <summary className="cursor-pointer select-none text-label-sm text-primary w-fit">{dict.audit.showAllFields}</summary>

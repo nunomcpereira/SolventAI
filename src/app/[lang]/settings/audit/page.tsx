@@ -5,6 +5,7 @@ import { getDictionary } from "../../../../lib/i18n/getDictionary.js";
 import { getAuditLog, parseAuditType } from "../../../../lib/services/auditService.js";
 import { AuditLogList } from "../../../../components/audit/AuditLogList.js";
 import { ENTITY_TYPES } from "../../../../domain/history/entityHistory.js";
+import { restoreAuditVersionAction } from "./actions.js";
 
 const PAGE_SIZE = 100;
 
@@ -17,7 +18,7 @@ export default async function AuditLogPage({
   searchParams,
 }: {
   params: Promise<{ lang: string }>;
-  searchParams: Promise<{ type?: string; limit?: string }>;
+  searchParams: Promise<{ type?: string; limit?: string; restored?: string }>;
 }) {
   const { lang } = await params;
   if (!isSupportedLanguage(lang)) notFound();
@@ -70,7 +71,20 @@ export default async function AuditLogPage({
         })}
       </nav>
 
-      <AuditLogList events={audit.events} names={audit.names} dict={dict} lang={lang} />
+      {query.restored ? (
+        <p role="status" className={`text-body-md ${query.restored === "ok" ? "text-status-healthy" : "text-status-danger"}`}>
+          {query.restored === "ok" ? dict.audit.restoreDone : dict.audit.restoreFailed}
+        </p>
+      ) : null}
+
+      <AuditLogList
+        events={audit.events}
+        names={audit.names}
+        dict={dict}
+        lang={lang}
+        restoreAction={restoreAuditVersionAction.bind(null, lang)}
+        returnTo={href({ ...(type ? { type } : {}), limit })}
+      />
 
       {audit.total > audit.events.length ? (
         <Link

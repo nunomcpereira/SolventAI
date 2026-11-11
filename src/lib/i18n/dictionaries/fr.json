@@ -445,6 +445,12 @@
     "pastVersionViewing": "Vous consultez cette page telle qu'elle était avant le {date}.",
     "pastVersionReadOnly": "Lecture seule — les valeurs et calculs utilisent ces données.",
     "pastVersionBack": "Revenir à la version actuelle",
+    "restoreVersion": "Restaurer la version précédente",
+    "restoreDeleted": "Restaurer cet élément",
+    "restoreHelp": "Réenregistre l'élément tel qu'il était avant cette modification. La restauration est journalisée et peut être annulée de la même façon.",
+    "restoreConfirm": "Confirmer la restauration",
+    "restoreDone": "Version restaurée.",
+    "restoreFailed": "Impossible de restaurer cette version.",
     "types": {
       "account": "Compte",
       "income": "Revenu",
