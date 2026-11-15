@@ -23,9 +23,12 @@ test.describe("Bank import", () => {
     await page.getByRole("button", { name: "Import movements" }).click();
     await expect(page.getByRole("status").filter({ hasText: "imported" })).toContainText("7 movements read, 0 new (7 already imported).");
 
-    for (let i = 0; i < 2; i++) {
-      await page.getByRole("button", { name: "Delete import: cgd-sample.csv" }).first().click();
-    }
+    // One at a time: each delete reloads the list, so wait for it before the next click.
+    const deleteButtons = page.getByRole("button", { name: "Delete import: cgd-sample.csv" });
+    await expect(deleteButtons).toHaveCount(2);
+    await deleteButtons.first().click();
+    await expect(deleteButtons).toHaveCount(1);
+    await deleteButtons.first().click();
     await expect(page.getByRole("button", { name: /Delete import/ })).toHaveCount(0);
   });
 
