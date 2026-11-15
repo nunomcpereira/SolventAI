@@ -145,6 +145,10 @@ export function entityName(event: AuditEvent, dict: Dict, names: AuditNames): st
   if (event.entityType === "settings") return dict.audit.settingsEntity;
   const snap = isObject(event.snapshot) ? event.snapshot : {};
   if (typeof snap["name"] === "string") return snap["name"];
+  if (typeof snap["fromAccountId"] === "string" && typeof snap["toAccountId"] === "string") {
+    const route = `${names.accounts.get(snap["fromAccountId"]) ?? snap["fromAccountId"]} → ${names.accounts.get(snap["toAccountId"]) ?? snap["toAccountId"]}`;
+    return typeof snap["description"] === "string" ? `${snap["description"]} (${route})` : route;
+  }
   const category = typeof snap["category"] === "string" ? snap["category"].replace(/_/g, " ") : "";
   const account = typeof snap["accountId"] === "string" ? names.accounts.get(snap["accountId"]) : undefined;
   const label = category ? category.charAt(0).toUpperCase() + category.slice(1) : event.entityId;

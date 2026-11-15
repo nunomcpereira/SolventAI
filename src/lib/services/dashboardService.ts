@@ -18,6 +18,7 @@ import {
   alignLoanScheduleToSimulation,
   buildSimulationIncomeItems,
   buildSimulationExpenseItems,
+  buildSimulationTransferItems,
   buildSimulationAccounts,
   toLiquiditySnapshots,
 } from "./simulationBuilders.js";
@@ -90,7 +91,7 @@ export async function getDashboardData(monthOffset = 0): Promise<DashboardData> 
   const clampedMonthOffset = Math.min(Math.max(Math.trunc(monthOffset), minMonthOffset), MAX_DASHBOARD_MONTH_OFFSET);
   const totalMonths = HORIZON_MONTHS + Math.max(clampedMonthOffset, 0);
 
-  const { accounts, loans, incomes, expenses, currency, activeAccounts, activeAccountIds } = await loadSimulationInputs();
+  const { accounts, loans, incomes, expenses, transfers, currency, activeAccounts, activeAccountIds } = await loadSimulationInputs();
 
   const debtPayments: SimulationDebtPayment[] = [];
   const loanWarnings: DashboardLoanWarning[] = [];
@@ -143,6 +144,7 @@ export async function getDashboardData(monthOffset = 0): Promise<DashboardData> 
 
   const incomeItems = await buildSimulationIncomeItems(incomes, activeAccountIds, currency);
   const expenseItems = await buildSimulationExpenseItems(expenses, activeAccountIds, currency);
+  const transferItems = await buildSimulationTransferItems(transfers, activeAccountIds, currency);
 
   // Net monthly income (for the effort rate): v1 sums only monthly-frequency income
   // items directly, since normalizing other frequencies to a monthly-equivalent is a
@@ -179,6 +181,7 @@ export async function getDashboardData(monthOffset = 0): Promise<DashboardData> 
           accounts: simulationAccounts,
           incomeItems,
           expenseItems,
+          transferItems,
           debtPayments,
           events: [],
           horizonStart,
@@ -251,24 +254,36 @@ export async function getDashboardData(monthOffset = 0): Promise<DashboardData> 
   };
 }
 
+/** Drift for every active account added together — the default view, since moving money
+ * between your own accounts must not read as spending (or as income). */
+export const ALL_ACCOUNTS = "all";
+
 export interface BalanceDriftData {
+  /** The account shown, ALL_ACCOUNTS for the combined view, undefined when there are no accounts. */
   accountId: string | undefined;
   projected: { date: string; balance: string }[];
   actual: { date: string; balance: string }[];
 }
 
 /**
- * Projected-vs-actual balance drift for one account (defaults to the `isDefault`
- * account, or the first account, when `accountId` is omitted) — see
- * historyReplayService.computeBalanceTrajectory for how the two series are computed.
- * Returns an empty result when there are no accounts at all.
+ * Projected-vs-actual balance drift. By default (or with ALL_ACCOUNTS) for all active
+ * accounts combined — see historyReplayService.computeHistoricalProjection; with an
+ * account id, for that account alone — see computeBalanceTrajectory. An unknown id
+ * falls back to the combined view. Returns an empty result when there are no accounts.
  */
-export async function getBalanceDriftData(accountId?: string): Promise<BalanceDriftData> {
-  const { accounts } = await loadSimulationInputs();
-  const account = accountId
-    ? accounts.find((a) => a.id === accountId)
-    : (accounts.find((a) => a.isDefault) ?? accounts[0]);
-  if (!account) return { accountId: undefined, projected: [], actual: [] };
+export async function getBalanceDriftData(accountId: string = ALL_ACCOUNTS): Promise<BalanceDriftData> {
+  const { accounts, activeAccounts } = await loadSimulationInputs();
+  if (accounts.length === 0) return { accountId: undefined, projected: [], actual: [] };
+  const account = accounts.find((a) => a.id === accountId);
+  if (!account) {
+    if (activeAccounts.length === 0) return { accountId: undefined, projected: [], actual: [] };
+    const historical = await computeHistoricalProjection();
+    return {
+      accountId: ALL_ACCOUNTS,
+      projected: historical.projected.map((p) => ({ date: p.date, balance: p.totalLiquidity })),
+      actual: historical.actual.map((a) => ({ date: a.date, balance: a.totalLiquidity })),
+    };
+  }
 
   const { projected, actual } = await computeBalanceTrajectory(account.id);
   return {

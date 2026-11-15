@@ -178,3 +178,46 @@ describe("runSimulation — events", () => {
     expect(() => runSimulation(baseInput({ numberOfPeriods: 0 }))).toThrow();
   });
 });
+
+describe("runSimulation — recurring transfers", () => {
+  const transfer = {
+    id: "poup",
+    fromAccountId: "checking",
+    toAccountId: "savings",
+    amount: m("100.00"),
+    frequency: "monthly" as const,
+    startDate: d("2026-01-09"),
+  };
+
+  it("moves money between accounts each period without changing total liquidity", () => {
+    const snapshots = runSimulation(baseInput({ transferItems: [transfer] }));
+    expect(balanceOf(snapshots[0]!, "checking").toDecimalString()).toBe("4900.00");
+    expect(balanceOf(snapshots[0]!, "savings").toDecimalString()).toBe("20100.00");
+    expect(balanceOf(snapshots[5]!, "checking").toDecimalString()).toBe("4400.00");
+    expect(balanceOf(snapshots[5]!, "savings").toDecimalString()).toBe("20600.00");
+    for (const snap of snapshots) {
+      expect(sumMoney("EUR", snap.accounts.map((a) => a.balance)).toDecimalString()).toBe("25000.00");
+    }
+  });
+
+  it("is neither income nor expense", () => {
+    const [first] = runSimulation(baseInput({ transferItems: [transfer] }));
+    expect(first!.totalIncome.isZero()).toBe(true);
+    expect(first!.totalExpenses.isZero()).toBe(true);
+  });
+
+  it("stops after endDate", () => {
+    const snapshots = runSimulation(baseInput({ transferItems: [{ ...transfer, endDate: d("2026-02-28") }] }));
+    expect(balanceOf(snapshots[5]!, "savings").toDecimalString()).toBe("20200.00");
+  });
+
+  it("books only the side that is simulated when the other account is absent", () => {
+    const snapshots = runSimulation(
+      baseInput({
+        accounts: [{ accountId: "checking", initialBalance: m("5000.00"), minimumReserve: m("0") }],
+        transferItems: [transfer],
+      }),
+    );
+    expect(balanceOf(snapshots[1]!, "checking").toDecimalString()).toBe("4800.00");
+  });
+});

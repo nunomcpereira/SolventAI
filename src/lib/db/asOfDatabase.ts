@@ -6,17 +6,19 @@ import { createSqliteAccountRepository } from "./repositories/sqliteAccountRepos
 import { createSqliteLoanRepository } from "./repositories/sqliteLoanRepository.js";
 import { createSqliteIncomeRepository } from "./repositories/sqliteIncomeRepository.js";
 import { createSqliteExpenseRepository } from "./repositories/sqliteExpenseRepository.js";
+import { createSqliteRecurringTransferRepository } from "./repositories/sqliteRecurringTransferRepository.js";
 import { createSqliteScenarioRepository } from "./repositories/sqliteScenarioRepository.js";
 import { createSqliteSettingsRepository } from "./repositories/sqliteSettingsRepository.js";
 import { parseAccount } from "../../domain/accounts/account.js";
 import { parseLoan } from "../../domain/loans/loan.js";
 import { parseIncome } from "../../domain/income/income.js";
 import { parseExpense } from "../../domain/expenses/expense.js";
+import { parseRecurringTransfer } from "../../domain/transfers/recurringTransfer.js";
 import { parseScenario } from "../../domain/scenarios/scenario.js";
 import { parseSettings } from "../../domain/settings/settings.js";
 
 /** Tables whose rows are rebuilt from entity_history rather than copied as they are now. */
-const REBUILT_TABLES = new Set(["accounts", "loans", "loan_fees", "incomes", "expenses", "scenarios", "settings", "entity_history", "schema_migrations"]);
+const REBUILT_TABLES = new Set(["accounts", "loans", "loan_fees", "incomes", "expenses", "recurring_transfers", "scenarios", "settings", "entity_history", "schema_migrations"]);
 
 /** Every row is already older than the cut-off, so reconstruct "as of the end of time". */
 const END_OF_TIME = "9999-12-31T23:59:59.999Z";
@@ -25,7 +27,7 @@ const quote = (name: string) => `"${name.replace(/"/g, '""')}"`;
 
 /**
  * Builds a read-only, in-memory copy of the database at `sourcePath` as it stood just
- * before `beforeIso`: accounts, incomes, expenses, loans, scenarios and settings are each
+ * before `beforeIso`: accounts, incomes, expenses, recurring transfers, loans, scenarios and settings are each
  * entity's last history row strictly before that instant (deleted ones dropped), and
  * entity_history is cut there too. Untracked tables (exchange rates, contracts, market
  * rates…) are copied as they are now — they have no history. If no settings were recorded
@@ -68,6 +70,8 @@ export async function buildAsOfDatabase(sourcePath: string, beforeIso: string): 
   for (const i of await asOf("income", parseIncome)) await incomes.save(i);
   const expenses = createSqliteExpenseRepository(db);
   for (const e of await asOf("expense", parseExpense)) await expenses.save(e);
+  const transfers = createSqliteRecurringTransferRepository(db);
+  for (const t of await asOf("transfer", parseRecurringTransfer)) await transfers.save(t);
   const scenarios = createSqliteScenarioRepository(db);
   for (const s of await asOf("scenario", parseScenario)) await scenarios.save(s);
   const [settings] = await asOf("settings", parseSettings);

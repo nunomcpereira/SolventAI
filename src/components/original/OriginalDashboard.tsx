@@ -5,7 +5,7 @@
 import { notFound } from "next/navigation";
 import { SUPPORTED_LANGUAGES, type Language } from "../../lib/i18n/locales.js";
 import { getDictionary } from "../../lib/i18n/getDictionary.js";
-import { getDashboardData, getBalanceDriftData, MAX_DASHBOARD_MONTH_OFFSET } from "../../lib/services/dashboardService.js";
+import { getDashboardData, getBalanceDriftData, MAX_DASHBOARD_MONTH_OFFSET, ALL_ACCOUNTS } from "../../lib/services/dashboardService.js";
 import { getSettings } from "../../lib/services/settingsService.js";
 import { getAccountTypeOptions, getLoanCategoryOptions } from "../../lib/settings/typeOptions.js";
 import { formatMoney, formatMonthYear } from "../../lib/format.js";
@@ -13,6 +13,7 @@ import { computeSolvencyRisk } from "../../engine/metrics/index.js";
 import { Badge } from "../ui/Badge.js";
 import { LiquidityChart } from "../charts/LiquidityChart.js";
 import { BalanceDriftChart } from "../charts/BalanceDriftChart.js";
+import { DriftAccountPicker } from "../dashboard/DriftAccountPicker.js";
 import { OriginalEffortGauge as EffortGauge } from "./OriginalEffortGauge.js";
 import { DashboardSuggestionWizards } from "../dashboard/DashboardSuggestionWizards.js";
 import { LiveRefresh } from "../ui/LiveRefresh.js";
@@ -40,7 +41,7 @@ export async function OriginalDashboard({
   searchParams,
 }: {
   params: Promise<{ lang: string }>;
-  searchParams: Promise<{ monthOffset?: string }>;
+  searchParams: Promise<{ monthOffset?: string; drift?: string }>;
 }) {
   const { lang } = await params;
   if (!isSupportedLanguage(lang)) notFound();
@@ -53,7 +54,7 @@ export async function OriginalDashboard({
   const [data, settings, balanceDrift] = await Promise.all([
     getDashboardData(monthOffset),
     getSettings(),
-    getBalanceDriftData(),
+    getBalanceDriftData(query.drift),
   ]);
   const effectiveMonthOffset = data.monthOffset;
   const balanceDriftAccountName = data.accounts.find((a) => a.id === balanceDrift.accountId)?.name;
@@ -260,11 +261,22 @@ export async function OriginalDashboard({
       </div>
 
       {balanceDrift.accountId && (balanceDrift.projected.length > 0 || balanceDrift.actual.length > 0) && (
-        <div className="bg-surface-container-lowest border border-outline-variant rounded-xl p-6 overflow-hidden">
+        <div id="balance-drift" className="bg-surface-container-lowest border border-outline-variant rounded-xl p-6 overflow-hidden">
           <h3 className="text-headline-sm text-on-surface mb-1">{dict.dashboard.balanceDriftTitle}</h3>
           <p className="text-body-md text-on-surface-variant mb-6">
-            {dict.dashboard.balanceDriftSubtitle.replace("{account}", balanceDriftAccountName ?? "")}
+            {balanceDrift.accountId === ALL_ACCOUNTS
+              ? dict.dashboard.balanceDriftSubtitleAll
+              : dict.dashboard.balanceDriftSubtitle.replace("{account}", balanceDriftAccountName ?? "")}
           </p>
+          <DriftAccountPicker
+            lang={lang}
+            selected={balanceDrift.accountId}
+            accounts={data.accounts.filter((a) => a.active).map((a) => ({ id: a.id, name: a.name }))}
+            allValue={ALL_ACCOUNTS}
+            allLabel={dict.dashboard.balanceDriftAll}
+            ariaLabel={dict.dashboard.balanceDriftChooser}
+            monthOffset={effectiveMonthOffset}
+          />
           <div className="w-full min-w-0">
             <BalanceDriftChart
               projected={balanceDrift.projected}

@@ -18,6 +18,7 @@ import {
   alignLoanScheduleToSimulation,
   buildSimulationIncomeItems,
   buildSimulationExpenseItems,
+  buildSimulationTransferItems,
   buildSimulationAccounts,
   toLiquiditySnapshots,
 } from "./simulationBuilders.js";
@@ -341,7 +342,7 @@ export async function runScenarioAgainstBase(
   const clampedMonthOffset = Math.min(Math.max(Math.trunc(monthOffset), minMonthOffset), MAX_TIMELINE_MONTH_OFFSET);
   const totalMonths = Math.max(clampedMonthOffset, 0) + HORIZON_MONTHS;
 
-  const { loans, incomes, expenses, currency, activeAccounts, activeAccountIds } = await loadSimulationInputs();
+  const { loans, incomes, expenses, transfers, currency, activeAccounts, activeAccountIds } = await loadSimulationInputs();
   const loanIds = new Set(loans.map((l) => l.id));
   const incomeIds = new Set(incomes.map((i) => i.id));
   const expenseIds = new Set(expenses.map((e) => e.id));
@@ -420,6 +421,7 @@ export async function runScenarioAgainstBase(
 
   const incomeItems = await buildSimulationIncomeItems(incomes, activeAccountIds, currency);
   const expenseItems = await buildSimulationExpenseItems(expenses, activeAccountIds, currency);
+  const transferItems = await buildSimulationTransferItems(transfers, activeAccountIds, currency);
   const baseAccounts = await buildSimulationAccounts(activeAccounts, currency);
 
   async function normalizeEventMoney(event: SimulationEvent): Promise<SimulationEvent> {
@@ -521,6 +523,7 @@ export async function runScenarioAgainstBase(
       accounts: baseAccounts,
       incomeItems,
       expenseItems,
+      transferItems,
       debtPayments: debtPaymentsForRun.payments,
       events: events.filter(isValidEvent),
       horizonStart,

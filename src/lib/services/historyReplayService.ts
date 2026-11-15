@@ -4,6 +4,7 @@ import { createSqliteEntityHistoryRepository } from "../db/repositories/index.js
 import { parseAccount, type Account } from "../../domain/accounts/account.js";
 import { parseIncome, type Income } from "../../domain/income/income.js";
 import { parseExpense, type Expense } from "../../domain/expenses/expense.js";
+import { parseRecurringTransfer, type RecurringTransfer } from "../../domain/transfers/recurringTransfer.js";
 import { parseLoan, type Loan } from "../../domain/loans/loan.js";
 import { IsoDate } from "../../engine/dates/isoDate.js";
 import { Money, sumMoney } from "../../engine/money/money.js";
@@ -45,10 +46,11 @@ export async function computeBalanceTrajectory(accountId: string): Promise<Balan
   const db = await getDb();
   const history = createSqliteEntityHistoryRepository(db);
 
-  const [allAccountRows, allIncomeRows, allExpenseRows, allLoanRows] = await Promise.all([
+  const [allAccountRows, allIncomeRows, allExpenseRows, allTransferRows, allLoanRows] = await Promise.all([
     history.listByType("account"),
     history.listByType("income"),
     history.listByType("expense"),
+    history.listByType("transfer"),
     history.listByType("loan"),
   ]);
 
@@ -72,11 +74,16 @@ export async function computeBalanceTrajectory(accountId: string): Promise<Balan
   const relevantLoanIds = new Set(
     [...currentLoans.values()].filter((l) => l.sourceAccountId === accountId).map((l) => l.id),
   );
+  const touchesAccount = (t: RecurringTransfer) => t.fromAccountId === accountId || t.toAccountId === accountId;
+  const relevantTransferIds = new Set(
+    [...reconstructAsOf(allTransferRows, nowIso, parseRecurringTransfer).values()].filter(touchesAccount).map((t) => t.id),
+  );
 
   const configChangeTimestamps = [
     ...allIncomeRows.filter((r) => relevantIncomeIds.has(r.entityId)).map((r) => r.recordedAt),
     ...allExpenseRows.filter((r) => relevantExpenseIds.has(r.entityId)).map((r) => r.recordedAt),
     ...allLoanRows.filter((r) => relevantLoanIds.has(r.entityId)).map((r) => r.recordedAt),
+    ...allTransferRows.filter((r) => relevantTransferIds.has(r.entityId)).map((r) => r.recordedAt),
   ]
     .filter((t) => t > accountCreatedAt)
     .sort();
@@ -108,11 +115,13 @@ export async function computeBalanceTrajectory(accountId: string): Promise<Balan
     const loansAsOf = [...reconstructAsOf(allLoanRows, segStartIso, parseLoan).values()].filter(
       (l): l is Loan => l.sourceAccountId === accountId,
     );
+    const transfersAsOf = [...reconstructAsOf(allTransferRows, segStartIso, parseRecurringTransfer).values()].filter(touchesAccount);
 
     const simInput = await buildSimulationInput({
       accounts: [accountForSim],
       incomes: incomesAsOf,
       expenses: expensesAsOf,
+      transfers: transfersAsOf,
       loans: loansAsOf,
       currency: accountForSim.currency,
       horizonStart: segStart,
@@ -169,10 +178,11 @@ export async function computeHistoricalProjection(): Promise<HistoricalProjectio
 
   const db = await getDb();
   const history = createSqliteEntityHistoryRepository(db);
-  const [allAccountRows, allIncomeRows, allExpenseRows, allLoanRows] = await Promise.all([
+  const [allAccountRows, allIncomeRows, allExpenseRows, allTransferRows, allLoanRows] = await Promise.all([
     history.listByType("account"),
     history.listByType("income"),
     history.listByType("expense"),
+    history.listByType("transfer"),
     history.listByType("loan"),
   ]);
 
@@ -191,12 +201,18 @@ export async function computeHistoricalProjection(): Promise<HistoricalProjectio
   const relevantIncomeIds = new Set([...currentIncomes.values()].filter((i) => activeAccountIds.has(i.accountId)).map((i) => i.id));
   const relevantExpenseIds = new Set([...currentExpenses.values()].filter((e) => activeAccountIds.has(e.accountId)).map((e) => e.id));
   const relevantLoanIds = new Set([...currentLoans.values()].filter((l) => activeAccountIds.has(l.sourceAccountId)).map((l) => l.id));
+  const relevantTransferIds = new Set(
+    [...reconstructAsOf(allTransferRows, nowIso, parseRecurringTransfer).values()]
+      .filter((t) => activeAccountIds.has(t.fromAccountId) || activeAccountIds.has(t.toAccountId))
+      .map((t) => t.id),
+  );
 
   const configChangeTimestamps = [
     ...allAccountRows.filter((r) => activeAccountIds.has(r.entityId)).map((r) => r.recordedAt),
     ...allIncomeRows.filter((r) => relevantIncomeIds.has(r.entityId)).map((r) => r.recordedAt),
     ...allExpenseRows.filter((r) => relevantExpenseIds.has(r.entityId)).map((r) => r.recordedAt),
     ...allLoanRows.filter((r) => relevantLoanIds.has(r.entityId)).map((r) => r.recordedAt),
+    ...allTransferRows.filter((r) => relevantTransferIds.has(r.entityId)).map((r) => r.recordedAt),
   ]
     .filter((t) => t > earliestCreatedAt)
     .sort();
@@ -231,11 +247,15 @@ export async function computeHistoricalProjection(): Promise<HistoricalProjectio
     const loansAsOf = [...reconstructAsOf(allLoanRows, segStartIso, parseLoan).values()].filter(
       (l): l is Loan => accountIdsAsOf.has(l.sourceAccountId),
     );
+    const transfersAsOf = [...reconstructAsOf(allTransferRows, segStartIso, parseRecurringTransfer).values()].filter(
+      (t) => accountIdsAsOf.has(t.fromAccountId) || accountIdsAsOf.has(t.toAccountId),
+    );
 
     const simInput = await buildSimulationInput({
       accounts: accountsAsOf,
       incomes: incomesAsOf,
       expenses: expensesAsOf,
+      transfers: transfersAsOf,
       loans: loansAsOf,
       currency,
       horizonStart: segStart,
@@ -309,7 +329,8 @@ export async function computeHistoricalProjection(): Promise<HistoricalProjectio
   function latestAtOrBefore(series: { date: string; balance: Money }[] | undefined, date: string): Money | undefined {
     let best: { date: string; balance: Money } | undefined;
     for (const point of series ?? []) {
-      if (point.date <= date && (!best || point.date > best.date)) best = point;
+      // ">=": of several corrections on the same day, the last one (rows are oldest first) wins.
+      if (point.date <= date && (!best || point.date >= best.date)) best = point;
     }
     return best?.balance;
   }
@@ -319,7 +340,7 @@ export async function computeHistoricalProjection(): Promise<HistoricalProjectio
   for (const date of correctionDates) {
     const parts: Money[] = [];
     for (const accountId of activeAccountIds) {
-      const correctionToday = actualByAccount.get(accountId)?.find((p) => p.date === date);
+      const correctionToday = [...(actualByAccount.get(accountId) ?? [])].reverse().find((p) => p.date === date);
       const value =
         correctionToday?.balance ??
         latestAtOrBefore(actualByAccount.get(accountId), date) ??

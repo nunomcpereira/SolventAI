@@ -7,7 +7,8 @@
     "loans": "Empréstimos e despesas",
     "upload": "Carregar",
     "simulation": "Simulação",
-    "settings": "Definições"
+    "settings": "Definições",
+    "import": "Importar movimentos"
   },
   "dashboard": {
     "title": "Painel",
@@ -41,7 +42,10 @@
     "balanceDriftSubtitle": "Para {account} — a diferença entre o saldo projetado e o saldo real inserido é a sua despesa não contabilizada.",
     "balanceDriftProjected": "Projetado",
     "balanceDriftActual": "Real",
-    "savingsTrend": "Tendência de poupança (média {amount}/mês)"
+    "savingsTrend": "Tendência de poupança (média {amount}/mês)",
+    "balanceDriftAll": "Todas as contas",
+    "balanceDriftChooser": "Mostrar o gráfico para",
+    "balanceDriftSubtitleAll": "Todas as contas ativas em conjunto — a diferença entre o saldo projetado e os saldos reais inseridos é a sua despesa não contabilizada. Mover dinheiro entre as suas contas não a altera."
   },
   "accounts": {
     "title": "Rendimentos e saldos",
@@ -88,7 +92,18 @@
     "cancelBalanceEdit": "Cancelar edição do saldo",
     "editMinimumReserve": "Editar reserva mínima",
     "saveMinimumReserve": "Guardar reserva mínima",
-    "cancelMinimumReserveEdit": "Cancelar edição da reserva mínima"
+    "cancelMinimumReserveEdit": "Cancelar edição da reserva mínima",
+    "addRecurringTransfer": "Adicionar transferência recorrente",
+    "recurringTransfersTitle": "Transferências recorrentes",
+    "recurringTransfersHelp": "Ordens permanentes entre as tuas contas (ex.: reforço mensal da poupança). Mudam o dinheiro de sítio sem alterar a liquidez total.",
+    "noRecurringTransfers": "Ainda não há transferências recorrentes.",
+    "saveRecurringTransfer": "Guardar transferência",
+    "transferFrom": "Conta de origem",
+    "transferTo": "Conta de destino",
+    "transferAmount": "Montante",
+    "transferStartDate": "Primeira transferência",
+    "transferDescription": "Descrição",
+    "transferRoute": "Origem → destino"
   },
   "loans": {
     "title": "Empréstimos e despesas",
@@ -192,7 +207,11 @@
       "extracting": "A extrair…",
       "extracted": "Extraído",
       "failed": "Falhou"
-    }
+    },
+    "dropOr": "ou arrasta-o para aqui",
+    "dropHere": "Larga o ficheiro aqui",
+    "fileSelected": "Escolhido: {name}",
+    "wrongType": "Esse ficheiro não é {types}."
   },
   "simulation": {
     "title": "Simulação",
@@ -467,7 +486,8 @@
       "expense": "Despesa",
       "loan": "Empréstimo",
       "scenario": "Cenário",
-      "settings": "Definições"
+      "settings": "Definições",
+      "transfer": "Transferência"
     },
     "actions": {
       "created": "criado",
@@ -521,7 +541,10 @@
       "customIncomeCategories": "Tipos de rendimento personalizados",
       "llmEndpoint": "Endpoint do LLM local",
       "llmEnabled": "Extração com IA local",
-      "allowCloudLlmFallback": "Recurso a LLM na nuvem"
+      "allowCloudLlmFallback": "Recurso a LLM na nuvem",
+      "fromAccountId": "Conta de origem",
+      "toAccountId": "Conta de destino",
+      "description": "Descrição"
     }
   },
   "backup": {
@@ -544,5 +567,130 @@
     "errNewerVersion": "Esta cópia foi criada por uma versão mais recente do SolventAI. Atualize a aplicação primeiro.",
     "errForbidden": "Restauro recusado: o pedido não veio desta aplicação.",
     "errUnknown": "O restauro falhou. Os dados atuais não foram alterados."
+  },
+  "importer": {
+    "title": "Importar movimentos",
+    "subtitle": "Importa os movimentos do banco (CSV) para atualizar o saldo e receber propostas de receitas, despesas e transferências recorrentes, com base no teu histórico real.",
+    "dropHint": "Escolhe o ficheiro de movimentos",
+    "supportedBanks": "Suportado: Caixa Geral de Depósitos (exportação CSV de “Consultar saldos e movimentos”).",
+    "accountLabel": "Conta",
+    "accountAuto": "Automática (conta associada, senão {name})",
+    "updateBalance": "Atualizar o saldo da conta com o saldo final do extrato",
+    "importButton": "Importar movimentos",
+    "importing": "A importar…",
+    "localBadge": "O ficheiro é lido neste computador e fica na tua base de dados local.",
+    "resultTitle": "{file} importado",
+    "resultRows": "{rows} movimentos lidos, {new} novos ({dup} já importados).",
+    "resultPeriod": "Período {start} – {end}.",
+    "resultBalanceUpdated": "Saldo de {account} atualizado para {balance}.",
+    "resultBalanceUnchanged": "Saldo da conta não alterado.",
+    "resultCheckOk": "O saldo corrido bate certo em todos os movimentos.",
+    "resultCheckFailed": "Alguns movimentos não batem com o saldo corrido do extrato — verifica o ficheiro.",
+    "errors": {
+      "unknown_format": "Este ficheiro não é um extrato bancário suportado.",
+      "no_rows": "O extrato não tem movimentos.",
+      "bad_row": "Não foi possível ler uma linha do extrato.",
+      "no_account": "Adiciona uma conta antes de importar um extrato.",
+      "currency_mismatch": "A moeda do extrato não corresponde à da conta.",
+      "empty_file": "Escolhe um ficheiro para importar.",
+      "generic": "Não foi possível importar o extrato."
+    },
+    "proposalsFor": "Propostas para a conta",
+    "proposalsTitle": "Propostas",
+    "basedOn": "Com base em {count} movimentos de {start} a {end}.",
+    "howItWorks": "Detetado por regras fixas (sem IA): mesma entidade a intervalos regulares, pagamentos anuais e médias mensais para o resto. Nada é guardado sem confirmares.",
+    "noImports": "Importa um extrato para receber propostas.",
+    "noProposals": "Nada de novo a propor.",
+    "sections": {
+      "income": "Receitas",
+      "transfer": "Transferências entre as tuas contas",
+      "recurring": "Despesas recorrentes",
+      "annual": "Anuais",
+      "average": "Médias mensais por categoria",
+      "known": "Já contemplado"
+    },
+    "include": "Incluir",
+    "kind": "Tipo",
+    "kinds": {
+      "expense": "Despesa",
+      "income": "Receita",
+      "transfer": "Transferência"
+    },
+    "amount": "Montante",
+    "frequency": "Frequência",
+    "category": "Categoria",
+    "target": "Conta de destino",
+    "chooseAccount": "Escolher conta…",
+    "startDate": "Início",
+    "confidence": {
+      "high": "confiança alta",
+      "medium": "confiança média",
+      "low": "confiança baixa"
+    },
+    "variable": "montante variável",
+    "replaces": "substitui {name}",
+    "statusExists": "já registado",
+    "statusUpdate": "registado como {amount} — vai ser atualizado",
+    "statusLoan": "coberto pelo empréstimo {name}",
+    "averageLabel": "Média mensal · {category}",
+    "averageTransferLabel": "Média mensal → {name}",
+    "averageMonths": "média de {months} meses completos",
+    "extraLabel": "Extra anual · {name}",
+    "evidence": "Movimentos",
+    "evidenceMore": "…e mais {count}",
+    "topCounterparties": "Maiores entidades",
+    "dismiss": "Ignorar",
+    "restore": "Repor",
+    "dismissedTitle": "Propostas ignoradas ({count})",
+    "apply": "Criar selecionados",
+    "applyHelp": "Os itens selecionados são adicionados às receitas, despesas ou transferências e ficam no registo de alterações.",
+    "appliedNotice": "{count} itens guardados.",
+    "acceptedNote": "{count} propostas já foram aceites e estão escondidas.",
+    "unmatchedTitle": "Já existem nesta conta mas não aparecem no extrato",
+    "unmatchedHelp": "Se algum destes era uma estimativa global, apaga-o depois de aceitares os itens detalhados — senão a mesma despesa conta duas vezes.",
+    "importsTitle": "Extratos importados",
+    "importRow": "{rows} movimentos ({new} novos) · {start} – {end}",
+    "deleteImport": "Apagar importação",
+    "categories": {
+      "housing": "Habitação",
+      "utilities": "Água, luz, gás e telecomunicações",
+      "food": "Alimentação",
+      "transport": "Transportes",
+      "insurance": "Seguros",
+      "healthcare": "Saúde",
+      "government": "Impostos e taxas",
+      "subscriptions": "Subscrições",
+      "discretionary": "Diversos e numerário",
+      "other": "Outros",
+      "salary": "Salário",
+      "rent": "Rendas",
+      "bonus": "Prémio",
+      "pension": "Pensão",
+      "freelance": "Trabalho independente",
+      "investment": "Investimentos"
+    },
+    "dropOr": "ou arrasta-o para aqui",
+    "dropHere": "Larga o ficheiro aqui",
+    "fileSelected": "Escolhido: {name}",
+    "wrongType": "Esse ficheiro não é {types}."
+  },
+  "expenseStats": {
+    "title": "Resumo das despesas recorrentes",
+    "averageMonthly": "Gasto médio mensal",
+    "activeItems": "{count} despesas recorrentes ativas",
+    "perYear": "Por ano",
+    "perYearNote": "aos valores de hoje",
+    "loanPayments": "Prestações de empréstimos / mês",
+    "totalOut": "{amount} / mês com as despesas",
+    "shareOfIncome": "Peso no rendimento mensal",
+    "leftover": "sobram {amount} / mês",
+    "shortfall": "faltam {amount} / mês",
+    "noIncome": "sem rendimentos recorrentes",
+    "allocationTitle": "Alocação mensal por categoria",
+    "category": "Categoria",
+    "share": "Peso",
+    "perMonth": "/mês",
+    "chartLabel": "Gráfico circular das despesas recorrentes mensais por categoria; a tabela ao lado indica o montante e o peso de cada uma.",
+    "howComputed": "Um mês médio: despesas anuais e trimestrais contam 1/12 e 1/3 do valor. Despesas terminadas e pontuais ficam de fora."
   }
 }

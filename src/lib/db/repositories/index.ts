@@ -10,3 +10,5 @@ export {
 } from "./sqliteContractRepository.js";
 export { createSqliteScenarioRepository } from "./sqliteScenarioRepository.js";
 export { createSqliteEntityHistoryRepository } from "./sqliteEntityHistoryRepository.js";
+export { createSqliteRecurringTransferRepository } from "./sqliteRecurringTransferRepository.js";
+export { createSqliteBankImportRepository } from "./sqliteBankImportRepository.js";

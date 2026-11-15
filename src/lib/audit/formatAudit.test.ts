@@ -63,4 +63,12 @@ describe("entityName", () => {
     expect(entityName(ev("expense", { category: "housing", accountId: "acc-1" }), en, names)).toBe("Housing (Caixa Geral Depositos)");
     expect(entityName(ev("settings", {}), en, names)).toBe("Settings");
   });
+
+  it("names a recurring transfer by its route", () => {
+    const names2 = { ...names, accounts: new Map([["acc-1", "CGD"], ["acc-2", "Savings"]]) };
+    expect(entityName(ev("transfer", { fromAccountId: "acc-1", toAccountId: "acc-2" }), en, names2)).toBe("CGD → Savings");
+    expect(entityName(ev("transfer", { fromAccountId: "acc-1", toAccountId: "acc-2", description: "Standing order" }), en, names2)).toBe(
+      "Standing order (CGD → Savings)",
+    );
+  });
 });

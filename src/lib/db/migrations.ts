@@ -188,5 +188,63 @@ export const MIGRATIONS: Migration[] = [
       CREATE INDEX idx_contract_documents_hash ON contract_documents(content_hash);
     `,
   },
-];
+  {
+    id: "0012_recurring_transfers",
+    sql: `
+      CREATE TABLE recurring_transfers (
+        id TEXT PRIMARY KEY,
+        from_account_id TEXT NOT NULL,
+        to_account_id TEXT NOT NULL,
+        amount_minor_units TEXT NOT NULL,
+        currency TEXT NOT NULL,
+        frequency TEXT NOT NULL,
+        start_date TEXT NOT NULL,
+        end_date TEXT,
+        description TEXT
+      );
+    `,
+  },
+  {
+    id: "0013_bank_import",
+    sql: `
+      CREATE TABLE bank_imports (
+        id TEXT PRIMARY KEY,
+        account_id TEXT NOT NULL,
+        bank TEXT NOT NULL,
+        file_name TEXT NOT NULL,
+        imported_at TEXT NOT NULL,
+        external_account_ref TEXT,
+        period_start TEXT,
+        period_end TEXT,
+        closing_balance_minor_units TEXT,
+        currency TEXT NOT NULL,
+        row_count INTEGER NOT NULL,
+        new_row_count INTEGER NOT NULL,
+        balance_check_ok INTEGER NOT NULL
+      );
 
+      CREATE TABLE bank_transactions (
+        id TEXT PRIMARY KEY,
+        account_id TEXT NOT NULL,
+        import_id TEXT NOT NULL,
+        booking_date TEXT NOT NULL,
+        value_date TEXT NOT NULL,
+        description TEXT NOT NULL,
+        amount_minor_units TEXT NOT NULL,
+        currency TEXT NOT NULL,
+        balance_after_minor_units TEXT,
+        bank_category TEXT
+      );
+
+      CREATE INDEX idx_bank_transactions_account_date ON bank_transactions(account_id, booking_date);
+
+      CREATE TABLE import_decisions (
+        account_id TEXT NOT NULL,
+        proposal_key TEXT NOT NULL,
+        decision TEXT NOT NULL,
+        decided_at TEXT NOT NULL,
+        PRIMARY KEY (account_id, proposal_key)
+      );
+    `,
+  },
+];

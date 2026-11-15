@@ -4,6 +4,7 @@ import { createSqliteAccountRepository } from "./repositories/sqliteAccountRepos
 import { createSqliteLoanRepository } from "./repositories/sqliteLoanRepository.js";
 import { createSqliteIncomeRepository } from "./repositories/sqliteIncomeRepository.js";
 import { createSqliteExpenseRepository } from "./repositories/sqliteExpenseRepository.js";
+import { createSqliteRecurringTransferRepository } from "./repositories/sqliteRecurringTransferRepository.js";
 import { createSqliteScenarioRepository } from "./repositories/sqliteScenarioRepository.js";
 import { createSqliteSettingsRepository } from "./repositories/sqliteSettingsRepository.js";
 import { createSqliteContractDocumentRepository } from "./repositories/sqliteContractRepository.js";
@@ -11,6 +12,7 @@ import { parseAccount } from "../../domain/accounts/account.js";
 import { parseLoan } from "../../domain/loans/loan.js";
 import { parseIncome } from "../../domain/income/income.js";
 import { parseExpense } from "../../domain/expenses/expense.js";
+import { parseRecurringTransfer } from "../../domain/transfers/recurringTransfer.js";
 import { parseScenario } from "../../domain/scenarios/scenario.js";
 import { parseSettings } from "../../domain/settings/settings.js";
 
@@ -43,6 +45,9 @@ export async function restoreSnapshot(db: Database, entityType: EntityType, snap
       return;
     case "expense":
       await createSqliteExpenseRepository(db).save(parseExpense(snapshot));
+      return;
+    case "transfer":
+      await createSqliteRecurringTransferRepository(db).save(parseRecurringTransfer(snapshot));
       return;
     case "scenario":
       await createSqliteScenarioRepository(db).save(parseScenario(snapshot));

@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-export const ENTITY_TYPES = ["account", "income", "expense", "loan", "scenario", "settings"] as const;
+export const ENTITY_TYPES = ["account", "income", "expense", "transfer", "loan", "scenario", "settings"] as const;
 export type EntityType = (typeof ENTITY_TYPES)[number];
 
 export const CHANGE_TYPES = ["save", "delete", "baseline"] as const;

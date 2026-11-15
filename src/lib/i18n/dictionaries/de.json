@@ -7,7 +7,8 @@
     "loans": "Kredite und Ausgaben",
     "upload": "Hochladen",
     "simulation": "Simulation",
-    "settings": "Einstellungen"
+    "settings": "Einstellungen",
+    "import": "Bankimport"
   },
   "dashboard": {
     "title": "Übersicht",
@@ -41,7 +42,10 @@
     "balanceDriftSubtitle": "Für {account} – die Lücke zwischen Prognose und dem eingegebenen tatsächlichen Kontostand sind Ihre nicht erfassten Ausgaben.",
     "balanceDriftProjected": "Prognostiziert",
     "balanceDriftActual": "Tatsächlich",
-    "savingsTrend": "Spartrend (Ø {amount}/Monat)"
+    "savingsTrend": "Spartrend (Ø {amount}/Monat)",
+    "balanceDriftAll": "Alle Konten",
+    "balanceDriftChooser": "Diagramm anzeigen für",
+    "balanceDriftSubtitleAll": "Alle aktiven Konten zusammen – die Lücke zwischen Prognose und den eingegebenen tatsächlichen Kontoständen sind Ihre nicht erfassten Ausgaben. Umbuchungen zwischen eigenen Konten ändern sie nicht."
   },
   "accounts": {
     "title": "Einkommen und Salden",
@@ -88,7 +92,18 @@
     "cancelBalanceEdit": "Saldobearbeitung abbrechen",
     "editMinimumReserve": "Mindestreserve bearbeiten",
     "saveMinimumReserve": "Mindestreserve speichern",
-    "cancelMinimumReserveEdit": "Bearbeitung der Mindestreserve abbrechen"
+    "cancelMinimumReserveEdit": "Bearbeitung der Mindestreserve abbrechen",
+    "addRecurringTransfer": "Dauerauftrag hinzufügen",
+    "recurringTransfersTitle": "Daueraufträge",
+    "recurringTransfersHelp": "Daueraufträge zwischen deinen eigenen Konten (z. B. monatlich aufs Sparkonto). Sie verschieben Geld, ohne die Gesamtliquidität zu ändern.",
+    "noRecurringTransfers": "Noch keine Daueraufträge.",
+    "saveRecurringTransfer": "Dauerauftrag speichern",
+    "transferFrom": "Vom Konto",
+    "transferTo": "Auf Konto",
+    "transferAmount": "Betrag",
+    "transferStartDate": "Erste Ausführung",
+    "transferDescription": "Beschreibung",
+    "transferRoute": "Von → nach"
   },
   "loans": {
     "title": "Kredite und Ausgaben",
@@ -192,7 +207,11 @@
       "extracting": "Wird extrahiert…",
       "extracted": "Extrahiert",
       "failed": "Fehlgeschlagen"
-    }
+    },
+    "dropOr": "oder hierher ziehen",
+    "dropHere": "Datei hier ablegen",
+    "fileSelected": "Ausgewählt: {name}",
+    "wrongType": "Diese Datei ist keine {types}-Datei."
   },
   "simulation": {
     "title": "Simulation",
@@ -467,7 +486,8 @@
       "expense": "Ausgabe",
       "loan": "Kredit",
       "scenario": "Szenario",
-      "settings": "Einstellungen"
+      "settings": "Einstellungen",
+      "transfer": "Dauerauftrag"
     },
     "actions": {
       "created": "erstellt",
@@ -521,7 +541,10 @@
       "customIncomeCategories": "Eigene Einkommensarten",
       "llmEndpoint": "Lokaler LLM-Endpunkt",
       "llmEnabled": "Lokale KI-Extraktion",
-      "allowCloudLlmFallback": "Cloud-LLM-Fallback"
+      "allowCloudLlmFallback": "Cloud-LLM-Fallback",
+      "fromAccountId": "Vom Konto",
+      "toAccountId": "Auf Konto",
+      "description": "Beschreibung"
     }
   },
   "backup": {
@@ -544,5 +567,130 @@
     "errNewerVersion": "Diese Sicherung stammt von einer neueren SolventAI-Version. Aktualisieren Sie zuerst die App.",
     "errForbidden": "Wiederherstellung abgelehnt: Die Anfrage kam nicht von dieser App.",
     "errUnknown": "Wiederherstellung fehlgeschlagen. Ihre aktuellen Daten wurden nicht geändert."
+  },
+  "importer": {
+    "title": "Bankimport",
+    "subtitle": "Importiere die Umsätze deiner Bank (CSV), um den Kontostand zu aktualisieren und Vorschläge für wiederkehrende Einnahmen, Ausgaben und Überweisungen aus deinem echten Verlauf zu erhalten.",
+    "dropHint": "Kontoauszugsdatei wählen",
+    "supportedBanks": "Unterstützt: Caixa Geral de Depósitos (CSV-Export „Consultar saldos e movimentos“).",
+    "accountLabel": "Konto",
+    "accountAuto": "Automatisch (verknüpftes Konto, sonst {name})",
+    "updateBalance": "Kontostand auf den Schlusssaldo des Auszugs setzen",
+    "importButton": "Umsätze importieren",
+    "importing": "Wird importiert…",
+    "localBadge": "Die Datei wird auf diesem Rechner gelesen und bleibt in deiner lokalen Datenbank.",
+    "resultTitle": "{file} importiert",
+    "resultRows": "{rows} Umsätze gelesen, {new} neu ({dup} bereits importiert).",
+    "resultPeriod": "Zeitraum {start} – {end}.",
+    "resultBalanceUpdated": "Kontostand von {account} auf {balance} gesetzt.",
+    "resultBalanceUnchanged": "Kontostand nicht geändert.",
+    "resultCheckOk": "Der laufende Saldo stimmt bei allen Umsätzen.",
+    "resultCheckFailed": "Einige Umsätze passen nicht zum laufenden Saldo des Auszugs — bitte Datei prüfen.",
+    "errors": {
+      "unknown_format": "Diese Datei ist kein unterstützter Kontoauszug.",
+      "no_rows": "Der Auszug enthält keine Umsätze.",
+      "bad_row": "Eine Zeile des Auszugs konnte nicht gelesen werden.",
+      "no_account": "Lege zuerst ein Konto an.",
+      "currency_mismatch": "Die Währung des Auszugs passt nicht zum Konto.",
+      "empty_file": "Wähle eine Datei zum Importieren.",
+      "generic": "Der Auszug konnte nicht importiert werden."
+    },
+    "proposalsFor": "Vorschläge für Konto",
+    "proposalsTitle": "Vorschläge",
+    "basedOn": "Basierend auf {count} Umsätzen vom {start} bis {end}.",
+    "howItWorks": "Mit festen Regeln erkannt (ohne KI): gleicher Empfänger in regelmäßigen Abständen, jährliche Abbuchungen und Monatsdurchschnitte für den Rest. Gespeichert wird erst nach deiner Bestätigung.",
+    "noImports": "Importiere einen Auszug, um Vorschläge zu erhalten.",
+    "noProposals": "Nichts Neues vorzuschlagen.",
+    "sections": {
+      "income": "Einnahmen",
+      "transfer": "Überweisungen zwischen deinen Konten",
+      "recurring": "Wiederkehrende Ausgaben",
+      "annual": "Jährlich",
+      "average": "Monatsdurchschnitte nach Kategorie",
+      "known": "Bereits berücksichtigt"
+    },
+    "include": "Übernehmen",
+    "kind": "Art",
+    "kinds": {
+      "expense": "Ausgabe",
+      "income": "Einnahme",
+      "transfer": "Überweisung"
+    },
+    "amount": "Betrag",
+    "frequency": "Häufigkeit",
+    "category": "Kategorie",
+    "target": "Auf Konto",
+    "chooseAccount": "Konto wählen…",
+    "startDate": "Beginn",
+    "confidence": {
+      "high": "hohe Sicherheit",
+      "medium": "mittlere Sicherheit",
+      "low": "geringe Sicherheit"
+    },
+    "variable": "Betrag schwankt",
+    "replaces": "ersetzt {name}",
+    "statusExists": "bereits erfasst",
+    "statusUpdate": "erfasst mit {amount} — wird aktualisiert",
+    "statusLoan": "durch Kredit {name} abgedeckt",
+    "averageLabel": "Monatsdurchschnitt · {category}",
+    "averageTransferLabel": "Monatsdurchschnitt → {name}",
+    "averageMonths": "Durchschnitt aus {months} vollen Monaten",
+    "extraLabel": "Jährliche Sonderzahlung · {name}",
+    "evidence": "Umsätze",
+    "evidenceMore": "…und {count} weitere",
+    "topCounterparties": "Größte Empfänger",
+    "dismiss": "Ignorieren",
+    "restore": "Wiederherstellen",
+    "dismissedTitle": "Ignorierte Vorschläge ({count})",
+    "apply": "Auswahl anlegen",
+    "applyHelp": "Ausgewählte Einträge werden zu Einnahmen, Ausgaben oder Daueraufträgen hinzugefügt und im Änderungsprotokoll vermerkt.",
+    "appliedNotice": "{count} Einträge gespeichert.",
+    "acceptedNote": "{count} Vorschläge wurden bereits übernommen und sind ausgeblendet.",
+    "unmatchedTitle": "Bereits auf diesem Konto, aber nicht im Auszug gefunden",
+    "unmatchedHelp": "War einer davon eine Gesamtschätzung, lösche ihn nach dem Übernehmen der Einzelposten — sonst zählt dieselbe Ausgabe doppelt.",
+    "importsTitle": "Importierte Auszüge",
+    "importRow": "{rows} Umsätze ({new} neu) · {start} – {end}",
+    "deleteImport": "Import löschen",
+    "categories": {
+      "housing": "Wohnen",
+      "utilities": "Energie, Wasser, Telekom",
+      "food": "Lebensmittel",
+      "transport": "Mobilität",
+      "insurance": "Versicherungen",
+      "healthcare": "Gesundheit",
+      "government": "Steuern und Gebühren",
+      "subscriptions": "Abos",
+      "discretionary": "Sonstiges und Bargeld",
+      "other": "Andere",
+      "salary": "Gehalt",
+      "rent": "Mieteinnahmen",
+      "bonus": "Bonus",
+      "pension": "Rente",
+      "freelance": "Selbstständig",
+      "investment": "Kapitalerträge"
+    },
+    "dropOr": "oder hierher ziehen",
+    "dropHere": "Datei hier ablegen",
+    "fileSelected": "Ausgewählt: {name}",
+    "wrongType": "Diese Datei ist keine {types}-Datei."
+  },
+  "expenseStats": {
+    "title": "Überblick wiederkehrende Ausgaben",
+    "averageMonthly": "Durchschnittliche Monatsausgaben",
+    "activeItems": "{count} aktive wiederkehrende Ausgaben",
+    "perYear": "Pro Jahr",
+    "perYearNote": "zu heutigen Beträgen",
+    "loanPayments": "Kreditraten / Monat",
+    "totalOut": "{amount} / Monat mit Ausgaben",
+    "shareOfIncome": "Anteil am Monatseinkommen",
+    "leftover": "{amount} / Monat bleiben übrig",
+    "shortfall": "{amount} / Monat fehlen",
+    "noIncome": "kein wiederkehrendes Einkommen",
+    "allocationTitle": "Monatliche Aufteilung nach Kategorie",
+    "category": "Kategorie",
+    "share": "Anteil",
+    "perMonth": "/Monat",
+    "chartLabel": "Kreisdiagramm der monatlichen wiederkehrenden Ausgaben nach Kategorie; die Tabelle daneben nennt Betrag und Anteil jeder Kategorie.",
+    "howComputed": "Ein Durchschnittsmonat: jährliche und vierteljährliche Posten zählen mit 1/12 bzw. 1/3 ihres Betrags. Beendete und einmalige Ausgaben sind nicht enthalten."
   }
 }

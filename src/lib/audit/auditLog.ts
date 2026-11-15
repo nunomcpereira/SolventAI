@@ -147,6 +147,7 @@ const ENTITY_PAGES: Record<EntityType, string> = {
   account: "accounts",
   income: "accounts",
   expense: "loans",
+  transfer: "accounts",
   loan: "loans",
   scenario: "simulation",
   settings: "settings",

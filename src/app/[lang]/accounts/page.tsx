@@ -4,7 +4,7 @@ import { SUPPORTED_LANGUAGES, type Language } from "../../../lib/i18n/locales.js
 import { getDictionary } from "../../../lib/i18n/getDictionary.js";
 import { listAccounts } from "../../../lib/services/accountsService.js";
 import { getSettings } from "../../../lib/services/settingsService.js";
-import { formatMoney } from "../../../lib/format.js";
+import { formatMoney, formatDate } from "../../../lib/format.js";
 import { sumMoney } from "../../../engine/money/money.js";
 import { getAccountTypeOptions, getIncomeCategoryOptions } from "../../../lib/settings/typeOptions.js";
 import { InlineAccountNameEditor } from "../../../components/accounts/InlineAccountNameEditor.js";
@@ -14,6 +14,10 @@ import { InlineAccountActiveEditor } from "../../../components/accounts/InlineAc
 import { IncomeEntryForm } from "../../../components/accounts/IncomeEntryForm.js";
 import { convertMoneyToCurrency } from "../../../lib/services/exchangeRateService.js";
 import { listRecurringIncomes } from "../../../lib/services/recurringItemsService.js";
+import { listRecurringTransfers } from "../../../lib/services/recurringTransfersService.js";
+import { appTodayIso } from "../../../lib/services/db.js";
+import { InlineTransferRow } from "../../../components/transfers/InlineTransferRow.js";
+import { TransferEntryForm } from "../../../components/transfers/TransferEntryForm.js";
 import { LiveRefresh } from "../../../components/ui/LiveRefresh.js";
 import { InlineRecurringItemRow } from "../../../components/ui/InlineRecurringItemRow.js";
 import {
@@ -25,6 +29,9 @@ import {
   updateRecurringIncomeAction,
   deleteRecurringIncomeAction,
   setDefaultAccountAction,
+  createRecurringTransferAction,
+  updateRecurringTransferAction,
+  deleteRecurringTransferAction,
 } from "./actions.js";
 
 function isSupportedLanguage(value: string): value is Language {
@@ -35,7 +42,13 @@ export default async function AccountsPage({ params }: { params: Promise<{ lang:
   const { lang } = await params;
   if (!isSupportedLanguage(lang)) notFound();
   const dict = getDictionary(lang);
-  const [accounts, settings, incomes] = await Promise.all([listAccounts(), getSettings(), listRecurringIncomes()]);
+  const [accounts, settings, incomes, transfers, today] = await Promise.all([
+    listAccounts(),
+    getSettings(),
+    listRecurringIncomes(),
+    listRecurringTransfers(),
+    appTodayIso(),
+  ]);
   const accountTypeOptions = getAccountTypeOptions(settings);
   const incomeCategoryOptions = getIncomeCategoryOptions(settings);
   const accountTypeLabelMap = new Map(accountTypeOptions.map((option) => [option.value, option.label]));
@@ -84,6 +97,22 @@ export default async function AccountsPage({ params }: { params: Promise<{ lang:
   const boundUpdateIncome = updateRecurringIncomeAction.bind(null, lang);
   const boundDeleteIncome = deleteRecurringIncomeAction.bind(null, lang);
   const accountOptionsForRows = accounts.map((account) => ({ id: account.id, name: account.name, currency: account.currency }));
+  const boundCreateTransfer = createRecurringTransferAction.bind(null, lang);
+  const boundUpdateTransfer = updateRecurringTransferAction.bind(null, lang);
+  const boundDeleteTransfer = deleteRecurringTransferAction.bind(null, lang);
+  const defaultTransferFrom = accounts.find((a) => a.isDefault) ?? accounts[0];
+  const defaultTransferTo = accounts.find((a) => a.id !== defaultTransferFrom?.id && (a.type === "savings" || a.type === "emergency")) ??
+    accounts.find((a) => a.id !== defaultTransferFrom?.id);
+  const transferFormLabels = {
+    from: dict.accounts.transferFrom,
+    to: dict.accounts.transferTo,
+    amount: dict.accounts.transferAmount,
+    frequency: dict.accounts.incomeFrequency,
+    startDate: dict.accounts.transferStartDate,
+    description: dict.accounts.transferDescription,
+    save: dict.accounts.saveRecurringTransfer,
+    frequencies: frequencyLabelMap,
+  };
 
   return (
     <div className="flex flex-col gap-stack-lg w-full">
@@ -293,6 +322,24 @@ export default async function AccountsPage({ params }: { params: Promise<{ lang:
             }}
           />
         </details>
+
+        {accounts.length >= 2 ? (
+          <details className="self-start border border-dashed border-outline rounded-sm p-5 flex flex-col items-center justify-center min-h-[72px] group [&_summary]:list-none">
+            <summary className="cursor-pointer select-none flex flex-col items-center text-center">
+              <span className="text-label-md text-on-surface-variant group-hover:text-on-surface transition-colors border-b border-outline-variant group-hover:border-on-surface pb-0.5"><span className="font-mono text-primary mr-1.5">+</span>
+                {dict.accounts.addRecurringTransfer}
+              </span>
+            </summary>
+            <TransferEntryForm
+              action={boundCreateTransfer}
+              accounts={accountOptionsForRows}
+              {...(defaultTransferFrom ? { defaultFromId: defaultTransferFrom.id } : {})}
+              {...(defaultTransferTo ? { defaultToId: defaultTransferTo.id } : {})}
+              today={today}
+              labels={transferFormLabels}
+            />
+          </details>
+        ) : null}
       </div>
 
       {accounts.length === 0 ? <p className="text-body-md text-on-surface-variant">{dict.accounts.empty}</p> : null}
@@ -355,6 +402,60 @@ export default async function AccountsPage({ params }: { params: Promise<{ lang:
                       freqBiweekly: dict.wizards.freqBiweekly,
                       freqWeekly: dict.wizards.freqWeekly,
                       freqDaily: dict.wizards.freqDaily,
+                    }}
+                  />
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </div>
+
+      <div className="bg-surface-container-lowest border border-outline-variant rounded-sm p-4 md:p-6">
+        <h2 className="text-headline-sm text-on-surface">{dict.accounts.recurringTransfersTitle}</h2>
+        <p className="text-body-md text-on-surface-variant mt-1 mb-stack-md">{dict.accounts.recurringTransfersHelp}</p>
+        {transfers.length === 0 ? (
+          <p className="text-body-md text-on-surface-variant">{dict.accounts.noRecurringTransfers}</p>
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="stack-table w-full text-left text-body-md">
+              <thead>
+                <tr className="text-label-sm text-on-surface-variant border-b border-outline-variant">
+                  <th className="py-2 pr-4 font-normal">{dict.accounts.transferRoute}</th>
+                  <th className="py-2 pr-4 font-normal">{dict.accounts.transferAmount}</th>
+                  <th className="py-2 pr-4 font-normal">{dict.accounts.incomeFrequency}</th>
+                  <th className="py-2 pr-4 font-normal">{dict.accounts.transferStartDate}</th>
+                  <th className="py-2 pr-4 font-normal">{dict.accounts.endDate}</th>
+                  <th className="py-2 pr-4 font-normal"></th>
+                </tr>
+              </thead>
+              <tbody>
+                {transfers.map((transfer) => (
+                  <InlineTransferRow
+                    key={transfer.id}
+                    id={transfer.id}
+                    fromAccountId={transfer.fromAccountId}
+                    toAccountId={transfer.toAccountId}
+                    amount={transfer.amount.toDecimalString()}
+                    formattedAmount={formatMoney(transfer.amount, lang)}
+                    frequency={transfer.frequency}
+                    startDate={transfer.startDate.toString()}
+                    formattedStartDate={formatDate(transfer.startDate.toString(), lang)}
+                    {...(transfer.endDate
+                      ? { endDate: transfer.endDate.toString(), formattedEndDate: formatDate(transfer.endDate.toString(), lang) }
+                      : {})}
+                    {...(transfer.description ? { description: transfer.description } : {})}
+                    accounts={accountOptionsForRows}
+                    updateAction={boundUpdateTransfer}
+                    deleteAction={boundDeleteTransfer}
+                    labels={{
+                      ...transferFormLabels,
+                      endDate: dict.accounts.endDate,
+                      ongoing: dict.accounts.ongoing,
+                      edit: dict.accounts.edit,
+                      save: dict.accounts.save,
+                      cancel: dict.accounts.cancel,
+                      delete: dict.accounts.delete,
                     }}
                   />
                 ))}

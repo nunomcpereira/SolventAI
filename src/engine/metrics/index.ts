@@ -14,3 +14,10 @@ export {
 export { computeInterestDrag } from "./interestDrag.js";
 export { type BalanceCheckpoint, type SavingsTrend, computeSavingsTrend } from "./savingsTrend.js";
 export { currentAnnualRate, weightedAverageRate } from "./averageRate.js";
+export {
+  type AllocationItem,
+  type CategoryAllocation,
+  type ExpenseAllocation,
+  monthlyEquivalent,
+  computeExpenseAllocation,
+} from "./expenseAllocation.js";
