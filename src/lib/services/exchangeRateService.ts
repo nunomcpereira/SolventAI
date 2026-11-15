@@ -4,7 +4,7 @@ import { Money } from "../../engine/money/money.js";
 import { Decimal } from "../../engine/money/decimal.js";
 import { IsoDate } from "../../engine/dates/isoDate.js";
 import { findApplicableRate, parseExchangeRate } from "../../domain/exchangeRates/exchangeRate.js";
-import { getDb } from "./db.js";
+import { appTodayIso, getDb } from "./db.js";
 import { createSqliteExchangeRateRepository } from "../db/repositories/index.js";
 
 interface FrankfurterLatestResponse {
@@ -14,8 +14,8 @@ interface FrankfurterLatestResponse {
   rates: Record<string, number>;
 }
 
-function todayIsoDate(): IsoDate {
-  return IsoDate.fromString(new Date().toISOString().slice(0, 10));
+async function todayIsoDate(): Promise<IsoDate> {
+  return IsoDate.fromString(await appTodayIso());
 }
 
 async function fetchLiveRate(fromCurrency: string, toCurrency: string): Promise<{ rate: Decimal; effectiveDate: IsoDate }> {
@@ -54,15 +54,20 @@ async function resolveRate(fromCurrency: string, toCurrency: string, asOfDate: I
   if (inverse) return Decimal.ONE.div(inverse.rate);
 
   const live = await fetchLiveRate(fromCurrency, toCurrency);
-  await repo.save(
-    parseExchangeRate({
-      id: randomUUID(),
-      fromCurrency,
-      toCurrency,
-      rate: live.rate.toString(),
-      effectiveDate: live.effectiveDate.toString(),
-    }),
-  );
+  try {
+    await repo.save(
+      parseExchangeRate({
+        id: randomUUID(),
+        fromCurrency,
+        toCurrency,
+        rate: live.rate.toString(),
+        effectiveDate: live.effectiveDate.toString(),
+      }),
+    );
+  } catch (error) {
+    // A past version (?before=) is read-only; the rate is still usable, just not cached.
+    if (!/readonly|query_only/i.test(String((error as Error).message))) throw error;
+  }
 
   return live.rate;
 }
@@ -70,12 +75,12 @@ async function resolveRate(fromCurrency: string, toCurrency: string, asOfDate: I
 export async function convertMoneyToCurrency(
   amount: Money,
   toCurrency: string,
-  asOfDate: IsoDate = todayIsoDate(),
+  asOfDate?: IsoDate,
 ): Promise<Money> {
   const from = amount.currency.toUpperCase();
   const to = toCurrency.toUpperCase();
   if (from === to) return amount;
 
-  const rate = await resolveRate(from, to, asOfDate);
+  const rate = await resolveRate(from, to, asOfDate ?? (await todayIsoDate()));
   return Money.fromMinorUnits(amount.mulDecimal(rate).minorUnits, to);
 }

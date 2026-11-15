@@ -115,6 +115,18 @@
   --sidebar-field-bg: var(--color-surface-container-lowest);
   --selection: #d5e3fc;
 
+  /* Categorical series (identity, not rank), fixed order — validated for CVD and
+   * contrast on the light surfaces; the dark themes override them below. */
+  --chart-cat-1: #2a78d6;
+  --chart-cat-2: #eb6834;
+  --chart-cat-3: #1baf7a;
+  --chart-cat-4: #eda100;
+  --chart-cat-5: #e87ba4;
+  --chart-cat-6: #008300;
+  --chart-cat-7: #6250d6;
+  --chart-cat-8: #e34948;
+  --chart-cat-other: #9a9cab;
+
   --chart-grid: #e0e3e5;
   --chart-axis: #434656;
   --chart-ink: #0040e0;
@@ -219,6 +231,15 @@
 :root[data-theme="classic-dark"],
 :root[data-theme="ledger-dark"] {
   color-scheme: dark;
+  --chart-cat-1: #3987e5;
+  --chart-cat-2: #d95926;
+  --chart-cat-3: #199e70;
+  --chart-cat-4: #c98500;
+  --chart-cat-5: #d55181;
+  --chart-cat-6: #008300;
+  --chart-cat-7: #9085e9;
+  --chart-cat-8: #e66767;
+  --chart-cat-other: #6b6e7a;
 }
 
 :root[data-theme="classic-dark"] {

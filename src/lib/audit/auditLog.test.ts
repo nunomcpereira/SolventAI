@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { allFields, buildAuditEvents, diffSnapshots } from "./auditLog.js";
+import { allFields, buildAuditEvents, diffSnapshots, pageBeforeHref, restorableSnapshot } from "./auditLog.js";
 import { type EntityHistoryEntry } from "../../domain/history/entityHistory.js";
 
 let seq = 0;
@@ -106,5 +106,28 @@ describe("allFields", () => {
       { path: "name", before: "A", after: "A", changed: false },
       { path: "endDate", before: "2027-01-01", after: undefined, changed: true },
     ]);
+  });
+});
+
+describe("pageBeforeHref", () => {
+  const at = "2026-11-07T10:00:01.000Z";
+  it("links each entity type to its page, as of just before the change", () => {
+    expect(pageBeforeHref({ entityType: "loan", entityId: "l1", recordedAt: at }, "pt")).toBe(`/pt/loans?before=${encodeURIComponent(at)}`);
+    expect(pageBeforeHref({ entityType: "income", entityId: "i1", recordedAt: at }, "en")).toBe(`/en/accounts?before=${encodeURIComponent(at)}`);
+    expect(pageBeforeHref({ entityType: "expense", entityId: "x1", recordedAt: at }, "en")).toMatch(/^\/en\/loans\?/);
+    expect(pageBeforeHref({ entityType: "settings", entityId: "settings", recordedAt: at }, "en")).toMatch(/^\/en\/settings\?/);
+  });
+  it("opens a scenario on itself", () => {
+    expect(pageBeforeHref({ entityType: "scenario", entityId: "s1", recordedAt: at }, "en")).toBe(
+      `/en/simulation?scenarioId=s1&before=${encodeURIComponent(at)}`,
+    );
+  });
+});
+
+describe("restorableSnapshot", () => {
+  it("restores an update's previous state and a deletion's last state, not a creation", () => {
+    expect(restorableSnapshot({ action: "updated", snapshot: { v: 2 }, previousSnapshot: { v: 1 } })).toEqual({ v: 1 });
+    expect(restorableSnapshot({ action: "deleted", snapshot: { v: 3 } })).toEqual({ v: 3 });
+    expect(restorableSnapshot({ action: "created", snapshot: { v: 1 } })).toBeUndefined();
   });
 });

@@ -7,6 +7,13 @@ import { createRecurringIncome, updateRecurringIncome, deleteRecurringIncome } f
 import { emitChange } from "../../../lib/services/changeEvents.js";
 import { parseRecurringEntryCreate, parseRecurringEntryUpdate } from "../../../lib/forms/recurringEntryForm.js";
 import { parseAccountFormCreate } from "../../../lib/forms/accountForm.js";
+import {
+  createRecurringTransfer,
+  updateRecurringTransfer,
+  deleteRecurringTransfer,
+  type RecurringTransferInput,
+} from "../../../lib/services/recurringTransfersService.js";
+import { type Frequency } from "../../../engine/dates/frequency.js";
 
 function revalidateAccountDependents(lang: string): void {
   revalidatePath(`/${lang}/accounts`);
@@ -92,5 +99,44 @@ export async function deleteRecurringIncomeAction(lang: string, formData: FormDa
   const id = String(formData.get("incomeId") ?? "");
   if (!id) return;
   await deleteRecurringIncome(id);
+  revalidateAccountDependents(lang);
+}
+
+function transferInputFrom(formData: FormData): RecurringTransferInput | undefined {
+  const fromAccountId = String(formData.get("fromAccountId") ?? "");
+  const toAccountId = String(formData.get("toAccountId") ?? "");
+  if (!fromAccountId || !toAccountId || fromAccountId === toAccountId) return undefined;
+  const endDate = String(formData.get("endDate") ?? "");
+  const description = String(formData.get("description") ?? "");
+  return {
+    fromAccountId,
+    toAccountId,
+    amount: String(formData.get("amount") ?? "0"),
+    frequency: String(formData.get("frequency") ?? "monthly") as Frequency,
+    startDate: String(formData.get("startDate") ?? new Date().toISOString().slice(0, 10)),
+    ...(endDate ? { endDate } : {}),
+    ...(description ? { description } : {}),
+  };
+}
+
+export async function createRecurringTransferAction(lang: string, formData: FormData): Promise<void> {
+  const input = transferInputFrom(formData);
+  if (!input) return;
+  await createRecurringTransfer(input);
+  revalidateAccountDependents(lang);
+}
+
+export async function updateRecurringTransferAction(lang: string, formData: FormData): Promise<void> {
+  const id = String(formData.get("transferId") ?? "");
+  const input = transferInputFrom(formData);
+  if (!id || !input) return;
+  await updateRecurringTransfer(id, input);
+  revalidateAccountDependents(lang);
+}
+
+export async function deleteRecurringTransferAction(lang: string, formData: FormData): Promise<void> {
+  const id = String(formData.get("transferId") ?? "");
+  if (!id) return;
+  await deleteRecurringTransfer(id);
   revalidateAccountDependents(lang);
 }

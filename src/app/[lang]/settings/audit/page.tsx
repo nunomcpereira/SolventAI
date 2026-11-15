@@ -5,6 +5,8 @@ import { getDictionary } from "../../../../lib/i18n/getDictionary.js";
 import { getAuditLog, parseAuditType } from "../../../../lib/services/auditService.js";
 import { AuditLogList } from "../../../../components/audit/AuditLogList.js";
 import { ENTITY_TYPES } from "../../../../domain/history/entityHistory.js";
+import { restoreAuditVersionAction } from "./actions.js";
+import { PastVersionPicker } from "../../../../components/history/PastVersionPicker.js";
 
 const PAGE_SIZE = 100;
 
@@ -17,7 +19,7 @@ export default async function AuditLogPage({
   searchParams,
 }: {
   params: Promise<{ lang: string }>;
-  searchParams: Promise<{ type?: string; limit?: string }>;
+  searchParams: Promise<{ type?: string; limit?: string; restored?: string }>;
 }) {
   const { lang } = await params;
   if (!isSupportedLanguage(lang)) notFound();
@@ -48,6 +50,10 @@ export default async function AuditLogPage({
         </Link>
         <h1 className="text-display-lg-mobile md:text-display-lg text-on-surface mt-2">{dict.audit.title}</h1>
         <p className="text-body-lg text-on-surface-variant mt-1">{dict.audit.subtitle}</p>
+        <div className="mt-4 flex flex-col gap-1">
+          <p className="text-body-sm text-on-surface-variant">{dict.audit.pickMomentHelp}</p>
+          <PastVersionPicker path={`/${lang}/dashboard`} labels={{ label: dict.audit.pickMomentLabel, go: dict.audit.pickMomentGo }} />
+        </div>
       </div>
 
       <nav aria-label={dict.audit.title} className="flex flex-wrap gap-2">
@@ -70,7 +76,20 @@ export default async function AuditLogPage({
         })}
       </nav>
 
-      <AuditLogList events={audit.events} names={audit.names} dict={dict} lang={lang} />
+      {query.restored ? (
+        <p role="status" className={`text-body-md ${query.restored === "ok" ? "text-status-healthy" : "text-status-danger"}`}>
+          {query.restored === "ok" ? dict.audit.restoreDone : dict.audit.restoreFailed}
+        </p>
+      ) : null}
+
+      <AuditLogList
+        events={audit.events}
+        names={audit.names}
+        dict={dict}
+        lang={lang}
+        restoreAction={restoreAuditVersionAction.bind(null, lang)}
+        returnTo={href({ ...(type ? { type } : {}), limit })}
+      />
 
       {audit.total > audit.events.length ? (
         <Link

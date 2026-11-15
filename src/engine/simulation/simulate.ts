@@ -23,6 +23,18 @@ export interface SimulationExpenseItem extends RecurringAmountItem {
 }
 
 /**
+ * A standing order between two accounts. Each occurrence debits `fromAccountId` and
+ * credits `toAccountId` with the same amount (callers normalize to the simulation
+ * currency first), so it never changes total liquidity. Either side may be outside the
+ * simulated set (e.g. a single-account replay): that side is simply not booked.
+ */
+export interface SimulationTransferItem extends RecurringAmountItem {
+  id: string;
+  fromAccountId: string;
+  toAccountId: string;
+}
+
+/**
  * A scheduled debt-service cash outflow for one account in one period, precomputed by
  * the caller from a loan's amortization schedule (see engine/amortization,
  * engine/prepayment). This module owns account-level cash orchestration and event
@@ -45,6 +57,8 @@ export interface SimulationInput {
   accounts: SimulationAccountInput[];
   incomeItems: SimulationIncomeItem[];
   expenseItems: SimulationExpenseItem[];
+  /** Recurring transfers between the user's own accounts. */
+  transferItems?: SimulationTransferItem[];
   debtPayments?: SimulationDebtPayment[];
   events: SimulationEvent[];
   /** Simulation start date. Period 1 covers [horizonStart, horizonStart + 1 periodFrequency). */
@@ -228,6 +242,13 @@ export function runSimulation(input: SimulationInput): SimulationPeriodSnapshot[
       }
       if (itemTotal !== undefined) {
         expenseBreakdown.push({ itemId: item.id, accountId: item.accountId, amount: itemTotal });
+      }
+    }
+
+    for (const item of input.transferItems ?? []) {
+      for (const occ of expandOccurrences(item, periodStartInclusive, periodEndExclusive.addDays(-1))) {
+        if (transfersOutByAccount.has(item.fromAccountId)) addTo(transfersOutByAccount, item.fromAccountId, occ.amount);
+        if (transfersInByAccount.has(item.toAccountId)) addTo(transfersInByAccount, item.toAccountId, occ.amount);
       }
     }
 

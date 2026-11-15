@@ -6,6 +6,7 @@ import { getSettings } from "../../../lib/services/settingsService.js";
 import { getAvailableAccountsForLoanSelect } from "../../../lib/services/loansPageService.js";
 import { Badge, type BadgeTone } from "../../../components/ui/Badge.js";
 import { UploadSubmitButton } from "../../../components/upload/UploadSubmitButton.js";
+import { FileDropZone } from "../../../components/upload/FileDropZone.js";
 import { LiveRefresh } from "../../../components/ui/LiveRefresh.js";
 import { moneyFromSerialized } from "../../../domain/shared/codecs.js";
 import { formatMoney, formatDate } from "../../../lib/format.js";
@@ -89,16 +90,21 @@ export default async function UploadPage({ params }: { params: Promise<{ lang: s
 
         <div className="bg-surface-container-lowest border border-outline-variant rounded-sm shadow-sm overflow-hidden">
           <form action={boundAction} className="p-8 md:p-12 flex flex-col items-center text-center gap-stack-md">
-            <label
-              htmlFor="contract-file"
-              className="w-full border-2 border-dashed border-outline-variant hover:border-primary bg-surface rounded-sm p-12 transition-all cursor-pointer flex flex-col items-center gap-stack-md"
-            >
-              <span className="font-mono text-[28px] leading-none text-outline">↑ .pdf</span>
-              <div>
-                <p className="text-headline-sm text-on-surface mb-1">{dict.upload.dropHint}</p>
-              </div>
-              <input id="contract-file" type="file" name="file" accept="application/pdf" className="sr-only" required />
-            </label>
+            <FileDropZone
+              id="contract-file"
+              name="file"
+              accept="application/pdf"
+              extensions={[".pdf"]}
+              badge="↑ .pdf"
+              required
+              labels={{
+                title: dict.upload.dropHint,
+                hint: dict.upload.dropOr,
+                dropHere: dict.upload.dropHere,
+                selected: dict.upload.fileSelected,
+                wrongType: dict.upload.wrongType,
+              }}
+            />
 
             <div className="flex items-center gap-2 text-tertiary">
               <span className="material-symbols-outlined" style={{ fontSize: "18px" }}>

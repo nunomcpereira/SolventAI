@@ -8,6 +8,7 @@ import {
   getAvailableContractDocumentsForSelect,
 } from "../../../lib/services/loansPageService.js";
 import { getSettings } from "../../../lib/services/settingsService.js";
+import { appTodayIso } from "../../../lib/services/db.js";
 import { getLoanCategoryOptions } from "../../../lib/settings/typeOptions.js";
 import { formatDate, formatMoney } from "../../../lib/format.js";
 import { Badge } from "../../../components/ui/Badge.js";
@@ -20,6 +21,8 @@ import { sumMoney } from "../../../engine/money/money.js";
 import { Decimal } from "../../../engine/money/decimal.js";
 import { EXPENSE_CATEGORIES } from "../../../domain/expenses/expense.js";
 import { listRecurringExpenses } from "../../../lib/services/recurringItemsService.js";
+import { getExpenseStats } from "../../../lib/services/expenseStatsService.js";
+import { ExpenseOverview } from "../../../components/loans/ExpenseOverview.js";
 import { serializeLoan } from "../../../domain/loans/loan.js";
 import { PrepaymentOptimizerCard } from "../../../components/loans/PrepaymentOptimizerCard.js";
 import {
@@ -48,12 +51,14 @@ export default async function LoansPage({
   const { lang } = await params;
   if (!isSupportedLanguage(lang)) notFound();
   const dict = getDictionary(lang);
-  const [summaries, accounts, contractDocuments, settings, expenses] = await Promise.all([
+  const [today, summaries, accounts, contractDocuments, settings, expenses, expenseStats] = await Promise.all([
+    appTodayIso(),
     listLoanSummaries(),
     getAvailableAccountsForLoanSelect(),
     getAvailableContractDocumentsForSelect(),
     getSettings(),
     listRecurringExpenses(),
+    getExpenseStats(),
   ]);
   const loanCategoryOptions = getLoanCategoryOptions(settings);
   const loanCategoryLabelMap = new Map(loanCategoryOptions.map((option) => [option.value, option.label]));
@@ -570,6 +575,7 @@ export default async function LoansPage({
 
       {summaries.length > 0 ? (
         <PrepaymentOptimizerCard
+          today={today}
           serializedLoans={serializedLoans}
           currency={currency}
           lang={lang}
@@ -597,6 +603,7 @@ export default async function LoansPage({
 
       <div className="bg-surface-container-lowest border border-outline-variant rounded-sm p-4 md:p-6">
         <h2 className="text-headline-sm text-on-surface mb-stack-md">{dict.loans.recurringExpensesTitle}</h2>
+        <ExpenseOverview stats={expenseStats} dict={dict} lang={lang} />
         {expenses.length === 0 ? (
           <p className="text-body-md text-on-surface-variant">{dict.loans.noRecurringExpenses}</p>
         ) : (

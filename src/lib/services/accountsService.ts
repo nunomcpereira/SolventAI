@@ -8,6 +8,7 @@ import {
   createSqliteIncomeRepository,
   createSqliteExpenseRepository,
   createSqliteScenarioRepository,
+  createSqliteRecurringTransferRepository,
 } from "../db/repositories/index.js";
 import { type Account, parseAccount, type AccountType } from "../../domain/accounts/account.js";
 import { Money } from "../../engine/money/money.js";
@@ -110,11 +111,13 @@ export async function deleteAccount(id: string): Promise<void> {
   const incomeRepo = createSqliteIncomeRepository(db);
   const expenseRepo = createSqliteExpenseRepository(db);
   const scenarioRepo = createSqliteScenarioRepository(db);
+  const transferRepo = createSqliteRecurringTransferRepository(db);
 
-  const [loans, incomes, expenses, scenarios] = await Promise.all([
+  const [loans, incomes, expenses, transfers, scenarios] = await Promise.all([
     loanRepo.list(),
     incomeRepo.list(),
     expenseRepo.list(),
+    transferRepo.list(),
     scenarioRepo.list(),
   ]);
 
@@ -122,6 +125,9 @@ export async function deleteAccount(id: string): Promise<void> {
     ...loans.filter((loan) => loan.sourceAccountId === id).map((loan) => loanRepo.delete(loan.id)),
     ...incomes.filter((income) => income.accountId === id).map((income) => incomeRepo.delete(income.id)),
     ...expenses.filter((expense) => expense.accountId === id).map((expense) => expenseRepo.delete(expense.id)),
+    ...transfers
+      .filter((transfer) => transfer.fromAccountId === id || transfer.toAccountId === id)
+      .map((transfer) => transferRepo.delete(transfer.id)),
   ]);
 
   await Promise.all(

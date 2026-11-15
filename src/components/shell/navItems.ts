@@ -14,6 +14,7 @@ export function buildNavItems(lang: Language, dict: Dictionary): NavItem[] {
     { href: `/${lang}/dashboard`, icon: "dashboard", label: dict.nav.dashboard, matchSegments: ["dashboard"] },
     { href: `/${lang}/accounts`, icon: "account_balance", label: dict.nav.accounts, matchSegments: ["accounts"] },
     { href: `/${lang}/loans`, icon: "account_balance_wallet", label: dict.nav.loans, matchSegments: ["loans"] },
+    { href: `/${lang}/import`, icon: "upload_file", label: dict.nav.import, matchSegments: ["import"] },
     { href: `/${lang}/simulation`, icon: "query_stats", label: dict.nav.simulation, matchSegments: ["simulation"] },
     { href: `/${lang}/settings`, icon: "settings", label: dict.nav.settings, matchSegments: ["settings"] },
   ];

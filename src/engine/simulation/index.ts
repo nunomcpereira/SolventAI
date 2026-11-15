@@ -23,6 +23,7 @@ export {
   type SimulationAccountInput,
   type SimulationIncomeItem,
   type SimulationExpenseItem,
+  type SimulationTransferItem,
   type SimulationDebtPayment,
   type SimulationInput,
   type SimulationAccountSnapshot,

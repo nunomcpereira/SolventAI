@@ -5,12 +5,14 @@ import { createSqliteAccountRepository } from "./repositories/sqliteAccountRepos
 import { createSqliteLoanRepository } from "./repositories/sqliteLoanRepository.js";
 import { createSqliteIncomeRepository } from "./repositories/sqliteIncomeRepository.js";
 import { createSqliteExpenseRepository } from "./repositories/sqliteExpenseRepository.js";
+import { createSqliteRecurringTransferRepository } from "./repositories/sqliteRecurringTransferRepository.js";
 import { createSqliteScenarioRepository } from "./repositories/sqliteScenarioRepository.js";
 import { createSqliteSettingsRepository } from "./repositories/sqliteSettingsRepository.js";
 import { serializeAccount } from "../../domain/accounts/account.js";
 import { serializeLoan } from "../../domain/loans/loan.js";
 import { serializeIncome } from "../../domain/income/income.js";
 import { serializeExpense } from "../../domain/expenses/expense.js";
+import { serializeRecurringTransfer } from "../../domain/transfers/recurringTransfer.js";
 import { serializeScenario } from "../../domain/scenarios/scenario.js";
 import { serializeSettings } from "../../domain/settings/settings.js";
 
@@ -34,11 +36,12 @@ export async function ensureHistoryBaselines(db: Database): Promise<number> {
     recorded += 1;
   };
 
-  const [accounts, loans, incomes, expenses, scenarios, settings] = await Promise.all([
+  const [accounts, loans, incomes, expenses, transfers, scenarios, settings] = await Promise.all([
     createSqliteAccountRepository(db).list(),
     createSqliteLoanRepository(db).list(),
     createSqliteIncomeRepository(db).list(),
     createSqliteExpenseRepository(db).list(),
+    createSqliteRecurringTransferRepository(db).list(),
     createSqliteScenarioRepository(db).list(),
     createSqliteSettingsRepository(db).get(),
   ]);
@@ -49,6 +52,7 @@ export async function ensureHistoryBaselines(db: Database): Promise<number> {
     for (const l of loans) baseline("loan", l.id, serializeLoan(l));
     for (const i of incomes) baseline("income", i.id, serializeIncome(i));
     for (const e of expenses) baseline("expense", e.id, serializeExpense(e));
+    for (const t of transfers) baseline("transfer", t.id, serializeRecurringTransfer(t));
     for (const s of scenarios) baseline("scenario", s.id, serializeScenario(s));
     if (settings) baseline("settings", "settings", serializeSettings(settings));
     db.exec("COMMIT");

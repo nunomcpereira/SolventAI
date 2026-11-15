@@ -19,3 +19,14 @@ docs/*.pdf
 
 # Ignite scan output
 .ignite/scans/
+
+# Personal financial data must never be committed, wherever it ends up:
+# SQLite databases and their backups, and real bank statement exports.
+*.db
+*.db-wal
+*.db-shm
+*.db.backup*
+*.sqlite
+*.bundle
+movimentos*.csv
+extrato*.csv

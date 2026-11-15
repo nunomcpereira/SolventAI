@@ -1,6 +1,6 @@
 import "server-only";
 import { randomUUID } from "node:crypto";
-import { getDb } from "./db.js";
+import { appTodayIso, getDb } from "./db.js";
 import { ensureSeeded } from "./seed.js";
 import {
   createSqliteLoanRepository,
@@ -69,7 +69,7 @@ export async function listLoanSummaries(): Promise<LoanSummary[]> {
   const contractDocs = await createSqliteContractDocumentRepository(db).list();
   const docMap = new Map(contractDocs.map((d) => [d.id, d.fileName]));
 
-  const today = IsoDate.fromString(new Date().toISOString().slice(0, 10));
+  const today = IsoDate.fromString(await appTodayIso());
 
   return loans.map((loan) => {
     const contractDocumentName = loan.contractDocumentId ? docMap.get(loan.contractDocumentId) : undefined;

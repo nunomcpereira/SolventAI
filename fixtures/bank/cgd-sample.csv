@@ -1,0 +1,15 @@
+Consultar saldos e movimentos à ordem - 14-03-2026
+
+Conta ;0000111122223 - EUR - Conta exemplo 
+Data de início ;01-01-2026
+Data de fim ;14-03-2026
+
+Data mov. ;Data valor ;Descrição ;Débito ;Crédito ;Saldo contabilístico ;Saldo disponível ;Categoria ;
+10-03-2026;10-03-2026;COMPRA SUPERMERCADO EXEMPLO ;45,10;;3.404,90;3.404,90;COMPRAS ;
+09-03-2026;09-03-2026;TRF POUP PROGRAMADA ;100,00;;3.450,00;3.450,00;Diversos ;
+25-02-2026;25-02-2026;TRF EMPRESA EXEMPLO LDA ;;2.500,00;3.550,00;3.550,00;Diversos ;
+09-02-2026;09-02-2026;TRF POUP PROGRAMADA ;100,00;;1.050,00;1.050,00;Diversos ;
+05-02-2026;05-02-2026;Operadora Telecom ;39,99;;1.150,00;1.150,00;TELE / TV / INTERNET ;
+05-02-2026;04-02-2026;BX VALOR 03-TRANSACCO ;0,01;;1.189,99;1.189,99;Diversos ;
+02-01-2026;02-01-2026;DEPOSITO ;;1.190,00;1.190,00;1.190,00;DEPOSITO ;
+ ; ; ; ;Saldo contabilístico ;3.404,90 EUR ; ; ;

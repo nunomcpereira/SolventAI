@@ -7,14 +7,17 @@ import {
   createSqliteIncomeRepository,
   createSqliteExpenseRepository,
   createSqliteSettingsRepository,
+  createSqliteRecurringTransferRepository,
 } from "../db/repositories/index.js";
 import { type Account } from "../../domain/accounts/account.js";
 import { type Loan } from "../../domain/loans/loan.js";
 import { type Income } from "../../domain/income/income.js";
 import { type Expense } from "../../domain/expenses/expense.js";
+import { type RecurringTransfer } from "../../domain/transfers/recurringTransfer.js";
 import {
   type SimulationIncomeItem,
   type SimulationExpenseItem,
+  type SimulationTransferItem,
   type SimulationDebtPayment,
   type SimulationInput,
   type SimulationPeriodSnapshot,
@@ -34,6 +37,7 @@ export async function loadSimulationInputs(): Promise<{
   loans: Loan[];
   incomes: Income[];
   expenses: Expense[];
+  transfers: RecurringTransfer[];
   currency: string;
   activeAccounts: Account[];
   activeAccountIds: Set<string>;
@@ -41,11 +45,12 @@ export async function loadSimulationInputs(): Promise<{
   const db = await getDb();
   await ensureSeeded(db);
 
-  const [accounts, loans, incomes, expenses, settings] = await Promise.all([
+  const [accounts, loans, incomes, expenses, transfers, settings] = await Promise.all([
     createSqliteAccountRepository(db).list(),
     createSqliteLoanRepository(db).list(),
     createSqliteIncomeRepository(db).list(),
     createSqliteExpenseRepository(db).list(),
+    createSqliteRecurringTransferRepository(db).list(),
     createSqliteSettingsRepository(db).get(),
   ]);
 
@@ -53,7 +58,7 @@ export async function loadSimulationInputs(): Promise<{
   const activeAccounts = accounts.filter((a) => a.active);
   const activeAccountIds = new Set(activeAccounts.map((a) => a.id));
 
-  return { accounts, loans, incomes, expenses, currency, activeAccounts, activeAccountIds };
+  return { accounts, loans, incomes, expenses, transfers, currency, activeAccounts, activeAccountIds };
 }
 
 /** Re-indexes a loan's own schedule (period 1 = loan.startDate) onto the simulation's
@@ -122,6 +127,29 @@ export async function buildSimulationExpenseItems(
   );
 }
 
+/** Converts recurring transfers to simulation input items, in the selected base
+ * currency. A transfer is kept while at least one side is an active account — the engine
+ * books only the sides it simulates, so money sent to an inactive account still leaves. */
+export async function buildSimulationTransferItems(
+  transfers: readonly RecurringTransfer[],
+  activeAccountIds: ReadonlySet<string>,
+  currency: string,
+): Promise<SimulationTransferItem[]> {
+  return Promise.all(
+    transfers
+      .filter((t) => activeAccountIds.has(t.fromAccountId) || activeAccountIds.has(t.toAccountId))
+      .map(async (t) => ({
+        id: t.id,
+        fromAccountId: t.fromAccountId,
+        toAccountId: t.toAccountId,
+        amount: await convertMoneyToCurrency(t.amount, currency),
+        frequency: t.frequency,
+        startDate: t.startDate,
+        ...(t.endDate !== undefined ? { endDate: t.endDate } : {}),
+      })),
+  );
+}
+
 /** Converts active accounts to simulation input accounts, in the selected base currency. */
 export async function buildSimulationAccounts(
   activeAccounts: readonly Account[],
@@ -150,6 +178,7 @@ export async function buildSimulationInput(params: {
   accounts: readonly Account[];
   incomes: readonly Income[];
   expenses: readonly Expense[];
+  transfers?: readonly RecurringTransfer[];
   loans: readonly Loan[];
   currency: CurrencyCode;
   horizonStart: IsoDate;
@@ -162,9 +191,10 @@ export async function buildSimulationInput(params: {
   const activeAccounts = accounts.filter((a) => a.active);
   const activeAccountIds = new Set(activeAccounts.map((a) => a.id));
 
-  const [incomeItems, expenseItems, simAccounts] = await Promise.all([
+  const [incomeItems, expenseItems, transferItems, simAccounts] = await Promise.all([
     buildSimulationIncomeItems(incomes, activeAccountIds, currency),
     buildSimulationExpenseItems(expenses, activeAccountIds, currency),
+    buildSimulationTransferItems(params.transfers ?? [], activeAccountIds, currency),
     buildSimulationAccounts(activeAccounts, currency),
   ]);
 
@@ -193,6 +223,7 @@ export async function buildSimulationInput(params: {
     accounts: simAccounts,
     incomeItems,
     expenseItems,
+    transferItems,
     debtPayments,
     events: [],
     horizonStart,
